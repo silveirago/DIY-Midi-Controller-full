@@ -11,7 +11,7 @@
   gustavosilveira@musiconerd.com
 
   If you are using for anything that's not for personal use don't forget to give credit.
-  
+
 */
 
 
@@ -24,6 +24,10 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 
 // Use if using a cd4067 multiplexer
 #include <Multiplexer4067.h> // Multiplexer CD4067 library >> https://github.com/sumotoy/Multiplexer4067
+
+// Threads
+#include <Thread.h> // Threads library >> https://github.com/ivanseidel/ArduinoThread
+#include <ThreadController.h> // Same as above
 
 /////////////////////////////////////////////
 // buttons
@@ -83,10 +87,23 @@ byte midiCh = 1; //* MIDI channel to be used
 byte note = 24; //* Lowest note to be used
 byte cc = 11; //* Lowest MIDI CC to be used
 
+/////////////////////////////////////////////
+// Threads
+// This libs create a "fake" thread. This means you can make something happen every x milisseconds
+// We can use that to read something in an interval, instead of reading it every single loop
+// In this case we'll read the potentiometers in a thread, making the reading of the buttons faster
+ThreadController cpu; //thread master, where the other threads will be added
+Thread threadPotentiometers; // thread to control the pots
+
 void setup() {
 
-  Serial.begin(31250); // use if using with ATmega328 (uno, mega, nano...)
+  // Baud Rate
+  // use if using with ATmega328 (uno, mega, nano...)
+  // 31250 for MIDI class compliant | 115200 for Hairless MIDI
+  Serial.begin(115200);
 
+  // Buttons
+  // Initialize buttons with pull up resistors
   for (int i = 0; i < N_BUTTONS; i++) {
     pinMode(buttonPin[i], INPUT_PULLUP);
   }
@@ -102,12 +119,19 @@ void setup() {
   pinMode(x1, INPUT_PULLUP);
   pinMode(x2, INPUT_PULLUP);
 
+  /////////////////////////////////////////////
+  // Threads
+  threadPotentiometers.setInterval(10); // every how many millisiconds
+  threadPotentiometers.onRun(potentiometers); // the function that will be added to the thread
+  cpu.add(&threadPotentiometers); // add every thread here
+
 }
 
 void loop() {
 
+  cpu.run();
   buttons();
-  potentiometers();
+  //  potentiometers();
 
 }
 
