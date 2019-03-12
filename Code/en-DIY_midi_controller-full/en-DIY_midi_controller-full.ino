@@ -18,7 +18,6 @@
 // Use if using with ATmega328 - Uno, Mega, Nano...
 #include <MIDI.h>
 MIDI_CREATE_DEFAULT_INSTANCE();
-
 // Use if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
 //#include "MIDIUSB.h"
 
@@ -28,6 +27,11 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 // Threads
 #include <Thread.h> // Threads library >> https://github.com/ivanseidel/ArduinoThread
 #include <ThreadController.h> // Same as above
+
+// Encoder
+// In the downloads manager download the Encoder lib from Paul Stoffregen (it comes with the Teensy)
+#include <Encoder.h>  //makes all the work for you on reading the encoder
+
 
 /////////////////////////////////////////////
 // buttons
@@ -82,6 +86,25 @@ unsigned long PTime[N_POTS] = {0}; // Previously stored time
 unsigned long timer[N_POTS] = {0}; // Stores the time that has elapsed since the timer was reset
 
 /////////////////////////////////////////////
+// Encoders
+// You can add as many encoders you want separated in many banks you want
+const int N_ENCODERS = 8; //* number of encoders
+const int N_ENCODER_PINS = N_ENCODERS * 2; //number of pins used by the encoders
+const int N_ENCODER_BANKS = 2; //* number of banks
+//this array stores the two pins of every encoder -  Use pins with Interrupts
+Encoder encoder[N_ENCODERS] = {{2, 3}, {4, 5}, {6, 7}, {18, 9}, {10, 19}, {12, 20}, {14, 15}, {16, 17}};
+int lastEncoderValue[N_ENCODER_BANKS][N_ENCODERS] = {127};
+int encoderValue[N_ENCODER_BANKS][N_ENCODERS] = {127};
+
+int preset[N_ENCODER_BANKS][N_ENCODERS] = { //stores presets
+  {255, 0, 0, 0, 255, 0, 0, 0},
+  {255, 0, 0, 0, 0, 0, 0, 255}
+};
+
+// for the encoder banks
+int Bank = 0;
+int lastBank = 0;
+/////////////////////////////////////////////
 
 byte midiCh = 1; //* MIDI channel to be used
 byte note = 24; //* Lowest note to be used
@@ -125,12 +148,27 @@ void setup() {
   threadPotentiometers.onRun(potentiometers); // the function that will be added to the thread
   cpu.add(&threadPotentiometers); // add every thread here
 
+  /////////////////////////////////////////////
+  // Encoders
+  for (int i = 0; i < N_ENCODERS; i++) { // if you want to start with a certain value use presets
+    encoder[i].write(preset[0][i]);
+  }
+
+  for (int z = 0; z < N_ENCODER_BANKS; z++) {
+    for (int i = 0; i < N_ENCODERS; i++) {
+      lastEncoderValue[z][i] = preset[z][i];
+      encoderValue[z][i] = preset[z][i];
+    }
+  }
+  /////////////////////////////////////////////
+
 }
 
 void loop() {
 
   cpu.run();
   buttons();
+  encoders();
   //  potentiometers();
 
 }
@@ -246,8 +284,68 @@ void potentiometers() {
       }
     }
   }
+}
+
+////////////////////////////////////////////
+//read encoder values
+void readEncoders() { //read each encoder and stores its value
+
+  for (int i = 0; i < N_ENCODERS; i++) {
+    encoderValue[Bank][i] = encoder[i].read();
+  }
+}
+
+void encoders() { //do whatever needs to be done with the encoder values
+
+  readEncoders();
+
+  for (int i = 0; i < N_ENCODERS; i++) {
+    if (encoderValue[Bank][i] != lastEncoderValue[Bank][i]) {
+
+      clipEncoderValue(i, 0, 127); //check if it's > than 127, or < then 0
+      sendCC(i);
+      lastEncoderValue[Bank][i] = encoderValue[Bank][i];
+      //printEncoderValue(i);
+    }
+  }
+}
+
+////////////////////////////////////////////
+//sends encoder's midi cc
+void sendCC(byte i)  {
+
+  // use if using with ATmega328 (uno, mega, nano...)
+  //do usbMIDI.sendControlChange if using with Teensy
+  MIDI.sendControlChange(i, encoderValue[Bank][i], Bank);
+
+  //use if using with ATmega32U4 (micro, pro micro, leonardo...)
+  //        controlChange(i, encoderValue[Bank][i], Bank);
+  //        MidiUSB.flush();
 
 }
+
+////////////////////////////////////////////
+//check if it's > than x, or < then y
+void clipEncoderValue(int i, int minVal, int maxVal) {
+
+  if (encoderValue[Bank][i] > maxVal - 1) {
+    encoderValue[Bank][i] = maxVal;
+    encoder[i].write(maxVal);
+  }
+  if (encoderValue[Bank][i] < minVal + 1) {
+    encoderValue[Bank][i] = minVal;
+    encoder[i].write(minVal);
+  }
+}
+
+////////////////////////////////////////////
+//print encoder values in the serial monitor
+void printEncoderValue(byte i) {
+  Serial.print("Bank: "); Serial.print(Bank); Serial.print("  ");
+  Serial.print("Encoder "); Serial.print(i); Serial.print(": ");
+  Serial.println(encoderValue[Bank][i]);
+}
+
 
 // use if using with ATmega32U4 (micro, pro micro, leonardo...)
 /*
