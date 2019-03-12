@@ -4,11 +4,14 @@
   - It can use many multiplexers
 
   http://www.musiconerd.com
-  http://www.bitcontrollers.com
-
-  If you are using for anything that's not personal use don't forget to give credit.
-
+  http://www.youtube.com/musiconerd
+  http://facebook.com/musiconerdmusiconerd
+  http://instagram.com/musiconerd/
+  http://www.gustavosilveira.net
   gustavosilveira@musiconerd.com
+
+  If you are using for anything that's not for personal use don't forget to give credit.
+  
 */
 
 
