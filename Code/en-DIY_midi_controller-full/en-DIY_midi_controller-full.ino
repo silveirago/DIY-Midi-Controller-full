@@ -14,13 +14,29 @@
 
 */
 
+/////////////////////////////////////////////
+// choosing your board
 
+// Define your board. Choose:
+// "ATMEGA16U2" ATmega328 - Uno, Mega, Nano...
+// "ATMEGA32U4" if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
+// "TEENSY" if using a Teensy board
+// "DEBUG" if you just want to debug in the serial monitor
+
+#define ATMEGA16U2; // put here the uC you are using, like in the lines above
+
+#ifdef ATMEGA16U2
 // Use if using with ATmega328 - Uno, Mega, Nano...
 #include <MIDI.h>
 MIDI_CREATE_DEFAULT_INSTANCE();
-// Use if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
-//#include "MIDIUSB.h"
 
+#elif ATMEGA32U4
+// Use if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
+#include "MIDIUSB.h"
+
+#endif
+
+/////////////////////////////////////////////
 // Use if using a cd4067 multiplexer
 #include <Multiplexer4067.h> // Multiplexer CD4067 library >> https://github.com/sumotoy/Multiplexer4067
 
@@ -31,20 +47,6 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 // Encoder
 // In the downloads manager download the Encoder lib from Paul Stoffregen (it comes with the Teensy)
 #include <Encoder.h>  //makes all the work for you on reading the encoder
-
-
-/////////////////////////////////////////////
-// buttons
-const int N_BUTTONS = 2; //* The number of buttons
-const int buttonPin[N_BUTTONS] = {3, 4}; //* the number of the pushbutton pins in the desired order
-int buttonCState[N_BUTTONS] = {0};         // stores the button current value
-int buttonPState[N_BUTTONS] = {0};        // stores the button previous value
-//byte pin13index = 3; // put the index of the pin 13 in the buttonPin[] if you are using it, if not, comment lines 68-70
-
-/////////////////////////////////////////////
-// debounce
-unsigned long lastDebounceTime[N_BUTTONS] = {0};  // the last time the output pin was toggled
-unsigned long debounceDelay = 5;    //* the debounce time; increase if the output flickers
 
 ///////////////////////////////////////////
 // Multiplexer
@@ -65,11 +67,30 @@ Multiplexer4067 mux[N_MUX] = {
 };
 
 /////////////////////////////////////////////
+// buttons
+const int N_BUTTONS = 8; //  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2...
+const int N_BUTTONS_ARDUINO = 1; // number of buttons connected straight to the Arduino (in order)
+const int N_BUTTONS_PER_MUX[N_MUX] = {0, 8}; // number of buttons in each mux (in order)
+
+const int BUTTON_MUX_PIN[N_BUTTONS] = {6, 4, 3, 1, 7, 5, 2, 0}; //pin of each buttons of each mux in order
+const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {6, 4, 3, 1, 7, 5, 2, 0}; //pin of each buttons of each mux in order
+
+int buttonCState[N_BUTTONS] = {};         // stores the button current value
+int buttonPState[N_BUTTONS] = {};        // stores the button previous value
+//byte pin13index = 3; // put the index of the pin 13 in the BUTTON_MUX_PIN[] if you are using it, if not, comment lines 68-70
+
+/////////////////////////////////////////////
+// debounce
+unsigned long lastDebounceTime[N_BUTTONS] = {0};  // the last time the output pin was toggled
+unsigned long debounceDelay = 5;    //* the debounce time; increase if the output flickers
+
+/////////////////////////////////////////////
 // potentiometers
 const int N_POTS = 6 + 16 + 4; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
-const int N_POTS_ANALOG = 6; //* number of pots connected straight to the Arduino (in order)
+const int N_POTS_ARDUINO = 6; //* number of pots connected straight to the Arduino (in order)
 const int N_POTS_PER_MUX[N_MUX] = {16, 4}; //* number of pots in each multiplexer (in order)
-const int POT_ANALOG_PIN[N_POTS_ANALOG] = {A0, A1, A2, A3, A4, A5}; //* pins of each pot connected straigh to the Arduino
+
+const int POT_ANALOG_PIN[N_POTS_ARDUINO] = {A0, A1, A2, A3, A4, A5}; //* pins of each pot connected straigh to the Arduino
 const int POT_MUX_PIN[N_POTS] = {6, 4, 3, 1, 7, 5, 2, 0, 8, 10, 13, 15, 9, 11, 12, 14, 9, 11, 12, 14}; //* pins of each pot of each mux in the order you want them to be
 
 int potCState[N_POTS] = {0}; // Current state of the pot
@@ -128,9 +149,9 @@ void setup() {
   // Buttons
   // Initialize buttons with pull up resistors
   for (int i = 0; i < N_BUTTONS; i++) {
-    pinMode(buttonPin[i], INPUT_PULLUP);
+    pinMode(BUTTON_MUX_PIN[i], INPUT_PULLUP);
   }
-  //pinMode(buttonPin[3], INPUT); //pin 13
+  //pinMode(BUTTON_MUX_PIN[3], INPUT); //pin 13
 
   /////////////////////////////////////////////
   // Multiplexers
@@ -166,10 +187,10 @@ void setup() {
 
 void loop() {
 
-  cpu.run();
+  //cpu.run();
   buttons();
   // encoders();
-  //  potentiometers();
+  potentiometers();
 
 }
 
@@ -177,9 +198,33 @@ void loop() {
 // BUTTONS
 void buttons() {
 
+  //reads all the buttons of all the boards and stores in potCState
+  int nButtonsPerMuxSum = 0;
+
+  for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
+    buttonCState[i + nButtonsPerMuxSum] = digitalRead(BUTTON_ARDUINO_PIN[i]);
+  }
+
+  nButtonsPerMuxSum += N_BUTTONS_ARDUINO;
+
+  for (int j = 0; j < N_MUX; j++) {
+    for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
+      buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[i + nButtonsPerMuxSum]);
+      // Scale values to 0-1
+      if (buttonCState[i + nButtonsPerMuxSum] < 1000) {
+        buttonCState[i + nButtonsPerMuxSum] = HIGH;
+      }
+      else {
+        buttonCState[i + nButtonsPerMuxSum] = LOW;
+      }
+
+    }
+    nButtonsPerMuxSum += N_BUTTONS_PER_MUX[j];
+
+  }
+
   for (int i = 0; i < N_BUTTONS; i++) {
 
-    buttonCState[i] = digitalRead(buttonPin[i]);
     /*
         // Comment this if you are not using pin 13...
         if (i == pin13index) {
@@ -193,28 +238,47 @@ void buttons() {
         lastDebounceTime[i] = millis();
 
         if (buttonCState[i] == LOW) {
+
+          // Sends the MIDI note ON accordingly to the chosen board
+#ifdef ATMEGA16U2
           // use if using with ATmega328 (uno, mega, nano...)
-          //do usbMIDI.sendNoteOn if using with Teensy
           MIDI.sendNoteOn(note + i, 127, midiCh); // note, velocity, channel
 
+#elif ATMEGA32U4
           // use if using with ATmega32U4 (micro, pro micro, leonardo...)
-          //          noteOn(midiCh, note + i, 127);  // channel, note, velocity
-          //          MidiUSB.flush();
+          noteOn(midiCh, note + i, 127);  // channel, note, velocity
+          MidiUSB.flush();
 
-          //          Serial.print("button on  >> ");
-          //          Serial.println(i);
+#elif TEENSY
+          //do usbMIDI.sendNoteOn if using with Teensy
+          usbMIDI.sendNoteOn(note + i, 127, midiCh); // note, velocity, channel
+
+#elif DEBUG
+          Serial.print("button on  >> ");
+          Serial.println(i);
+#endif
+
         }
         else {
+
+          // Sends the MIDI note OFF accordingly to the chosen board
+#ifdef ATMEGA16U2
           // use if using with ATmega328 (uno, mega, nano...)
-          //do usbMIDI.sendNoteOn if using with Teensy
           MIDI.sendNoteOn(note + i, 0, midiCh); // note, velocity, channel
 
+#elif ATMEGA32U4
           // use if using with ATmega32U4 (micro, pro micro, leonardo...)
-          //          noteOn(midiCh, note + i, 0);  // channel, note, velocity
-          //          MidiUSB.flush();
+          noteOn(midiCh, note + i, 0);  // channel, note, velocity
+          MidiUSB.flush();
 
-          //          Serial.print("button off >> ");
-          //          Serial.println(i);
+#elif TEENSY
+          //do usbMIDI.sendNoteOn if using with Teensy
+          usbMIDI.sendNoteOn(note + i, 0, midiCh); // note, velocity, channel
+
+#elif DEBUG
+          Serial.print("button off >> ");
+          Serial.println(i);
+#endif
         }
         buttonPState[i] = buttonCState[i];
       }
@@ -229,11 +293,11 @@ void potentiometers() {
   //reads all the pots of all the boards and stores in potCState
   int nPotsPerMuxSum = 0;
 
-  for (int i = 0; i < N_POTS_ANALOG; i++) {
+  for (int i = 0; i < N_POTS_ARDUINO; i++) {
     potCState[i + nPotsPerMuxSum] = analogRead(POT_ANALOG_PIN[i]);
   }
 
-  nPotsPerMuxSum += N_POTS_ANALOG;
+  nPotsPerMuxSum += N_POTS_ARDUINO;
 
   for (int j = 0; j < N_MUX; j++) {
     for (int i = 0; i < N_POTS_PER_MUX[j]; i++) {
@@ -270,15 +334,24 @@ void potentiometers() {
     if (potMoving == true) { // If the potentiometer is still moving, send the change control
       if (midiPState[i] != midiCState[i]) {
 
+        // Sends the MIDI CC accordingly to the chosen board
+#ifdef ATMEGA16U2
         // use if using with ATmega328 (uno, mega, nano...)
-        //do usbMIDI.sendControlChange if using with Teensy
         MIDI.sendControlChange(cc + i, midiCState[i], midiCh); // cc number, cc value, midi channel
 
+#elif ATMEGA32U4
         //use if using with ATmega32U4 (micro, pro micro, leonardo...)
-        //        controlChange(midiCh, cc + i, midiCState[i]); //  (channel, CC number,  CC value)
-        //        MidiUSB.flush();
+        controlChange(midiCh, cc + i, midiCState[i]); //  (channel, CC number,  CC value)
+        MidiUSB.flush();
 
-        //Serial.println(midiCState[i]);
+#elif TEENSY
+        //do usbMIDI.sendControlChange if using with Teensy
+        usbMIDI.sendControlChange(cc + i, midiCState[i], midiCh); // cc number, cc value, midi channel
+
+#elif DEBUG
+        Serial.println(midiCState[i]);
+#endif
+
         potPState[i] = potCState[i]; // Stores the current reading of the potentiometer to compare with the next
         midiPState[i] = midiCState[i];
       }
