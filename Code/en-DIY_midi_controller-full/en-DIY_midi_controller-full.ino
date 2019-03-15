@@ -168,7 +168,7 @@ void loop() {
 
   cpu.run();
   buttons();
-  encoders();
+  // encoders();
   //  potentiometers();
 
 }
@@ -230,7 +230,7 @@ void potentiometers() {
   int nPotsPerMuxSum = 0;
 
   for (int i = 0; i < N_POTS_ANALOG; i++) {
-    potCState[i + nPotsPerMuxSum] = analogRead(POT_ANALOG_PIN);
+    potCState[i + nPotsPerMuxSum] = analogRead(POT_ANALOG_PIN[i]);
   }
 
   nPotsPerMuxSum += N_POTS_ANALOG;
@@ -303,7 +303,7 @@ void encoders() { //do whatever needs to be done with the encoder values
     if (encoderValue[Bank][i] != lastEncoderValue[Bank][i]) {
 
       clipEncoderValue(i, 0, 127); //check if it's > than 127, or < then 0
-      sendCC(i);
+      sendEncoderCC(i);
       lastEncoderValue[Bank][i] = encoderValue[Bank][i];
       //printEncoderValue(i);
     }
@@ -312,7 +312,7 @@ void encoders() { //do whatever needs to be done with the encoder values
 
 ////////////////////////////////////////////
 //sends encoder's midi cc
-void sendCC(byte i)  {
+void sendEncoderCC(byte i)  {
 
   // use if using with ATmega328 (uno, mega, nano...)
   //do usbMIDI.sendControlChange if using with Teensy
