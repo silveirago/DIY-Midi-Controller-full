@@ -203,13 +203,7 @@ void buttons() {
 
   //reads all the buttons of all the boards and stores in potCState
   int nButtonsPerMuxSum = 0;
-
-  for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
-    buttonCState[i + nButtonsPerMuxSum] = digitalRead(BUTTON_ARDUINO_PIN[i]);
-  }
-
-  nButtonsPerMuxSum += N_BUTTONS_ARDUINO;
-
+  // read pins from mux
   for (int j = 0; j < N_MUX; j++) {
     for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
       buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[i], + nButtonsPerMuxSum);
@@ -224,6 +218,10 @@ void buttons() {
     }
     nButtonsPerMuxSum += N_BUTTONS_PER_MUX[j];
 
+  }
+  // read pins from arduino
+  for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
+    buttonCState[i + nButtonsPerMuxSum] = digitalRead(BUTTON_ARDUINO_PIN[i]);
   }
 
   for (int i = 0; i < N_BUTTONS; i++) {
@@ -296,19 +294,20 @@ void potentiometers() {
 
   //reads all the pots of all the boards and stores in potCState
   int nPotsPerMuxSum = 0;
-
-  for (int i = 0; i < N_POTS_ARDUINO; i++) {
-    potCState[i + nPotsPerMuxSum] = analogRead(POT_ARDUINO_PIN[i]);
-  }
-
-  nPotsPerMuxSum += N_POTS_ARDUINO;
-
+  
+  // read pins from mux
   for (int j = 0; j < N_MUX; j++) {
     for (int i = 0; i < N_POTS_PER_MUX[j]; i++) {
       potCState[i + nPotsPerMuxSum] = mux[j].readChannel(POT_MUX_PIN[i + nPotsPerMuxSum]);
     }
     nPotsPerMuxSum += N_POTS_PER_MUX[j];
   }
+
+  // read pins from arduino
+  for (int i = 0; i < N_POTS_ARDUINO; i++) {
+    potCState[i + nPotsPerMuxSum] = analogRead(POT_ARDUINO_PIN[i]);
+  }
+
   //Debug only
   //    for (int i = 0; i < nPots; i++) {
   //      Serial.print(potCState[i]); Serial.print(" ");
