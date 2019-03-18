@@ -23,7 +23,7 @@
 // "TEENSY" if using a Teensy board
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define TEENSY // put here the uC you are using, like in the lines above
+#define DEBUG 1 // put here the uC you are using, like in the lines above
 
 // defines the MIDI library
 #ifdef ATMEGA328
@@ -73,9 +73,10 @@ const int N_BUTTONS_PER_MUX[N_MUX] = {2, 2}; // number of buttons in each mux (i
 
 const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {7}; // pins of each button connected straigh to the Arduino
 int BUTTON_MUX_PIN[N_MUX][16] = {//pin of each buttons of each mux in order
-  {2, 3},
-  {1, 2}
-}; 
+  {2, 3}, // pins of the first mux
+  {1, 2} // pins of the second
+  // ...
+};
 
 int buttonCState[N_BUTTONS] = {};         // stores the button current value
 int buttonPState[N_BUTTONS] = {};        // stores the button previous value
@@ -94,9 +95,10 @@ const int N_POTS_PER_MUX[N_MUX] = {2, 1}; //* number of pots in each multiplexer
 
 const int POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0}; //* pins of each pot connected straigh to the Arduino
 const int POT_MUX_PIN[N_MUX][16] = { //* pins of each pot of each mux in the order you want them to be
-  {0, 1}, 
-  {0}
-  }; 
+  {0, 1}, // pins of the first mux
+  {0} // pins of the second mux
+  // ...
+};
 
 int potCState[N_POTS] = {0}; // Current state of the pot
 int potPState[N_POTS] = {0}; // Previous state of the pot
@@ -153,6 +155,7 @@ void setup() {
 
 #ifdef DEBUG
   Serial.println("Debug mode");
+  Serial.println();
 #endif
 
   // Buttons
@@ -260,7 +263,7 @@ void buttons() {
           //do usbMIDI.sendNoteOn if using with Teensy
           usbMIDI.sendNoteOn(note + i, 127, midiCh); // note, velocity, channel
 
-#else DEBUG
+#elif DEBUG
           Serial.print(i);
           Serial.println(": button on");
 #endif
@@ -282,7 +285,7 @@ void buttons() {
           //do usbMIDI.sendNoteOn if using with Teensy
           usbMIDI.sendNoteOn(note + i, 0, midiCh); // note, velocity, channel
 
-#else DEBUG
+#elif DEBUG
           Serial.print(i);
           Serial.println(": button off");
 #endif
@@ -298,30 +301,30 @@ void buttons() {
 // POTENTIOMETERS
 void potentiometers() {
 
-//    // read pins from arduino
-//  for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
-//    buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
-//  }
-//
-//  //reads all the buttons of all the boards and stores in potCState
-//  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO;
-//
-//  // read pins from mux
-//  for (int j = 0; j < N_MUX; j++) {
-//    for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
-//      buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[j][i]);
-//      // Scale values to 0-1
-//      if (buttonCState[i + nButtonsPerMuxSum] > 500) {
-//        buttonCState[i + nButtonsPerMuxSum] = HIGH;
-//      }
-//      else {
-//        buttonCState[i + nButtonsPerMuxSum] = LOW;
-//      }
-//    }
-//    nButtonsPerMuxSum += N_BUTTONS_PER_MUX[j];
-//  }
+  //    // read pins from arduino
+  //  for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
+  //    buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
+  //  }
+  //
+  //  //reads all the buttons of all the boards and stores in potCState
+  //  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO;
+  //
+  //  // read pins from mux
+  //  for (int j = 0; j < N_MUX; j++) {
+  //    for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
+  //      buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[j][i]);
+  //      // Scale values to 0-1
+  //      if (buttonCState[i + nButtonsPerMuxSum] > 500) {
+  //        buttonCState[i + nButtonsPerMuxSum] = HIGH;
+  //      }
+  //      else {
+  //        buttonCState[i + nButtonsPerMuxSum] = LOW;
+  //      }
+  //    }
+  //    nButtonsPerMuxSum += N_BUTTONS_PER_MUX[j];
+  //  }
 
-    // read pins from arduino
+  // read pins from arduino
   for (int i = 0; i < N_POTS_ARDUINO; i++) {
     potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
   }
@@ -382,7 +385,7 @@ void potentiometers() {
         //do usbMIDI.sendControlChange if using with Teensy
         usbMIDI.sendControlChange(cc + i, midiCState[i], midiCh); // cc number, cc value, midi channel
 
-#else DEBUG
+#else 
         Serial.print("Pot: ");
         Serial.print(i);
         Serial.print(" ");
