@@ -13,3 +13,7 @@
 
   If you are using for anything that's not for personal use don't forget to give credit.
  
+    - Update 1 (03/12/19): You can add multiple multiplexers for potentiometers.
+    - Update 2: Threads added. it makes your MIDI controller faster.
+    - Update 3: Encoder functionality added, using a super handy library.
+    - Update 4 (03/18/19): Multiple encoders tested and working.
