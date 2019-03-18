@@ -224,7 +224,7 @@ void buttons() {
     buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
   }
   
-  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO; // ofsets the buttonCState at every mux reading
+  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO; // offsets the buttonCState at every mux reading
 
   // read the pins from every mux
   for (int j = 0; j < N_MUX; j++) {
@@ -314,7 +314,7 @@ void potentiometers() {
     potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
   }
   
-  int nPotsPerMuxSum = N_POTS_ARDUINO; //ofsets the buttonCState at every mux reading
+  int nPotsPerMuxSum = N_POTS_ARDUINO; //offsets the buttonCState at every mux reading
 
   // read the pins from every mux
   for (int j = 0; j < N_MUX; j++) {
@@ -329,11 +329,10 @@ void potentiometers() {
   //      Serial.print(potCState[i]); Serial.print(" ");
   //    }
   //    Serial.println();
-  //
 
   for (int i = 0; i < N_POTS; i++) { // Loops through all the potentiometers
 
-    midiCState[i] = map(potCState[i], 0, 1023, 127, 0); // Maps the reading of the potCState to a value usable in midi
+    midiCState[i] = map(potCState[i], 0, 1023, 0, 127); // Maps the reading of the potCState to a value usable in midi
 
     potVar = abs(potCState[i] - potPState[i]); // Calculates the absolute value between the difference between the current and previous state of the pot
 
