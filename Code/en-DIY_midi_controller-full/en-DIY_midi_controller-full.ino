@@ -72,7 +72,10 @@ const int N_BUTTONS_ARDUINO = 1; // number of buttons connected straight to the 
 const int N_BUTTONS_PER_MUX[N_MUX] = {2, 2}; // number of buttons in each mux (in order)
 
 const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {7}; // pins of each button connected straigh to the Arduino
-const int BUTTON_MUX_PIN[N_BUTTONS] = {2, 3, 1, 2}; //pin of each buttons of each mux in order
+int BUTTON_MUX_PIN[N_MUX][16] = {//pin of each buttons of each mux in order
+  {2, 3},
+  {1, 2}
+}; 
 
 int buttonCState[N_BUTTONS] = {};         // stores the button current value
 int buttonPState[N_BUTTONS] = {};        // stores the button previous value
@@ -85,12 +88,15 @@ unsigned long debounceDelay = 5;    //* the debounce time; increase if the outpu
 
 /////////////////////////////////////////////
 // potentiometers
-const int N_POTS = 1 + 2 + 2; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
+const int N_POTS = 1 + 2 + 1; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
 const int N_POTS_ARDUINO = 1; //* number of pots connected straight to the Arduino (in order)
-const int N_POTS_PER_MUX[N_MUX] = {2, 2}; //* number of pots in each multiplexer (in order)
+const int N_POTS_PER_MUX[N_MUX] = {2, 1}; //* number of pots in each multiplexer (in order)
 
 const int POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0}; //* pins of each pot connected straigh to the Arduino
-const int POT_MUX_PIN[N_POTS] = {0, 1, 0}; //* pins of each pot of each mux in the order you want them to be
+const int POT_MUX_PIN[N_MUX][16] = { //* pins of each pot of each mux in the order you want them to be
+  {0, 1}, 
+  {0}
+  }; 
 
 int potCState[N_POTS] = {0}; // Current state of the pot
 int potPState[N_POTS] = {0}; // Previous state of the pot
@@ -201,12 +207,18 @@ void loop() {
 // BUTTONS
 void buttons() {
 
+  // read pins from arduino
+  for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
+    buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
+  }
+
   //reads all the buttons of all the boards and stores in potCState
-  int nButtonsPerMuxSum = 0;
+  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO;
+
   // read pins from mux
   for (int j = 0; j < N_MUX; j++) {
     for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
-      buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[i], + nButtonsPerMuxSum);
+      buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[j][i]);
       // Scale values to 0-1
       if (buttonCState[i + nButtonsPerMuxSum] > 500) {
         buttonCState[i + nButtonsPerMuxSum] = HIGH;
@@ -214,18 +226,12 @@ void buttons() {
       else {
         buttonCState[i + nButtonsPerMuxSum] = LOW;
       }
-
     }
     nButtonsPerMuxSum += N_BUTTONS_PER_MUX[j];
+  }
 
-  }
-  // read pins from arduino
-  for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
-    buttonCState[i + nButtonsPerMuxSum] = digitalRead(BUTTON_ARDUINO_PIN[i]);
-  }
 
   for (int i = 0; i < N_BUTTONS; i++) {
-
     /*
         // Comment this if you are not using pin 13...
         if (i == pin13index) {
@@ -292,21 +298,46 @@ void buttons() {
 // POTENTIOMETERS
 void potentiometers() {
 
+//    // read pins from arduino
+//  for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
+//    buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
+//  }
+//
+//  //reads all the buttons of all the boards and stores in potCState
+//  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO;
+//
+//  // read pins from mux
+//  for (int j = 0; j < N_MUX; j++) {
+//    for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
+//      buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[j][i]);
+//      // Scale values to 0-1
+//      if (buttonCState[i + nButtonsPerMuxSum] > 500) {
+//        buttonCState[i + nButtonsPerMuxSum] = HIGH;
+//      }
+//      else {
+//        buttonCState[i + nButtonsPerMuxSum] = LOW;
+//      }
+//    }
+//    nButtonsPerMuxSum += N_BUTTONS_PER_MUX[j];
+//  }
+
+    // read pins from arduino
+  for (int i = 0; i < N_POTS_ARDUINO; i++) {
+    potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
+  }
+
   //reads all the pots of all the boards and stores in potCState
-  int nPotsPerMuxSum = 0;
-  
+  int nPotsPerMuxSum = N_POTS_ARDUINO;
+
   // read pins from mux
   for (int j = 0; j < N_MUX; j++) {
     for (int i = 0; i < N_POTS_PER_MUX[j]; i++) {
-      potCState[i + nPotsPerMuxSum] = mux[j].readChannel(POT_MUX_PIN[i + nPotsPerMuxSum]);
+      potCState[i + nPotsPerMuxSum] = mux[j].readChannel(POT_MUX_PIN[j][i]);
     }
     nPotsPerMuxSum += N_POTS_PER_MUX[j];
   }
 
-  // read pins from arduino
-  for (int i = 0; i < N_POTS_ARDUINO; i++) {
-    potCState[i + nPotsPerMuxSum] = analogRead(POT_ARDUINO_PIN[i]);
-  }
+
 
   //Debug only
   //    for (int i = 0; i < nPots; i++) {
@@ -364,10 +395,6 @@ void potentiometers() {
       }
     }
   }
-
-#ifdef DEBUG
-  //Serial.println();
-#endif
 }
 
 //////////////////////////////////////////////
