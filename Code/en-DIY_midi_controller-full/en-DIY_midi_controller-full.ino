@@ -22,16 +22,20 @@
 // "ATMEGA32U4" if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
 // "TEENSY" if using a Teensy board
 // "DEBUG" if you just want to debug the code in the serial monitor
+// you don't need to comment or uncomment any MIDI library below after you define your board
 
 #define DEBUG 1 // put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
-// defines the MIDI library
+//// Defines the MIDI library
+
+// if using with ATmega328 - Uno, Mega, Nano...
 #ifdef ATMEGA328
-#include <MIDI.h> // Use if using with ATmega328 - Uno, Mega, Nano...
+#include <MIDI.h> 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
+// if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
 #elif ATMEGA32U4
-#include "MIDIUSB.h" // Use if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
+#include "MIDIUSB.h" 
 
 #endif
 
@@ -49,32 +53,33 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 
 ///////////////////////////////////////////
 // Multiplexer
-#define N_MUX 2 // number of multiplexers
-// Define s0, s1, s2, s2, and x
+#define N_MUX 2 //* number of multiplexers
+//* Define s0, s1, s2, s2, and x
 #define s0 2
 #define s1 3
 #define s2 4
 #define s3 5
 #define x1 A1 // analog pin of the first mux
-#define x2 A2 /// analog pin of the x mux...
+#define x2 A2 // analog pin of the x mux...
 // add more #define and the x number if you need
 
 // Initializes the multiplexer
 Multiplexer4067 mux[N_MUX] = {
-  Multiplexer4067(s0, s1, s2, s3, x1),
-  Multiplexer4067(s0, s1, s2, s3, x2)
+  Multiplexer4067(s0, s1, s2, s3, x1), //*
+  Multiplexer4067(s0, s1, s2, s3, x2) //*
+  // ...
 };
 
 /////////////////////////////////////////////
 // buttons
-const int N_BUTTONS = 1 + 2 + 2; //  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2...
-const int N_BUTTONS_ARDUINO = 1; // number of buttons connected straight to the Arduino (in order)
-const int N_BUTTONS_PER_MUX[N_MUX] = {2, 2}; // number of buttons in each mux (in order)
+const int N_BUTTONS = 1 + 2 + 2; //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2...
+const int N_BUTTONS_ARDUINO = 1; //* number of buttons connected straight to the Arduino (in order)
+const int N_BUTTONS_PER_MUX[N_MUX] = {2, 2}; //* number of buttons in each mux (in order)
 
-const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {7}; // pins of each button connected straigh to the Arduino
-int BUTTON_MUX_PIN[N_MUX][16] = {//pin of each buttons of each mux in order
-  {2, 3}, // pins of the first mux
-  {1, 2} // pins of the second
+const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {7}; //* pins of each button connected straigh to the Arduino
+const int BUTTON_MUX_PIN[N_MUX][16] = { //* pin of each buttons of each mux in order
+  {2, 3}, //* pins of the first mux
+  {1, 2}  //* pins of the second
   // ...
 };
 
