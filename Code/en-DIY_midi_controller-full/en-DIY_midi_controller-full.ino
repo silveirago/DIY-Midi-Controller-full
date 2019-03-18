@@ -223,11 +223,10 @@ void buttons() {
   for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
     buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
   }
+  
+  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO; // ofsets the buttonCState at every mux reading
 
-  //reads all the buttons of all the boards and stores in potCState
-  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO;
-
-  // read pins from mux
+  // read the pins from every mux
   for (int j = 0; j < N_MUX; j++) {
     for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
       buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[j][i]);
@@ -315,10 +314,10 @@ void potentiometers() {
     potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
   }
 
-  //reads all the pots of all the boards and stores in potCState
-  int nPotsPerMuxSum = N_POTS_ARDUINO;
+  
+  int nPotsPerMuxSum = N_POTS_ARDUINO; //ofsets the buttonCState at every mux reading
 
-  // read pins from mux
+  // read the pins from every mux
   for (int j = 0; j < N_MUX; j++) {
     for (int i = 0; i < N_POTS_PER_MUX[j]; i++) {
       potCState[i + nPotsPerMuxSum] = mux[j].readChannel(POT_MUX_PIN[j][i]);
