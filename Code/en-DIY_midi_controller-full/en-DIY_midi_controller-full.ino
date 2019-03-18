@@ -18,9 +18,8 @@
 /////////////////////////////////////////////
 // LIBRARIES
 
-/////////////////////////////////////////////
-// choosing your board
-
+//////////////////////
+// Choosing your board
 // Define your board. Choose:
 // "ATMEGA328" if using ATmega328 - Uno, Mega, Nano...
 // "ATMEGA32U4" if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
@@ -43,10 +42,10 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 
 #endif
 
-/////////////////////////////////////////////
+//////////////////////
 // Use if using a cd4067 multiplexer
 #include <Multiplexer4067.h> // Multiplexer CD4067 library >> https://github.com/sumotoy/Multiplexer4067
-/////////////////////////////////////////////
+//////////////////////
 // Threads
 #include <Thread.h> // Threads library >> https://github.com/ivanseidel/ArduinoThread
 #include <ThreadController.h> // Same as above
@@ -54,7 +53,6 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 // Encoder
 // In the downloads manager download the Encoder lib from Paul Stoffregen (it comes with the Teensy)
 #include <Encoder.h>  //makes all the work for you on reading the encoder
-
 
 ///////////////////////////////////////////
 // MULTIPLEXERS
