@@ -23,7 +23,7 @@
 // "TEENSY" if using a Teensy board
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define DEBUG // put here the uC you are using, like in the lines above
+#define TEENSY // put here the uC you are using, like in the lines above
 
 // defines the MIDI library
 #ifdef ATMEGA328
