@@ -313,7 +313,6 @@ void potentiometers() {
   for (int i = 0; i < N_POTS_ARDUINO; i++) {
     potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
   }
-
   
   int nPotsPerMuxSum = N_POTS_ARDUINO; //ofsets the buttonCState at every mux reading
 
