@@ -12,6 +12,8 @@
 
   If you are using for anything that's not for personal use don't forget to give credit.
 
+  PS: Just change the value that has a comment like " //* "
+
 */
 
 /////////////////////////////////////////////
@@ -24,7 +26,7 @@
 // "DEBUG" if you just want to debug the code in the serial monitor
 // you don't need to comment or uncomment any MIDI library below after you define your board
 
-#define DEBUG 1 // put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define DEBUG 1 //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 //// Defines the MIDI library
 
@@ -60,7 +62,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 #define s2 4
 #define s3 5
 #define x1 A1 // analog pin of the first mux
-#define x2 A2 // analog pin of the x mux...
+#define x2 A2 // analog pin of the second mux...
 // add more #define and the x number if you need
 
 // Initializes the multiplexer
@@ -77,15 +79,15 @@ const int N_BUTTONS_ARDUINO = 1; //* number of buttons connected straight to the
 const int N_BUTTONS_PER_MUX[N_MUX] = {2, 2}; //* number of buttons in each mux (in order)
 
 const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {7}; //* pins of each button connected straigh to the Arduino
-const int BUTTON_MUX_PIN[N_MUX][16] = { //* pin of each buttons of each mux in order
+const int BUTTON_MUX_PIN[N_MUX][16] = { //* pin of each button of each mux in order
   {2, 3}, //* pins of the first mux
   {1, 2}  //* pins of the second
   // ...
 };
 
-int buttonCState[N_BUTTONS] = {};         // stores the button current value
+int buttonCState[N_BUTTONS] = {};        // stores the button current value
 int buttonPState[N_BUTTONS] = {};        // stores the button previous value
-//byte pin13index = 3; // put the index of the pin 13 in the BUTTON_MUX_PIN[] if you are using it, if not, comment lines 68-70
+//byte pin13index = 3; // put the index of the pin 13 (pin with resistor) in the BUTTON_ARDUINO_PIN[] if you are using it
 
 /////////////////////////////////////////////
 // debounce
@@ -112,14 +114,14 @@ int potVar = 0; // Difference between the current and previous state of the pot
 int midiCState[N_POTS] = {0}; // Current state of the midi value
 int midiPState[N_POTS] = {0}; // Previous state of the midi value
 
-int TIMEOUT = 300; //* Amount of time the potentiometer will be read after it exceeds the varThreshold
-int varThreshold = 10; //* Threshold for the potentiometer signal variation
+const int TIMEOUT = 300; //* Amount of time the potentiometer will be read after it exceeds the varThreshold
+const int varThreshold = 10; //* Threshold for the potentiometer signal variation
 boolean potMoving = true; // If the potentiometer is moving
 unsigned long PTime[N_POTS] = {0}; // Previously stored time
 unsigned long timer[N_POTS] = {0}; // Stores the time that has elapsed since the timer was reset
 
 /////////////////////////////////////////////
-// Encoders
+// Encoders (not tested)
 // You can add as many encoders you want separated in many banks you want
 const int N_ENCODERS = 8; //* number of encoders
 const int N_ENCODER_PINS = N_ENCODERS * 2; //number of pins used by the encoders
@@ -156,7 +158,7 @@ void setup() {
   // Baud Rate
   // use if using with ATmega328 (uno, mega, nano...)
   // 31250 for MIDI class compliant | 115200 for Hairless MIDI
-  Serial.begin(115200);
+  Serial.begin(115200); //*
 
 #ifdef DEBUG
   Serial.println("Debug mode");
@@ -168,7 +170,7 @@ void setup() {
   for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
     pinMode(BUTTON_ARDUINO_PIN[i], INPUT_PULLUP);
   }
-  //pinMode(BUTTON_MUX_PIN[3], INPUT); //pin 13
+  //pinMode(BUTTON_ARDUINO_PIN[pin13index], INPUT); //uncomment if using pin 13 (pin with resistor)
 
   /////////////////////////////////////////////
   // Multiplexers
@@ -305,29 +307,6 @@ void buttons() {
 /////////////////////////////////////////////
 // POTENTIOMETERS
 void potentiometers() {
-
-  //    // read pins from arduino
-  //  for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
-  //    buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
-  //  }
-  //
-  //  //reads all the buttons of all the boards and stores in potCState
-  //  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO;
-  //
-  //  // read pins from mux
-  //  for (int j = 0; j < N_MUX; j++) {
-  //    for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
-  //      buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[j][i]);
-  //      // Scale values to 0-1
-  //      if (buttonCState[i + nButtonsPerMuxSum] > 500) {
-  //        buttonCState[i + nButtonsPerMuxSum] = HIGH;
-  //      }
-  //      else {
-  //        buttonCState[i + nButtonsPerMuxSum] = LOW;
-  //      }
-  //    }
-  //    nButtonsPerMuxSum += N_BUTTONS_PER_MUX[j];
-  //  }
 
   // read pins from arduino
   for (int i = 0; i < N_POTS_ARDUINO; i++) {
