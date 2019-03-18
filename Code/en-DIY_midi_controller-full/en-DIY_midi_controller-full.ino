@@ -41,7 +41,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 
 #endif
 
-/////////////////////////////////////////////
+
 // Use if using a cd4067 multiplexer
 #include <Multiplexer4067.h> // Multiplexer CD4067 library >> https://github.com/sumotoy/Multiplexer4067
 
@@ -52,6 +52,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 // Encoder
 // In the downloads manager download the Encoder lib from Paul Stoffregen (it comes with the Teensy)
 #include <Encoder.h>  //makes all the work for you on reading the encoder
+
 
 ///////////////////////////////////////////
 // Multiplexer
