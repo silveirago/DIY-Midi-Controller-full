@@ -15,6 +15,8 @@
   PS: Just change the value that has a comment like " //* "
 
 */
+/////////////////////////////////////////////
+// LIBRARIES
 
 /////////////////////////////////////////////
 // choosing your board
@@ -41,21 +43,21 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 
 #endif
 
-
+/////////////////////////////////////////////
 // Use if using a cd4067 multiplexer
 #include <Multiplexer4067.h> // Multiplexer CD4067 library >> https://github.com/sumotoy/Multiplexer4067
-
+/////////////////////////////////////////////
 // Threads
 #include <Thread.h> // Threads library >> https://github.com/ivanseidel/ArduinoThread
 #include <ThreadController.h> // Same as above
-
+/////////////////////////////////////////////
 // Encoder
 // In the downloads manager download the Encoder lib from Paul Stoffregen (it comes with the Teensy)
 #include <Encoder.h>  //makes all the work for you on reading the encoder
 
 
 ///////////////////////////////////////////
-// Multiplexer
+// MULTIPLEXERS
 #define N_MUX 2 //* number of multiplexers
 //* Define s0, s1, s2, s2, and x
 #define s0 2
@@ -74,7 +76,7 @@ Multiplexer4067 mux[N_MUX] = {
 };
 
 /////////////////////////////////////////////
-// buttons
+// BUTTONS
 const int N_BUTTONS = 1 + 2 + 2; //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2...
 const int N_BUTTONS_ARDUINO = 1; //* number of buttons connected straight to the Arduino (in order)
 const int N_BUTTONS_PER_MUX[N_MUX] = {2, 2}; //* number of buttons in each mux (in order)
@@ -90,13 +92,12 @@ int buttonCState[N_BUTTONS] = {};        // stores the button current value
 int buttonPState[N_BUTTONS] = {};        // stores the button previous value
 //byte pin13index = 3; // put the index of the pin 13 (pin with resistor) in the BUTTON_ARDUINO_PIN[] if you are using it
 
-/////////////////////////////////////////////
 // debounce
 unsigned long lastDebounceTime[N_BUTTONS] = {0};  // the last time the output pin was toggled
 unsigned long debounceDelay = 5;    //* the debounce time; increase if the output flickers
 
 /////////////////////////////////////////////
-// potentiometers
+// POTENTIOMETERS
 const int N_POTS = 1 + 2 + 1; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
 const int N_POTS_ARDUINO = 1; //* number of pots connected straight to the Arduino (in order)
 const int N_POTS_PER_MUX[N_MUX] = {2, 1}; //* number of pots in each multiplexer (in order)
@@ -122,7 +123,7 @@ unsigned long PTime[N_POTS] = {0}; // Previously stored time
 unsigned long timer[N_POTS] = {0}; // Stores the time that has elapsed since the timer was reset
 
 /////////////////////////////////////////////
-// Encoders (not tested)
+// ENCODERS (not tested)
 // You can add as many encoders you want separated in many banks you want
 const int N_ENCODERS = 8; //* number of encoders
 const int N_ENCODER_PINS = N_ENCODERS * 2; //number of pins used by the encoders
@@ -147,7 +148,7 @@ byte note = 24; //* Lowest note to be used
 byte cc = 11; //* Lowest MIDI CC to be used
 
 /////////////////////////////////////////////
-// Threads
+// THREADS
 // This libs create a "fake" thread. This means you can make something happen every x milisseconds
 // We can use that to read something in an interval, instead of reading it every single loop
 // In this case we'll read the potentiometers in a thread, making the reading of the buttons faster
