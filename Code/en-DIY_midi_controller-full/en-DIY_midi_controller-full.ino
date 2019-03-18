@@ -199,10 +199,10 @@ void setup() {
 
 void loop() {
 
-  //cpu.run();
+  cpu.run(); // for threads
   buttons();
   // encoders();
-  potentiometers();
+  // potentiometers();
 
 }
 
@@ -385,7 +385,7 @@ void potentiometers() {
         //do usbMIDI.sendControlChange if using with Teensy
         usbMIDI.sendControlChange(cc + i, midiCState[i], midiCh); // cc number, cc value, midi channel
 
-#else 
+#else
         Serial.print("Pot: ");
         Serial.print(i);
         Serial.print(" ");
