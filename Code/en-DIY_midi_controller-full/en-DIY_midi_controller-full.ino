@@ -20,7 +20,7 @@
 
 //////////////////////
 // Choosing your board
-// Define your board. Choose:
+// Define your board, choose:
 // "ATMEGA328" if using ATmega328 - Uno, Mega, Nano...
 // "ATMEGA32U4" if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
 // "TEENSY" if using a Teensy board
@@ -29,7 +29,7 @@
 
 #define DEBUG 1 //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
-//// Defines the MIDI library
+// -- Defines the MIDI library -- //
 
 // if using with ATmega328 - Uno, Mega, Nano...
 #ifdef ATMEGA328
@@ -41,6 +41,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 #include "MIDIUSB.h"
 
 #endif
+// ---- //
 
 //////////////////////
 // Use if using a cd4067 multiplexer
