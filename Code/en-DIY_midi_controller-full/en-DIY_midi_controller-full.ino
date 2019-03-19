@@ -15,9 +15,8 @@
   PS: Just change the value that has a comment like " //* "
 
 */
-/////////////////////////////////////////////
-// LIBRARIES
 
+/////////////////////////////////////////////
 // Choosing your board
 // Define your board, choose:
 // "ATMEGA328" if using ATmega328 - Uno, Mega, Nano...
@@ -28,6 +27,8 @@
 
 #define DEBUG 1 //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
+/////////////////////////////////////////////
+// LIBRARIES
 // -- Defines the MIDI library -- //
 
 // if using with ATmega328 - Uno, Mega, Nano...
@@ -54,12 +55,12 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 //////////////////////
 // Encoder
 // In the downloads manager download the Encoder lib from Paul Stoffregen (it comes with the Teensy)
-#include <Encoder.h>  //makes all the work for you on reading the encoder
+#include <Encoder.h>  // makes all the work for you on reading the encoder
 
 ///////////////////////////////////////////
 // MULTIPLEXERS
 #define N_MUX 2 //* number of multiplexers
-//* Define s0, s1, s2, s2, and x
+//* Define s0, s1, s2, s2, and x pins
 #define s0 2
 #define s1 3
 #define s2 4
@@ -99,7 +100,7 @@ unsigned long debounceDelay = 5;    //* the debounce time; increase if the outpu
 /////////////////////////////////////////////
 // POTENTIOMETERS
 const int N_POTS = 1 + 2 + 1; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
-const int N_POTS_ARDUINO = 1; //* number of pots connected straight to the Arduino (in order)
+const int N_POTS_ARDUINO = 1; //* number of pots connected straight to the Arduino
 const int N_POTS_PER_MUX[N_MUX] = {2, 1}; //* number of pots in each multiplexer (in order)
 
 const int POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0}; //* pins of each pot connected straigh to the Arduino
