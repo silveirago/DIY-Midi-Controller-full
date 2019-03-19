@@ -123,24 +123,28 @@ unsigned long PTime[N_POTS] = {0}; // Previously stored time
 unsigned long timer[N_POTS] = {0}; // Stores the time that has elapsed since the timer was reset
 
 /////////////////////////////////////////////
-// ENCODERS (not tested)
-// You can add as many encoders you want separated in many banks you want
-const int N_ENCODERS = 8; //* number of encoders
+// ENCODERS
+// You can add as many encoders you want separated in many encoderChannels you want
+//#define TRAKTOR 1 // uncomment if using with traktor, comment if not
+const int N_ENCODERS = 2; //* number of encoders
+const int N_ENCODER_CHANNELS = 1; //* number of encoderChannels
 const int N_ENCODER_PINS = N_ENCODERS * 2; //number of pins used by the encoders
-const int N_ENCODER_BANKS = 2; //* number of banks
-//this array stores the two pins of every encoder -  Use pins with Interrupts
-Encoder encoder[N_ENCODERS] = {{2, 3}, {4, 5}, {6, 7}, {18, 9}, {10, 19}, {12, 20}, {14, 15}, {16, 17}};
-int lastEncoderValue[N_ENCODER_BANKS][N_ENCODERS] = {127};
-int encoderValue[N_ENCODER_BANKS][N_ENCODERS] = {127};
 
-int preset[N_ENCODER_BANKS][N_ENCODERS] = { //stores presets
-  {255, 0, 0, 0, 255, 0, 0, 0},
-  {255, 0, 0, 0, 0, 0, 0, 255}
+Encoder encoder[N_ENCODERS] = {{9, 8}, {11, 10}}; // the two pins of each encoder (backwards) -  Use pins with Interrupts!
+
+int encoderMinVal = 0; //* encoder minimum value
+int encoderMaxVal = 127; //* encoder maximum value
+
+int preset[N_ENCODER_CHANNELS][N_ENCODERS] = { //stores presets to start your encoders
+  {64, 127},
 };
 
-// for the encoder banks
-int Bank = 0;
-int lastBank = 0;
+int lastEncoderValue[N_ENCODER_CHANNELS][N_ENCODERS] = {127};
+int encoderValue[N_ENCODER_CHANNELS][N_ENCODERS] = {127};
+
+// for the encoder encoder Channels - Used for different banks
+int encoderChannel = 0;
+int lastEncoderChannel = 0;
 /////////////////////////////////////////////
 
 byte midiCh = 1; //* MIDI channel to be used
@@ -196,7 +200,7 @@ Serial.println();
     encoder[i].write(preset[0][i]);
   }
 
-  for (int z = 0; z < N_ENCODER_BANKS; z++) {
+  for (int z = 0; z < N_ENCODER_CHANNELS; z++) {
     for (int i = 0; i < N_ENCODERS; i++) {
       lastEncoderValue[z][i] = preset[z][i];
       encoderValue[z][i] = preset[z][i];
@@ -210,7 +214,7 @@ void loop() {
 
   cpu.run(); // for threads
   buttons();
-  // encoders();
+  encoders();
   // potentiometers();
 
 }
@@ -223,7 +227,7 @@ void buttons() {
   for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
     buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
   }
-  
+
   int nButtonsPerMuxSum = N_BUTTONS_ARDUINO; // offsets the buttonCState at every mux reading
 
   // read the pins from every mux
@@ -313,7 +317,7 @@ void potentiometers() {
   for (int i = 0; i < N_POTS_ARDUINO; i++) {
     potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
   }
-  
+
   int nPotsPerMuxSum = N_POTS_ARDUINO; //offsets the buttonCState at every mux reading
 
   // read the pins from every mux
@@ -366,7 +370,7 @@ MidiUSB.flush();
 //do usbMIDI.sendControlChange if using with Teensy
 usbMIDI.sendControlChange(cc + i, midiCState[i], midiCh); // cc number, cc value, midi channel
 
-#else
+#elif DEBUG
 Serial.print("Pot: ");
 Serial.print(i);
 Serial.print(" ");
@@ -381,65 +385,67 @@ Serial.println(midiCState[i]);
   }
 }
 
-//////////////////////////////////////////////
-////read encoder values
-//void readEncoders() { //read each encoder and stores its value
-//
-//  for (int i = 0; i < N_ENCODERS; i++) {
-//    encoderValue[Bank][i] = encoder[i].read();
-//  }
-//}
-//
-//void encoders() { //do whatever needs to be done with the encoder values
-//
-//  readEncoders();
-//
-//  for (int i = 0; i < N_ENCODERS; i++) {
-//    if (encoderValue[Bank][i] != lastEncoderValue[Bank][i]) {
-//
-//      clipEncoderValue(i, 0, 127); //check if it's > than 127, or < then 0
-//      sendEncoderCC(i);
-//      lastEncoderValue[Bank][i] = encoderValue[Bank][i];
-//      //printEncoderValue(i);
-//    }
-//  }
-//}
-//
-//////////////////////////////////////////////
-////sends encoder's midi cc
-//void sendEncoderCC(byte i)  {
-//
-//  // use if using with ATmega328 (uno, mega, nano...)
-//  //do usbMIDI.sendControlChange if using with Teensy
-//  MIDI.sendControlChange(i, encoderValue[Bank][i], Bank);
-//
-//  //use if using with ATmega32U4 (micro, pro micro, leonardo...)
-//  //        controlChange(i, encoderValue[Bank][i], Bank);
-//  //        MidiUSB.flush();
-//
-//}
-//
-//////////////////////////////////////////////
-////check if it's > than x, or < then y
-//void clipEncoderValue(int i, int minVal, int maxVal) {
-//
-//  if (encoderValue[Bank][i] > maxVal - 1) {
-//    encoderValue[Bank][i] = maxVal;
-//    encoder[i].write(maxVal);
-//  }
-//  if (encoderValue[Bank][i] < minVal + 1) {
-//    encoderValue[Bank][i] = minVal;
-//    encoder[i].write(minVal);
-//  }
-//}
-//
-//////////////////////////////////////////////
-////print encoder values in the serial monitor
-//void printEncoderValue(byte i) {
-//  Serial.print("Bank: "); Serial.print(Bank); Serial.print("  ");
-//  Serial.print("Encoder "); Serial.print(i); Serial.print(": ");
-//  Serial.println(encoderValue[Bank][i]);
-//}
+/////////////////////////////////////////////
+// ENCODERS
+void encoders() {
+
+  for (int i = 0; i < N_ENCODERS; i++) {
+    encoderValue[encoderChannel][i] = encoder[i].read(); // reads each encoder and stores the value
+  }
+
+  for (int i = 0; i < N_ENCODERS; i++) {
+
+    if (encoderValue[encoderChannel][i] != lastEncoderValue[encoderChannel][i]) {
+
+#ifdef TRAKTOR // to use with Traktor
+if (encoderValue[encoderChannel][i] > lastEncoderValue[encoderChannel][i]) {
+encoderValue[encoderChannel][i] = 127;
+} else {
+encoderValue[encoderChannel][i] = 0;
+}
+#endif
+
+      clipEncoderValue(i, encoderMinVal, encoderMaxVal); //check if it's greater than the max value or less than the min value
+
+      // Sends the MIDI CC accordingly to the chosen board
+#ifdef ATMEGA328
+// use if using with ATmega328 (uno, mega, nano...)
+MIDI.sendControlChange(i, encoderValue[encoderChannel][i], encoderChannel);
+
+#elif ATMEGA32U4
+//use if using with ATmega32U4 (micro, pro micro, leonardo...)
+controlChange(i, encoderValue[encoderChannel][i], encoderChannel);
+MidiUSB.flush();
+
+#elif TEENSY
+//do usbMIDI.sendControlChange if using with Teensy
+usbMIDI.sendControlChange(i, encoderValue[encoderChannel][i], encoderChannel);
+
+#elif DEBUG
+Serial.print("encoderChannel: "); Serial.print(encoderChannel); Serial.print("  ");
+Serial.print("Encoder "); Serial.print(i); Serial.print(": ");
+Serial.println(encoderValue[encoderChannel][i]);
+#endif
+
+      lastEncoderValue[encoderChannel][i] = encoderValue[encoderChannel][i];
+    }
+  }
+}
+
+
+////////////////////////////////////////////
+//check if it's > than x, or < then y
+void clipEncoderValue(int i, int minVal, int maxVal) {
+
+  if (encoderValue[encoderChannel][i] > maxVal - 1) {
+    encoderValue[encoderChannel][i] = maxVal;
+    encoder[i].write(maxVal);
+  }
+  if (encoderValue[encoderChannel][i] < minVal + 1) {
+    encoderValue[encoderChannel][i] = minVal;
+    encoder[i].write(minVal);
+  }
+}
 
 /////////////////////////////////////////////
 // if using with ATmega32U4 (micro, pro micro, leonardo...)
