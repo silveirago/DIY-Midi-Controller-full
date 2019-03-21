@@ -408,24 +408,24 @@ encoderValue[encoderChannel][i] = 0;
 }
 #endif
 
-      clipEncoderValue(i, encoderMinVal, encoderMaxVal); //check if it's greater than the max value or less than the min value
+      clipEncoderValue(i, encoderMinVal, encoderMaxVal); // checks if it's greater than the max value or less than the min value
 
       // Sends the MIDI CC accordingly to the chosen board
 #ifdef ATMEGA328
-// use if using with ATmega328 (uno, mega, nano...)
+// if using with ATmega328 (uno, mega, nano...)
 MIDI.sendControlChange(i, encoderValue[encoderChannel][i], encoderChannel);
 
 #elif ATMEGA32U4
-//use if using with ATmega32U4 (micro, pro micro, leonardo...)
+// if using with ATmega32U4 (micro, pro micro, leonardo...)
 controlChange(i, encoderValue[encoderChannel][i], encoderChannel);
 MidiUSB.flush();
 
 #elif TEENSY
-//do usbMIDI.sendControlChange if using with Teensy
+// if using with Teensy
 usbMIDI.sendControlChange(i, encoderValue[encoderChannel][i], encoderChannel);
 
 #elif DEBUG
-Serial.print("encoderChannel: "); Serial.print(encoderChannel); Serial.print("  ");
+Serial.print("encoder channel: "); Serial.print(encoderChannel); Serial.print("  ");
 Serial.print("Encoder "); Serial.print(i); Serial.print(": ");
 Serial.println(encoderValue[encoderChannel][i]);
 #endif
@@ -437,7 +437,7 @@ Serial.println(encoderValue[encoderChannel][i]);
 
 
 ////////////////////////////////////////////
-//check if it's > than x, or < then y
+// checks if it's greater than maximum value or less than then the minimum value
 void clipEncoderValue(int i, int minVal, int maxVal) {
 
   if (encoderValue[encoderChannel][i] > maxVal - 1) {

@@ -143,7 +143,7 @@ int encoderMinVal = 0; //* valor mínimo do encoder
 int encoderMaxVal = 127; //* valor máximo do encoder
 
 int preset[N_ENCODER_CHANNELS][N_ENCODERS] = { // armazena presetd para iniciar seus encoders
-  {64, 127}, // preset do primeiro banco
+  {64, 64}, // preset do primeiro banco
   // ...
 };
 
@@ -411,14 +411,14 @@ Serial.println(midiCState[i]);
 void encoders() {
 
   for (int i = 0; i < N_ENCODERS; i++) {
-    encoderValue[encoderChannel][i] = encoder[i].read(); // reads each encoder and stores the value
+    encoderValue[encoderChannel][i] = encoder[i].read(); // lê cada encoder e armazena o valor
   }
 
   for (int i = 0; i < N_ENCODERS; i++) {
 
     if (encoderValue[encoderChannel][i] != lastEncoderValue[encoderChannel][i]) {
 
-#ifdef TRAKTOR // to use with Traktor
+#ifdef TRAKTOR // para usar com o Traktor
 if (encoderValue[encoderChannel][i] > lastEncoderValue[encoderChannel][i]) {
 encoderValue[encoderChannel][i] = 127;
 } else {
@@ -426,24 +426,24 @@ encoderValue[encoderChannel][i] = 0;
 }
 #endif
 
-      clipEncoderValue(i, encoderMinVal, encoderMaxVal); //check if it's greater than the max value or less than the min value
+      clipEncoderValue(i, encoderMinVal, encoderMaxVal); // verifica se é maior que o valor máximo ou menor que o valor mínimo
 
-      // Sends the MIDI CC accordingly to the chosen board
+      // Envia o MIDI CC de acordo com o quadro escolhido
 #ifdef ATMEGA328
-// use if using with ATmega328 (uno, mega, nano...)
+// se usando com ATmega328 (uno, mega, nano ...)
 MIDI.sendControlChange(i, encoderValue[encoderChannel][i], encoderChannel);
 
 #elif ATMEGA32U4
-//use if using with ATmega32U4 (micro, pro micro, leonardo...)
+// se usando com ATmega32U4 (micro, pro micro, leonardo...)
 controlChange(i, encoderValue[encoderChannel][i], encoderChannel);
 MidiUSB.flush();
 
 #elif TEENSY
-//do usbMIDI.sendControlChange if using with Teensy
+// se usando com o Teensy
 usbMIDI.sendControlChange(i, encoderValue[encoderChannel][i], encoderChannel);
 
 #elif DEBUG
-Serial.print("encoderChannel: "); Serial.print(encoderChannel); Serial.print("  ");
+Serial.print("encoder channel: "); Serial.print(encoderChannel); Serial.print("  ");
 Serial.print("Encoder "); Serial.print(i); Serial.print(": ");
 Serial.println(encoderValue[encoderChannel][i]);
 #endif
@@ -455,7 +455,7 @@ Serial.println(encoderValue[encoderChannel][i]);
 
 
 ////////////////////////////////////////////
-//check if it's > than x, or < then y
+// verifica se é maior que o valor máximo ou menor que o valor mínimo
 void clipEncoderValue(int i, int minVal, int maxVal) {
 
   if (encoderValue[encoderChannel][i] > maxVal - 1) {
@@ -469,7 +469,7 @@ void clipEncoderValue(int i, int minVal, int maxVal) {
 }
 
 /////////////////////////////////////////////
-// if using with ATmega32U4 (micro, pro micro, leonardo...)
+// se estiver usando com ATmega32U4 (micro, pro micro, leonardo ...)
 #ifdef ATMEGA32U4
 
 // Arduino (pro)micro midi functions MIDIUSB Library
