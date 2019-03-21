@@ -91,7 +91,9 @@ const int BUTTON_MUX_PIN[N_MUX][16] = { //* pin of each button of each mux in or
 
 int buttonCState[N_BUTTONS] = {};        // stores the button current value
 int buttonPState[N_BUTTONS] = {};        // stores the button previous value
-//byte pin13index = 3; // put the index of the pin 13 (pin with resistor) in the BUTTON_ARDUINO_PIN[] if you are using it
+
+//#define pin13 1 // uncomment if you are using pin 13 (pin with led), or comment the line if it is not
+byte pin13index = 12; //* put the index of the pin 13 of the buttonPin[] array if you are using, if not, comment
 
 // debounce
 unsigned long lastDebounceTime[N_BUTTONS] = {0};  // the last time the output pin was toggled
@@ -137,7 +139,7 @@ int encoderMinVal = 0; //* encoder minimum value
 int encoderMaxVal = 127; //* encoder maximum value
 
 int preset[N_ENCODER_CHANNELS][N_ENCODERS] = { //stores presets to start your encoders
-  {64, 127},
+  {64, 64},
 };
 
 int lastEncoderValue[N_ENCODER_CHANNELS][N_ENCODERS] = {127};
@@ -248,13 +250,13 @@ void buttons() {
 
 
   for (int i = 0; i < N_BUTTONS; i++) {
-    /*
-        // Comment this if you are not using pin 13...
-        if (i == pin13index) {
-          buttonCState[i] = !buttonCState[i]; //inverts pin 13 because it has a pull down resistor instead of a pull up
-        }
-        // ...until here
-    */
+
+#ifdef pin13
+if (i == pin13index) {
+buttonCState[i] = !buttonCState[i]; // inverts the pin 13 because it has a pull down resistor instead of a pull up
+}
+#endif
+
     if ((millis() - lastDebounceTime[i]) > debounceDelay) {
 
       if (buttonPState[i] != buttonCState[i]) {
@@ -314,14 +316,14 @@ Serial.println(": button off");
 // POTENTIOMETERS
 void potentiometers() {
 
-  // read pins from arduino
+  // reads the pins from arduino
   for (int i = 0; i < N_POTS_ARDUINO; i++) {
     potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
   }
 
   int nPotsPerMuxSum = N_POTS_ARDUINO; //offsets the buttonCState at every mux reading
 
-  // read the pins from every mux
+  // reads the pins from every mux
   for (int j = 0; j < N_MUX; j++) {
     for (int i = 0; i < N_POTS_PER_MUX[j]; i++) {
       potCState[i + nPotsPerMuxSum] = mux[j].readChannel(POT_MUX_PIN[j][i]);
