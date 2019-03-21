@@ -179,7 +179,10 @@ Serial.println();
   for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
     pinMode(BUTTON_ARDUINO_PIN[i], INPUT_PULLUP);
   }
-  //pinMode(BUTTON_ARDUINO_PIN[pin13index], INPUT); //uncomment if using pin 13 (pin with resistor)
+  
+#ifdef pin13 // inicializa o pino 13 como uma entrada
+pinMode(BUTTON_ARDUINO_PIN[pin13index], INPUT);
+#endif
 
   /////////////////////////////////////////////
   // Multiplexers
