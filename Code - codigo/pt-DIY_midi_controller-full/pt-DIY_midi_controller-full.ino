@@ -29,7 +29,7 @@
 // "DEBUG" se você quer apenas debugar o código no monitor serial
 // você não precisa comentar ou descomentar qualquer biblioteca MIDI abaixo depois de definir sua placa
 
-#define DEBUG 1 //* coloque aqui o uC que você está usando, como nas linhas acima seguidas de "1", como "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA328 1 //* coloque aqui o uC que você está usando, como nas linhas acima seguidas de "1", como "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // BIBLIOTECAS
@@ -175,7 +175,7 @@ void setup() {
   Serial.begin(115200); //*
 
 #ifdef DEBUG
-Serial.println("Debug mode");
+Serial.println("Debug mode on");
 Serial.println();
 #endif
 
