@@ -60,7 +60,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 ///////////////////////////////////////////
 // MULTIPLEXERS
 #define N_MUX 2 //* number of multiplexers
-//* Define s0, s1, s2, s2, and x pins
+//* Define s0, s1, s2, s3, and x pins
 #define s0 2
 #define s1 3
 #define s2 4
