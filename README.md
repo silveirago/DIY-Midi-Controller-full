@@ -17,4 +17,5 @@
     - Update 2: Threads added. it makes your MIDI controller faster.
     - Update 3: Encoder functionality added, using a super handy library.
     - Update 4 (03/18/19): Multiple encoders tested and working.
-    - Update 5 (03.19.19): Multiple encoders (with banks) tested and working.
+    - Update 5 (03/19/19): Multiple encoders (with banks) tested and working.
+    - Update 6 (06/01/20): Custom note numbers a CC added
