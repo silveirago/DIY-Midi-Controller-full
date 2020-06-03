@@ -100,7 +100,12 @@ const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {2, 3}; //* pins of each button connec
 
 #define USING_CUSTOM_NN 1 //* comment if not using CUSTOM NOTE NUMBERS (scales), uncomment if using it.
 #ifdef USING_CUSTOM_NN
-int BUTTON_NN[N_BUTTONS] = {15, 20}; // Add the NOTE NUMBER of each button/switch you want
+int BUTTON_NN[N_BUTTONS] = {15, 20}; //* Add the NOTE NUMBER of each button/switch you want
+#endif
+
+#define USING_BUTTON_CC_N 1 //* comment if not using BUTTON CC number, uncomment if using it.
+#ifdef USING_BUTTON_CC_N // if using button with CC
+int BUTTON_CC_N[N_BUTTONS] = {12, 16}; //* Add the NOTE NUMBER of each button/switch you want
 #endif
 
 #ifdef USING_MUX // Fill if you are using mux, otherwise just leave it
@@ -327,43 +332,75 @@ buttonCState[i] = !buttonCState[i]; // inverts the pin 13 because it has a pull 
 
 
         // Sends the MIDI NOTE ON accordingly to the chosen board
+
+        /////////////////////////////////////////////
 #ifdef ATMEGA328
 // it will happen if using with ATmega328 (uno, mega, nano...)
+
+#ifndef USING_BUTTON_CC_N // if NOT using button CC
 
 #ifdef USING_CUSTOM_NN
 // if using custom NOTE numbers
 MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], MIDI_CH); // note, velocity, channel
-#else 
+#else
 // if not using custom NOTE numbers
 MIDI.sendNoteOn(NOTE + i, velocity[i], MIDI_CH); // note, velocity, channel
 #endif
 
+#else // if USING button CC
+if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
+MIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], MIDI_CH); // note, velocity, channel
+}
+#endif
 
+        /////////////////////////////////////////////
 #elif ATMEGA32U4
 // it will happen if using with ATmega32U4 (micro, pro micro, leonardo...)
+
+#ifndef USING_BUTTON_CC_N // if NOT using button CC
 
 #ifdef USING_CUSTOM_NN
 // if using custom NOTE numbers
 noteOn(MIDI_CH, NOTE + i, velocity[i]);  // channel, note, velocity
 MidiUSB.flush();
-#else 
+#else
 // if not using custom NOTE 
 noteOn(MIDI_CH, BUTTON_NN[i], velocity[i]);  // channel, note, velocity
 MidiUSB.flush();
 #endif
 
+#else // if USING button CC
+if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
+controlChange(MIDI_CH, BUTTON_CC_N[i], velocity[i]); //  (channel, CC number,  CC value)
+MidiUSB.flush();
+}
+#endif
+
+
+        /////////////////////////////////////////////
 #elif TEENSY
 //do usbMIDI.sendNoteOn if using with Teensy
+
+#ifndef USING_BUTTON_CC_N // if NOT using button CC
 
 #ifdef USING_CUSTOM_NN
 // if using custom NOTE numbers
 usbMIDI.sendNoteOn(BUTTON_NN[i], velocity[i], MIDI_CH); // note, velocity, channel
-#else 
+#else
 // if not using custom NOTE 
 usbMIDI.sendNoteOn(NOTE + i, velocity[i], MIDI_CH); // note, velocity, channel
 #endif
 
+#else // if USING button CC
+if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
+usbMIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], MIDI_CH); // CC number, CC value, midi channel
+}
+#endif
+
+        /////////////////////////////////////////////
 #elif DEBUG
+
+#ifndef USING_BUTTON_CC_N // print if not using button cc number
 Serial.print("Button: ");
 Serial.print(i);
 Serial.print("  | ch: ");
@@ -376,10 +413,27 @@ Serial.print(NOTE + i);
 #endif
 Serial.print("  | velocity: ");
 Serial.println(velocity[i]);
+
+#else
+if (velocity[i] > 0) { // only when button is pressed
+Serial.print("Button: ");
+Serial.print(i);
+Serial.print("  | ch: ");
+Serial.print(MIDI_CH);
+Serial.print("  | cc: ");
+Serial.print(BUTTON_CC_N[i]);
+Serial.print("  | value: ");
+Serial.println(velocity[i]);
+}
 #endif
 
+
+#endif
+
+        /////////////////////////////////////////////
         buttonPState[i] = buttonCState[i];
       }
+
     }
   }
 }
