@@ -25,7 +25,7 @@
 // "DEBUG" if you just want to debug the code in the serial monitor
 // you don't need to comment or uncomment any MIDI library below after you define your board
 
-#define DEBUG 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA328 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using a multiplexer?
@@ -103,10 +103,13 @@ const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {2, 3}; //* pins of each button connec
 int BUTTON_NN[N_BUTTONS] = {15, 20}; //* Add the NOTE NUMBER of each button/switch you want
 #endif
 
-#define USING_BUTTON_CC_N 1 //* comment if not using BUTTON CC number, uncomment if using it.
+#define USING_BUTTON_CC_N 1 //* comment if not using BUTTON CC, uncomment if using it.
 #ifdef USING_BUTTON_CC_N // if using button with CC
-int BUTTON_CC_N[N_BUTTONS] = {12, 16}; //* Add the NOTE NUMBER of each button/switch you want
+int BUTTON_CC_N[N_BUTTONS] = {12, 16}; //* Add the CC NUMBER of each button/switch you want
 #endif
+
+#define USING_TOGGLE 1 //* comment if not using BUTTON TOGGLE mode, uncomment if using it.
+// With toggle mode on, when you press the button once it sends a note on, when you press it again it sends a note off
 
 #ifdef USING_MUX // Fill if you are using mux, otherwise just leave it
 const int N_BUTTONS_PER_MUX[N_MUX] = {2, 2}; //* number of buttons in each mux (in order)
@@ -117,8 +120,8 @@ const int BUTTON_MUX_PIN[N_MUX][16] = { //* pin of each button of each mux in or
 };
 #endif
 
-int buttonCState[N_BUTTONS] = {};        // stores the button current value
-int buttonPState[N_BUTTONS] = {};        // stores the button previous value
+int buttonCState[N_BUTTONS] = {0};        // stores the button current value
+int buttonPState[N_BUTTONS] = {0};        // stores the button previous value
 
 //#define pin13 1 // uncomment if you are using pin 13 (pin with led), or comment the line if it is not
 byte pin13index = 12; //* put the index of the pin 13 of the buttonPin[] array if you are using, if not, comment
@@ -128,7 +131,7 @@ unsigned long lastDebounceTime[N_BUTTONS] = {0};  // the last time the output pi
 unsigned long debounceDelay = 5;    //* the debounce time; increase if the output flickers
 
 // velocity
-byte velocity[N_BUTTONS] = {0};
+byte velocity[N_BUTTONS] = {127};
 
 /////////////////////////////////////////////
 // POTENTIOMETERS
@@ -287,8 +290,9 @@ void buttons() {
   }
 
 #ifdef USING_MUX
-// It will happen if you are using MUX
-int nButtonsPerMuxSum = N_BUTTONS_ARDUINO; // offsets the buttonCState at every mux reading
+
+  // It will happen if you are using MUX
+  int nButtonsPerMuxSum = N_BUTTONS_ARDUINO; // offsets the buttonCState at every mux reading
 
   // read the pins from every mux
   for (int j = 0; j < N_MUX; j++) {
@@ -309,10 +313,11 @@ int nButtonsPerMuxSum = N_BUTTONS_ARDUINO; // offsets the buttonCState at every 
   for (int i = 0; i < N_BUTTONS; i++) { // Read the buttons connected to the Arduino
 
 #ifdef pin13
-// It will happen if you are using pin 13
-if (i == pin13index) {
-buttonCState[i] = !buttonCState[i]; // inverts the pin 13 because it has a pull down resistor instead of a pull up
-}
+
+    // It will happen if you are using pin 13
+    if (i == pin13index) {
+      buttonCState[i] = !buttonCState[i]; // inverts the pin 13 because it has a pull down resistor instead of a pull up
+    }
 #endif
 
     if ((millis() - lastDebounceTime[i]) > debounceDelay) {
@@ -322,173 +327,206 @@ buttonCState[i] = !buttonCState[i]; // inverts the pin 13 because it has a pull 
 
         if (buttonCState[i] == LOW) {
 
+#ifndef USING_TOGGLE // if NOT using button toggle mode
+
           velocity[i] = 127; // if button is pressed velocity is 127
+#else
+
+          velocity[i] = !velocity[i] * 127; // changes the velocity between 0 and 127 each time one press a button
+#endif
+
         }
         else {
 
+#ifndef USING_TOGGLE // if NOT using button toggle mode
+
           velocity[i] = 0; // if button is released velocity is 0
+#endif
+}
 
-        }
 
+          // Sends the MIDI NOTE ON accordingly to the chosen board
 
-        // Sends the MIDI NOTE ON accordingly to the chosen board
+#ifdef USING_TOGGLE
 
-        /////////////////////////////////////////////
+          if (buttonCState[i] == LOW) { // only when button is pressed
+#endif
+
+            /////////////////////////////////////////////
 #ifdef ATMEGA328
-// it will happen if using with ATmega328 (uno, mega, nano...)
+
+            // it will happen if using with ATmega328 (uno, mega, nano...)
 
 #ifndef USING_BUTTON_CC_N // if NOT using button CC
 
 #ifdef USING_CUSTOM_NN
-// if using custom NOTE numbers
-MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], MIDI_CH); // note, velocity, channel
+
+            // if using custom NOTE numbers
+            MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], MIDI_CH); // note, velocity, channel
 #else
-// if not using custom NOTE numbers
-MIDI.sendNoteOn(NOTE + i, velocity[i], MIDI_CH); // note, velocity, channel
+
+            // if not using custom NOTE numbers
+            MIDI.sendNoteOn(NOTE + i, velocity[i], MIDI_CH); // note, velocity, channel
 #endif
 
 #else // if USING button CC
-if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
-MIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], MIDI_CH); // note, velocity, channel
-}
+
+            if (buttonCState[i] == LOW) { // only sends note on when button is pressed, nothing when released
+              MIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], MIDI_CH); // note, velocity, channel
+            }
 #endif
 
-        /////////////////////////////////////////////
+            /////////////////////////////////////////////
 #elif ATMEGA32U4
-// it will happen if using with ATmega32U4 (micro, pro micro, leonardo...)
+
+            // it will happen if using with ATmega32U4 (micro, pro micro, leonardo...)
 
 #ifndef USING_BUTTON_CC_N // if NOT using button CC
 
 #ifdef USING_CUSTOM_NN
-// if using custom NOTE numbers
-noteOn(MIDI_CH, NOTE + i, velocity[i]);  // channel, note, velocity
-MidiUSB.flush();
+
+            // if using custom NOTE numbers
+            noteOn(MIDI_CH, NOTE + i, velocity[i]);  // channel, note, velocity
+            MidiUSB.flush();
 #else
-// if not using custom NOTE 
-noteOn(MIDI_CH, BUTTON_NN[i], velocity[i]);  // channel, note, velocity
-MidiUSB.flush();
+
+            // if not using custom NOTE
+            noteOn(MIDI_CH, BUTTON_NN[i], velocity[i]);  // channel, note, velocity
+            MidiUSB.flush();
 #endif
 
 #else // if USING button CC
-if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
-controlChange(MIDI_CH, BUTTON_CC_N[i], velocity[i]); //  (channel, CC number,  CC value)
-MidiUSB.flush();
-}
+
+            if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
+              controlChange(MIDI_CH, BUTTON_CC_N[i], velocity[i]); //  (channel, CC number,  CC value)
+              MidiUSB.flush();
+            }
 #endif
 
 
-        /////////////////////////////////////////////
+            /////////////////////////////////////////////
 #elif TEENSY
 //do usbMIDI.sendNoteOn if using with Teensy
 
 #ifndef USING_BUTTON_CC_N // if NOT using button CC
 
 #ifdef USING_CUSTOM_NN
-// if using custom NOTE numbers
-usbMIDI.sendNoteOn(BUTTON_NN[i], velocity[i], MIDI_CH); // note, velocity, channel
+
+            // if using custom NOTE numbers
+            usbMIDI.sendNoteOn(BUTTON_NN[i], velocity[i], MIDI_CH); // note, velocity, channel
 #else
-// if not using custom NOTE 
-usbMIDI.sendNoteOn(NOTE + i, velocity[i], MIDI_CH); // note, velocity, channel
+
+            // if not using custom NOTE
+            usbMIDI.sendNoteOn(NOTE + i, velocity[i], MIDI_CH); // note, velocity, channel
 #endif
 
 #else // if USING button CC
-if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
-usbMIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], MIDI_CH); // CC number, CC value, midi channel
-}
+
+            if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
+              usbMIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], MIDI_CH); // CC number, CC value, midi channel
+            }
 #endif
 
-        /////////////////////////////////////////////
+            /////////////////////////////////////////////
 #elif DEBUG
 
 #ifndef USING_BUTTON_CC_N // print if not using button cc number
-Serial.print("Button: ");
-Serial.print(i);
-Serial.print("  | ch: ");
-Serial.print(MIDI_CH);
-Serial.print("  | nn: ");
+
+            Serial.print("Button: ");
+            Serial.print(i);
+            Serial.print("  | ch: ");
+            Serial.print(MIDI_CH);
+            Serial.print("  | nn: ");
+
 #ifdef USING_CUSTOM_NN
-Serial.print(BUTTON_NN[i]);
+
+            Serial.print(BUTTON_NN[i]);
 #else
-Serial.print(NOTE + i);
-#endif
-Serial.print("  | velocity: ");
-Serial.println(velocity[i]);
 
+            Serial.print(NOTE + i);
+#endif
+
+            Serial.print("  | velocity: ");
+            Serial.println(velocity[i]);
 #else
-if (velocity[i] > 0) { // only when button is pressed
-Serial.print("Button: ");
-Serial.print(i);
-Serial.print("  | ch: ");
-Serial.print(MIDI_CH);
-Serial.print("  | cc: ");
-Serial.print(BUTTON_CC_N[i]);
-Serial.print("  | value: ");
-Serial.println(velocity[i]);
-}
+
+            Serial.print("Button: ");
+            Serial.print(i);
+            Serial.print("  | ch: ");
+            Serial.print(MIDI_CH);
+            Serial.print("  | cc: ");
+            Serial.print(BUTTON_CC_N[i]);
+            Serial.print("  | value: ");
+            Serial.println(velocity[i]);
 #endif
 
-
 #endif
 
-        /////////////////////////////////////////////
-        buttonPState[i] = buttonCState[i];
+            /////////////////////////////////////////////
+
+#ifdef USING_TOGGLE
+
+          }
+#endif
+
+          buttonPState[i] = buttonCState[i];
+        }
+
       }
-
     }
   }
-}
 
-/////////////////////////////////////////////
-// POTENTIOMETERS
-void potentiometers() {
+  /////////////////////////////////////////////
+  // POTENTIOMETERS
+  void potentiometers() {
 
-  // reads the pins from arduino
-  for (int i = 0; i < N_POTS_ARDUINO; i++) {
-    potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
-  }
+    // reads the pins from arduino
+    for (int i = 0; i < N_POTS_ARDUINO; i++) {
+      potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
+    }
 
 #ifdef USING_MUX
 //It will happen if using a mux
 int nPotsPerMuxSum = N_POTS_ARDUINO; //offsets the buttonCState at every mux reading
 
-  // reads the pins from every mux
-  for (int j = 0; j < N_MUX; j++) {
-    for (int i = 0; i < N_POTS_PER_MUX[j]; i++) {
-      potCState[i + nPotsPerMuxSum] = mux[j].readChannel(POT_MUX_PIN[j][i]);
+    // reads the pins from every mux
+    for (int j = 0; j < N_MUX; j++) {
+      for (int i = 0; i < N_POTS_PER_MUX[j]; i++) {
+        potCState[i + nPotsPerMuxSum] = mux[j].readChannel(POT_MUX_PIN[j][i]);
+      }
+      nPotsPerMuxSum += N_POTS_PER_MUX[j];
     }
-    nPotsPerMuxSum += N_POTS_PER_MUX[j];
-  }
 #endif
 
-  //Debug only
-  //    for (int i = 0; i < nPots; i++) {
-  //      Serial.print(potCState[i]); Serial.print(" ");
-  //    }
-  //    Serial.println();
+    //Debug only
+    //    for (int i = 0; i < nPots; i++) {
+    //      Serial.print(potCState[i]); Serial.print(" ");
+    //    }
+    //    Serial.println();
 
-  for (int i = 0; i < N_POTS; i++) { // Loops through all the potentiometers
+    for (int i = 0; i < N_POTS; i++) { // Loops through all the potentiometers
 
-    potMidiCState[i] = map(potCState[i], 0, 1023, 0, 127); // Maps the reading of the potCState to a value usable in midi
+      potMidiCState[i] = map(potCState[i], 0, 1023, 0, 127); // Maps the reading of the potCState to a value usable in midi
 
-    potVar = abs(potCState[i] - potPState[i]); // Calculates the absolute value between the difference between the current and previous state of the pot
+      potVar = abs(potCState[i] - potPState[i]); // Calculates the absolute value between the difference between the current and previous state of the pot
 
-    if (potVar > varThreshold) { // Opens the gate if the potentiometer variation is greater than the threshold
-      PTime[i] = millis(); // Stores the previous time
-    }
+      if (potVar > varThreshold) { // Opens the gate if the potentiometer variation is greater than the threshold
+        PTime[i] = millis(); // Stores the previous time
+      }
 
-    timer[i] = millis() - PTime[i]; // Resets the timer 11000 - 11000 = 0ms
+      timer[i] = millis() - PTime[i]; // Resets the timer 11000 - 11000 = 0ms
 
-    if (timer[i] < TIMEOUT) { // If the timer is less than the maximum allowed time it means that the potentiometer is still moving
-      potMoving = true;
-    }
-    else {
-      potMoving = false;
-    }
+      if (timer[i] < TIMEOUT) { // If the timer is less than the maximum allowed time it means that the potentiometer is still moving
+        potMoving = true;
+      }
+      else {
+        potMoving = false;
+      }
 
-    if (potMoving == true) { // If the potentiometer is still moving, send the change control
-      if (potMidiPState[i] != potMidiCState[i]) {
+      if (potMoving == true) { // If the potentiometer is still moving, send the change control
+        if (potMidiPState[i] != potMidiCState[i]) {
 
-        // Sends the MIDI CC accordingly to the chosen board
+          // Sends the MIDI CC accordingly to the chosen board
 #ifdef ATMEGA328
 // use if using with ATmega328 (uno, mega, nano...)
 
@@ -534,26 +572,26 @@ Serial.println(potMidiCState[i]);
 #endif
 
 
-        potPState[i] = potCState[i]; // Stores the current reading of the potentiometer to compare with the next
-        potMidiPState[i] = potMidiCState[i];
+          potPState[i] = potCState[i]; // Stores the current reading of the potentiometer to compare with the next
+          potMidiPState[i] = potMidiCState[i];
+        }
       }
     }
   }
-}
 
-/////////////////////////////////////////////
-// ENCODERS
+  /////////////////////////////////////////////
+  // ENCODERS
 #ifdef USING_ENCODER
 
-void encoders() {
+  void encoders() {
 
-  for (int i = 0; i < N_ENCODERS; i++) {
-    encoderValue[encoderChannel][i] = encoder[i].read(); // reads each encoder and stores the value
-  }
+    for (int i = 0; i < N_ENCODERS; i++) {
+      encoderValue[encoderChannel][i] = encoder[i].read(); // reads each encoder and stores the value
+    }
 
-  for (int i = 0; i < N_ENCODERS; i++) {
+    for (int i = 0; i < N_ENCODERS; i++) {
 
-    if (encoderValue[encoderChannel][i] != lastEncoderValue[encoderChannel][i]) {
+      if (encoderValue[encoderChannel][i] != lastEncoderValue[encoderChannel][i]) {
 
 #ifdef TRAKTOR // to use with Traktor
 if (encoderValue[encoderChannel][i] > lastEncoderValue[encoderChannel][i]) {
@@ -563,9 +601,9 @@ encoderValue[encoderChannel][i] = 0;
 }
 #endif
 
-      clipEncoderValue(i, encoderMinVal, encoderMaxVal); // checks if it's greater than the max value or less than the min value
+        clipEncoderValue(i, encoderMinVal, encoderMaxVal); // checks if it's greater than the max value or less than the min value
 
-      // Sends the MIDI CC accordingly to the chosen board
+        // Sends the MIDI CC accordingly to the chosen board
 #ifdef ATMEGA328
 // if using with ATmega328 (uno, mega, nano...)
 MIDI.sendControlChange(i, encoderValue[encoderChannel][i], encoderChannel);
@@ -585,46 +623,46 @@ Serial.print("Encoder "); Serial.print(i); Serial.print(": ");
 Serial.println(encoderValue[encoderChannel][i]);
 #endif
 
-      lastEncoderValue[encoderChannel][i] = encoderValue[encoderChannel][i];
+        lastEncoderValue[encoderChannel][i] = encoderValue[encoderChannel][i];
+      }
     }
   }
-}
 
 
-////////////////////////////////////////////
-// checks if it's greater than maximum value or less than then the minimum value
-void clipEncoderValue(int i, int minVal, int maxVal) {
+  ////////////////////////////////////////////
+  // checks if it's greater than maximum value or less than then the minimum value
+  void clipEncoderValue(int i, int minVal, int maxVal) {
 
-  if (encoderValue[encoderChannel][i] > maxVal - 1) {
-    encoderValue[encoderChannel][i] = maxVal;
-    encoder[i].write(maxVal);
+    if (encoderValue[encoderChannel][i] > maxVal - 1) {
+      encoderValue[encoderChannel][i] = maxVal;
+      encoder[i].write(maxVal);
+    }
+    if (encoderValue[encoderChannel][i] < minVal + 1) {
+      encoderValue[encoderChannel][i] = minVal;
+      encoder[i].write(minVal);
+    }
   }
-  if (encoderValue[encoderChannel][i] < minVal + 1) {
-    encoderValue[encoderChannel][i] = minVal;
-    encoder[i].write(minVal);
-  }
-}
 
 #endif
 
-/////////////////////////////////////////////
-// if using with ATmega32U4 (micro, pro micro, leonardo...)
+  /////////////////////////////////////////////
+  // if using with ATmega32U4 (micro, pro micro, leonardo...)
 #ifdef ATMEGA32U4
 
-// Arduino (pro)micro midi functions MIDIUSB Library
-void noteOn(byte channel, byte pitch, byte velocity) {
-  midiEventPacket_t noteOn = {0x09, 0x90 | channel, pitch, velocity};
-  MidiUSB.sendMIDI(noteOn);
-}
+  // Arduino (pro)micro midi functions MIDIUSB Library
+  void noteOn(byte channel, byte pitch, byte velocity) {
+    midiEventPacket_t noteOn = {0x09, 0x90 | channel, pitch, velocity};
+    MidiUSB.sendMIDI(noteOn);
+  }
 
-void noteOff(byte channel, byte pitch, byte velocity) {
-  midiEventPacket_t noteOff = {0x08, 0x80 | channel, pitch, velocity};
-  MidiUSB.sendMIDI(noteOff);
-}
+  void noteOff(byte channel, byte pitch, byte velocity) {
+    midiEventPacket_t noteOff = {0x08, 0x80 | channel, pitch, velocity};
+    MidiUSB.sendMIDI(noteOff);
+  }
 
-void controlChange(byte channel, byte control, byte value) {
-  midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
-  MidiUSB.sendMIDI(event);
-}
+  void controlChange(byte channel, byte control, byte value) {
+    midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
+    MidiUSB.sendMIDI(event);
+  }
 
 #endif

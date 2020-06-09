@@ -21,3 +21,4 @@
     - Update 6: (06/01/20): Custom note numbers and CC
     - Update 7: (06/02/20): Velocity Variable
     - Update 8: (06/02/20): Buttons using CC
+    - Update 9: (09/02/20): Toggle mode added
