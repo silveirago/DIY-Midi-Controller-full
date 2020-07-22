@@ -120,6 +120,8 @@ const int BUTTON_MUX_PIN[N_MUX][16] = { //* pin of each button of each mux in or
 };
 #endif
 
+int buttonMuxThreshold = 500;
+
 int buttonCState[N_BUTTONS] = {0};        // stores the button current value
 int buttonPState[N_BUTTONS] = {0};        // stores the button previous value
 
@@ -299,7 +301,7 @@ void buttons() {
     for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
       buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[j][i]);
       // Scale values to 0-1
-      if (buttonCState[i + nButtonsPerMuxSum] > 500) {
+      if (buttonCState[i + nButtonsPerMuxSum] > buttonMuxThreshold) {
         buttonCState[i + nButtonsPerMuxSum] = HIGH;
       }
       else {
