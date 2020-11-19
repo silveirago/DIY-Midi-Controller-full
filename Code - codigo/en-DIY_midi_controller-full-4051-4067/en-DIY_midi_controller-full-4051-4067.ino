@@ -25,46 +25,20 @@
 // "DEBUG" if you just want to debug the code in the serial monitor
 // you don't need to comment or uncomment any MIDI library below after you define your board
 
-#define ATMEGA32U4 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA328 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using a multiplexer?
-//#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
+#define USING_MUX_4067 1 //* comment if not using a multiplexer 4067, uncomment if using it.
+#define USING_MUX_4051 1 //* comment if not using a multiplexer 4051, uncomment if using it.
 
 /////////////////////////////////////////////
 // Are you using encoders?
 // #define USING_ENCODER 1 //* comment if not using encoders, uncomment if using it.
 
 /////////////////////////////////////////////
-// Are you using neopixels (any addressableled strips)?
-//#define USING_NEOPIXEL 1 //* comment if not using neopixels, uncomment if using it.
-
-/////////////////////////////////////////////
 // LIBRARIES
 // -- Defines the MIDI library -- //
-
-//////////////////////////////////////
-// If using Fast Led
-#ifdef USING_NEOPIXEL
-
-#include "FastLED.h"
-
-FASTLED_USING_NAMESPACE
-
-#define DATA_PIN    6
-//#define CLK_PIN   4
-#define LED_TYPE    WS2812
-#define COLOR_ORDER GRB
-#define NUM_LEDS    4
-
-CRGB leds[NUM_LEDS];
-byte ledIndex[NUM_LEDS] = {0, 1, 2, 3};
-
-#define BRIGHTNESS          96 // 0-255
-#define FRAMES_PER_SECOND  120
-
-#endif
-//////////////////////////////////////
 
 // if using with ATmega328 - Uno, Mega, Nano...
 #ifdef ATMEGA328
@@ -80,8 +54,14 @@ byte ledIndex[NUM_LEDS] = {0, 1, 2, 3};
 
 //////////////////////
 // Add this lib if using a cd4067 multiplexer
-#ifdef USING_MUX
+#ifdef USING_MUX_4067
 #include <Multiplexer4067.h> // Multiplexer CD4067 library >> https://github.com/sumotoy/Multiplexer4067
+#endif
+
+//////////////////////
+// Add this lib if using a cd4067 multiplexer
+#ifdef USING_MUX_4051
+#include "analogmuxdemux.h" // https://github.com/ajfisher/arduino-analog-multiplexer
 #endif
 
 //////////////////////
@@ -98,66 +78,92 @@ byte ledIndex[NUM_LEDS] = {0, 1, 2, 3};
 
 ///////////////////////////////////////////
 // MULTIPLEXERS
-#ifdef USING_MUX
+///////////////////////////////////////////
+// 4067
+#ifdef USING_MUX_4067
 
-#define N_MUX 1 //* number of multiplexers
-//* Define s0, s1, s2, s3, and x pins
-#define s0 16
-#define s1 14
-#define s2 15
-#define s3 2
-#define x1 A10 // analog pin of the first mux
+#define N_MUX_4067 6 //* number of multiplexers
+//* Define s0_4067, s1_4067, s2_4067, s3_4067, and x pins
+#define s0_4067 2
+#define s1_4067 3
+#define s2_4067 4
+#define s3_4067 5
+#define x1_4067 A1 // analog pin of the first mux
+#define x2_4067 A2 // analog pin of the second mux...
+
 // add more #define and the x number if you need
 
 // Initializes the multiplexer
-Multiplexer4067 mux[N_MUX] = {
-  Multiplexer4067(s0, s1, s2, s3, x1) // The SIG pin where the multiplexer is connnected
+Multiplexer4067 mux[N_MUX_4067] = {
+  Multiplexer4067(s0_4067, s1_4067, s2_4067, s3_4067, x1_4067), //*
+  Multiplexer4067(s0_4067, s1_4067, s2_4067, s3_4067, x2_4067), //*
   // ...
 };
 
 #endif
 
+///////////////////////////////////////////
+// 4051
+#ifdef USING_MUX_4051
 
+#define N_MUX_4051 2 //* number of multiplexers
+//* Define s0_4067, s1_4067, s2_4067, s3_4067, and x pins
+#define s0_4051 2
+#define s1_4051 3
+#define s2_4051 4
+#define x1_4051 A1 // analog pin of the first mux
+#define x2_4051 A2 // analog pin of the second mux...
+// add more #define and the x number if you need
+
+// Initializes the multiplexer
+AnalogMux mux[N_MUX_4051] = {
+  AnalogMux(s0_4051, s1_4051, s2_4051, x1_4051), //*
+  AnalogMux(s0_4051, s1_4051, s2_4051, x2_4051) //*
+  // ...
+};
+
+#endif
 
 /////////////////////////////////////////////
 // BUTTONS
-const int N_BUTTONS = 4; //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2...
-const int N_BUTTONS_ARDUINO = 4; //* number of buttons connected straight to the Arduino (in order)
-const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {2, 3, 4, 5}; //* pins of each button connected straight to the Arduino
+const int N_BUTTONS = 2 + 0 + 0; //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2...
+const int N_BUTTONS_ARDUINO = 2; //* number of buttons connected straight to the Arduino (in order)
+const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {2, 3}; //* pins of each button connected straight to the Arduino
 
-// it will happen if you are using neo pixel
-// this button will open the menu wo you can change the MIDI channel
-// pressing one button. Each button will be one differente channel
-#ifdef USING_NEOPIXEL
-const int CHANNEL_BUTTON_PIN = 7;
-#endif
-
-//#define USING_CUSTOM_NN 1 //* comment if not using CUSTOM NOTE NUMBERS (scales), uncomment if using it.
+#define USING_CUSTOM_NN 1 //* comment if not using CUSTOM NOTE NUMBERS (scales), uncomment if using it.
 #ifdef USING_CUSTOM_NN
-int BUTTON_NN[N_BUTTONS] = {36, 40, 44, 48, 37, 41, 45, 49, 38, 42, 46, 50, 39, 43, 47, 51, 52};
-
-//* Add the NOTE NUMBER of each button/switch you want
+int BUTTON_NN[N_BUTTONS] = {15, 20}; //* Add the NOTE NUMBER of each button/switch you want
 #endif
 
-//#define USING_BUTTON_CC_N 1 //* comment if not using BUTTON CC, uncomment if using it.
+#define USING_BUTTON_CC_N 1 //* comment if not using BUTTON CC, uncomment if using it.
 #ifdef USING_BUTTON_CC_N // if using button with CC
 int BUTTON_CC_N[N_BUTTONS] = {12, 16}; //* Add the CC NUMBER of each button/switch you want
 #endif
 
-//#define USING_TOGGLE 1 //* comment if not using BUTTON TOGGLE mode, uncomment if using it.
+#define USING_TOGGLE 1 //* comment if not using BUTTON TOGGLE mode, uncomment if using it.
 // With toggle mode on, when you press the button once it sends a note on, when you press it again it sends a note off
 
-#ifdef USING_MUX // Fill if you are using mux, otherwise just leave it
-const int N_BUTTONS_PER_MUX[N_MUX] = {16}; //* number of buttons in each mux (in order)
-const int BUTTON_MUX_PIN[N_MUX][16] = { //* pin of each button of each mux in order
-{
-0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15
-}, //* pins of the first mux
+// 4067
+#ifdef USING_MUX_4067
+const int N_BUTTONS_PER_MUX_4067[N_MUX_4067] = {2, 2}; //* number of buttons in each mux (in order)
+const int BUTTON_MUX_4067_PIN[N_MUX_4067][16] = { //* pin of each button of each mux in order
+{2, 3}, //* pins of the first mux
+{1, 2}  //* pins of the second
 // ...
 };
 #endif
 
-int buttonMuxThreshold = 300;
+//4051
+#ifdef USING_MUX_4051 // Fill if you are using mux 4067 or 4051, otherwise just leave it
+const int N_BUTTONS_PER_MUX_4051[N_MUX_4067] = {2, 2}; //* number of buttons in each mux (in order)
+const int BUTTON_MUX_4051_PIN[N_MUX_4067][8] = { //* pin of each button of each mux in order
+{2, 3}, //* pins of the first mux
+{1, 2}  //* pins of the second
+// ...
+};
+#endif
+
+int buttonMuxThreshold = 500;
 
 int buttonCState[N_BUTTONS] = {0};        // stores the button current value
 int buttonPState[N_BUTTONS] = {0};        // stores the button previous value
@@ -174,19 +180,30 @@ byte velocity[N_BUTTONS] = {127};
 
 /////////////////////////////////////////////
 // POTENTIOMETERS
-const int N_POTS = 1; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
-const int N_POTS_ARDUINO = 1; //* number of pots connected straight to the Arduino
-const int POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0}; //* pins of each pot connected straight to the Arduino
+const int N_POTS = 2 + 0 + 0; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
+const int N_POTS_ARDUINO = 2; //* number of pots connected straight to the Arduino
+const int POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0, A1}; //* pins of each pot connected straight to the Arduino
 
-//#define USING_CUSTOM_CC_N 1 //* comment if not using CUSTOM CC NUMBERS, uncomment if using it.
+#define USING_CUSTOM_CC_N 1 //* comment if not using CUSTOM CC NUMBERS, uncomment if using it.
 #ifdef USING_CUSTOM_CC_N
-int POT_CC_N[N_POTS] = {1, 2, 3, 4, 5, 6, 7, 8}; // Add the CC NUMBER of each pot you want
+int POT_CC_N[N_POTS] = {10, 15}; // Add the CC NUMBER of each pot you want
 #endif
 
-#ifdef USING_MUX
-const int N_POTS_PER_MUX[N_MUX] = {0}; //* number of pots in each multiplexer (in order)
-const int POT_MUX_PIN[N_MUX][16] = { //* pins of each pot of each mux in the order you want them to be
-// nothing
+#ifdef USING_MUX_4067
+const int N_POTS_PER_MUX_4067[N_MUX_4067] = {2, 1}; //* number of pots in each multiplexer (in order)
+const int POT_MUX_PIN_4067[N_MUX_4067][16] = { //* pins of each pot of each mux in the order you want them to be
+{0, 1}, // pins of the first mux
+{0} // pins of the second mux
+// ...
+};
+#endif
+
+#ifdef USING_MUX_4051
+const int N_POTS_PER_MUX_4051[N_MUX_4051] = {2, 1}; //* number of pots in each multiplexer (in order)
+const int POT_MUX_PIN_4051[N_MUX_4051][8] = { //* pins of each pot of each mux in the order you want them to be
+{0, 1}, // pins of the first mux
+{0} // pins of the second mux
+// ...
 };
 #endif
 
@@ -203,12 +220,6 @@ boolean potMoving = true; // If the potentiometer is moving
 unsigned long PTime[N_POTS] = {0}; // Previously stored time
 unsigned long timer[N_POTS] = {0}; // Stores the time that has elapsed since the timer was reset
 
-// one pole filter
-// y[n] = A0 * x[n] + B1 * y[n-1];
-// A = 0.15 and B = 0.85
-float filterA = 0.3;
-float filterB = 0.7;
-
 /////////////////////////////////////////////
 // ENCODERS
 #ifdef USING_ENCODER
@@ -221,6 +232,7 @@ const int N_ENCODER_PINS = N_ENCODERS * 2; //number of pins used by the encoders
 Encoder encoder[N_ENCODERS] = {{9, 8}, {11, 10}}; // the two pins of each encoder (backwards) -  Use pins with Interrupts!
 
 int encoderMinVal = 0; //* encoder minimum value
+int encoderMaxVal = 127; //* encoder maximum value
 
 int preset[N_ENCODER_CHANNELS][N_ENCODERS] = { //stores presets to start your encoders
   {64, 64},
@@ -236,22 +248,9 @@ int lastEncoderChannel = 0;
 #endif
 /////////////////////////////////////////////
 
-/////////////////////////////////////////////
-// MIDI CHANNEL
-byte MIDI_CH = 0; //* MIDI channel to be used
-byte BUTTON_MIDI_CH = 0; //* MIDI channel to be used
+byte MIDI_CH = 1; //* MIDI channel to be used
 byte NOTE = 36; //* Lowest NOTE to be used - if not using custom NOTE NUMBER
 byte CC = 1; //* Lowest MIDI CC to be used - if not using custom CC NUMBER
-
-/////////////////////////////////////////////
-// MIDI CHANNEL MENU | NEOPIXEL
-boolean channelMenuOn = false;
-
-byte midiChMenuColor = 200; // menu color HUE
-byte midiChOnColor = midiChMenuColor + 60; // channel on menu color HUE
-
-byte noteOffHue = 135; // HUE when the notes are not played - 135 (blue)
-byte noteOnHue = 240; // HUE of the notes when they are played - 240 (magenta)
 
 /////////////////////////////////////////////
 // THREADS
@@ -260,95 +259,59 @@ byte noteOnHue = 240; // HUE of the notes when they are played - 240 (magenta)
 // In this case we'll read the potentiometers in a thread, making the reading of the buttons faster
 ThreadController cpu; //thread master, where the other threads will be added
 Thread threadPotentiometers; // thread to control the pots
-Thread threadChannelMenu; // thread to control the pots
 
 void setup() {
 
   // Baud Rate
   // use if using with ATmega328 (uno, mega, nano...)
   // 31250 for MIDI class compliant | 115200 for Hairless MIDI
-  //Serial.begin(115200); //*
-
+  Serial.begin(115200); //*
 
 #ifdef DEBUG
 Serial.println("Debug mode");
 Serial.println();
 #endif
 
-
-#ifdef USING_NEOPIXEL
-
-  ////////////////////////////////////
-  //FAST LED
-  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-
-  // set master brightness control
-  //FastLED.setBrightness(BRIGHTNESS);
-
-  setAllLeds(noteOffHue, 30);// set all leds at once with a hue (hue, randomness)
-
-  FastLED.show();
-
-  //////////////////////////////////////
-
-#endif
-
-  //////////////////////////////////////
   // Buttons
   // Initialize buttons with pull up resistors
   for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
     pinMode(BUTTON_ARDUINO_PIN[i], INPUT_PULLUP);
   }
 
-#ifdef USING_NEOPIXEL
-
-  pinMode(CHANNEL_BUTTON_PIN, INPUT_PULLUP);
-#endif
-
 #ifdef pin13 // Initialize pin 13 as an input
 pinMode(BUTTON_ARDUINO_PIN[pin13index], INPUT);
 #endif
-////////////////////////////////////
-
-  //////////////////////////////////////
-  // Potentiometer
-  // Initialize pots with pull up resistors
-  for (int i = 0; i < N_POTS_ARDUINO; i++) {
-    pinMode(POT_ARDUINO_PIN[i], INPUT_PULLUP);
-  }
-  ////////////////////////////////////
-
-
 
   /////////////////////////////////////////////
   // Multiplexers
 
-#ifdef USING_MUX
+#ifdef USING_MUX_4067
 
   // Initialize the multiplexers
-  for (int i = 0; i < N_MUX; i++) {
+  for (int i = 0; i < N_MUX_4067; i++) {
     mux[i].begin();
   }
-  //* Set each X pin as input_pullup (avoid floating behavior)
-  pinMode(x1, INPUT_PULLUP);
+#endif
 
+#ifdef USING_MUX_4067
+
+  //* Set each X pin as input_pullup (avoid floating behavior)
+  pinMode(x1_4067, INPUT_PULLUP);
+  pinMode(x2_4067, INPUT_PULLUP);
+#endif
+
+#ifdef USING_MUX_4051
+
+  //* Set each X pin as input_pullup (avoid floating behavior)
+  pinMode(x1_4051, INPUT_PULLUP);
+  pinMode(x2_4051, INPUT_PULLUP);
 #endif
 
   /////////////////////////////////////////////
   // Threads
-  // Potentiometers
-  threadPotentiometers.setInterval(15); // every how many millisiconds
+  threadPotentiometers.setInterval(10); // every how many millisiconds
   threadPotentiometers.onRun(potentiometers); // the function that will be added to the thread
   cpu.add(&threadPotentiometers); // add every thread here
-
-#ifdef USING_NEOPIXEL
-
-  // Channel Menu
-  threadChannelMenu.setInterval(40); // every how many millisiconds
-  threadChannelMenu.onRun(channelMenu); // the function that will be added to the thread
-  cpu.add(&threadChannelMenu); // add every thread here
-#endif
-
 
   /////////////////////////////////////////////
   // Encoders
@@ -368,25 +331,16 @@ pinMode(BUTTON_ARDUINO_PIN[pin13index], INPUT);
 #endif
 /////////////////////////////////////////////
 
-
-
 }
 
 void loop() {
 
-#ifdef ATMEGA32U4
-
-  // it will read MIDI incoming messages if using AT32U4
-  MIDIread();
-#endif
-
+  cpu.run(); // for threads
   buttons();
 
 #ifdef USING_ENCODER
 encoders();
 #endif
-
-  cpu.run(); // for threads
 
 }
 
@@ -399,15 +353,28 @@ void buttons() {
     buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
   }
 
-#ifdef USING_MUX
+#if defined(USING_MUX_4067) | defined(USING_MUX_4051) // it runs only if you are using a mux
 
   // It will happen if you are using MUX
   int nButtonsPerMuxSum = N_BUTTONS_ARDUINO; // offsets the buttonCState at every mux reading
 
   // read the pins from every mux
-  for (int j = 0; j < N_MUX; j++) {
-    for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
-      buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[j][i]);
+  for (int j = 0; j < N_MUX_4067; j++) {
+    for (int i = 0; i < N_BUTTONS_PER_MUX_4067[j]; i++) {
+
+#ifdef USING_MUX_4067
+
+      // 4067
+      buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_4067_PIN[j][i]);
+#endif
+
+#ifdef USING_MUX_4051
+
+      // 4051
+      mux[j].SelectPin(BUTTON_MUX_4067_PIN[j][i]);
+      buttonCState[i + nButtonsPerMuxSum] = mux[j].AnalogRead();
+#endif
+
       // Scale values to 0-1
       if (buttonCState[i + nButtonsPerMuxSum] > buttonMuxThreshold) {
         buttonCState[i + nButtonsPerMuxSum] = HIGH;
@@ -416,7 +383,7 @@ void buttons() {
         buttonCState[i + nButtonsPerMuxSum] = LOW;
       }
     }
-    nButtonsPerMuxSum += N_BUTTONS_PER_MUX[j];
+    nButtonsPerMuxSum += N_BUTTONS_PER_MUX_4067[j];
   }
 #endif
 
@@ -472,17 +439,17 @@ void buttons() {
 #ifdef USING_CUSTOM_NN
 
             // if using custom NOTE numbers
-            MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
+            MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], MIDI_CH); // note, velocity, channel
 #else
 
             // if not using custom NOTE numbers
-            MIDI.sendNoteOn(NOTE + i, velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
+            MIDI.sendNoteOn(NOTE + i, velocity[i], MIDI_CH); // note, velocity, channel
 #endif
 
 #else // if USING button CC
 
             if (buttonCState[i] == LOW) { // only sends note on when button is pressed, nothing when released
-              MIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
+              MIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], MIDI_CH); // note, velocity, channel
             }
 #endif
 
@@ -496,20 +463,19 @@ void buttons() {
 #ifdef USING_CUSTOM_NN
 
             // if using custom NOTE numbers
-
-            noteOn(BUTTON_MIDI_CH, BUTTON_NN[i], velocity[i]);  // channel, note, velocity
+            noteOn(MIDI_CH, NOTE + i, velocity[i]);  // channel, note, velocity
             MidiUSB.flush();
 #else
 
             // if not using custom NOTE
-            noteOn(BUTTON_MIDI_CH, NOTE + i, velocity[i]);  // channel, note, velocity
+            noteOn(MIDI_CH, BUTTON_NN[i], velocity[i]);  // channel, note, velocity
             MidiUSB.flush();
 #endif
 
 #else // if USING button CC
 
             if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
-              controlChange(BUTTON_MIDI_CH, BUTTON_CC_N[i], velocity[i]); //  (channel, CC number,  CC value)
+              controlChange(MIDI_CH, BUTTON_CC_N[i], velocity[i]); //  (channel, CC number,  CC value)
               MidiUSB.flush();
             }
 #endif
@@ -524,17 +490,17 @@ void buttons() {
 #ifdef USING_CUSTOM_NN
 
             // if using custom NOTE numbers
-            usbMIDI.sendNoteOn(BUTTON_NN[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
+            usbMIDI.sendNoteOn(BUTTON_NN[i], velocity[i], MIDI_CH); // note, velocity, channel
 #else
 
             // if not using custom NOTE
-            usbMIDI.sendNoteOn(NOTE + i, velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
+            usbMIDI.sendNoteOn(NOTE + i, velocity[i], MIDI_CH); // note, velocity, channel
 #endif
 
 #else // if USING button CC
 
             if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
-              usbMIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], BUTTON_MIDI_CH); // CC number, CC value, midi channel
+              usbMIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], MIDI_CH); // CC number, CC value, midi channel
             }
 #endif
 
@@ -546,7 +512,7 @@ void buttons() {
             Serial.print("Button: ");
             Serial.print(i);
             Serial.print("  | ch: ");
-            Serial.print(BUTTON_MIDI_CH);
+            Serial.print(MIDI_CH);
             Serial.print("  | nn: ");
 
 #ifdef USING_CUSTOM_NN
@@ -564,7 +530,7 @@ void buttons() {
             Serial.print("Button: ");
             Serial.print(i);
             Serial.print("  | ch: ");
-            Serial.print(BUTTON_MIDI_CH);
+            Serial.print(MIDI_CH);
             Serial.print("  | cc: ");
             Serial.print(BUTTON_CC_N[i]);
             Serial.print("  | value: ");
@@ -593,26 +559,54 @@ void buttons() {
 
     // reads the pins from arduino
     for (int i = 0; i < N_POTS_ARDUINO; i++) {
-      //potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
-
-      // one pole filter
-      // y[n] = A0 * x[n] + B1 * y[n-1];
-      // A = 0.15 and B = 0.85
-      int reading = analogRead(POT_ARDUINO_PIN[i]);
-      float filteredVal = filterA * reading + filterB * potPState[i]; // filtered value
-      potCState[i] = filteredVal;
+      potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
     }
 
-#ifdef USING_MUX
-//It will happen if using a mux
-int nPotsPerMuxSum = N_POTS_ARDUINO; //offsets the buttonCState at every mux reading
+#ifdef USING_MUX_4067
+
+    //It will happen if using a mux
+    int nPotsPerMuxSum = N_POTS_ARDUINO; //offsets the buttonCState at every mux reading
 
     // reads the pins from every mux
-    for (int j = 0; j < N_MUX; j++) {
-      for (int i = 0; i < N_POTS_PER_MUX[j]; i++) {
-        potCState[i + nPotsPerMuxSum] = mux[j].readChannel(POT_MUX_PIN[j][i]);
+    for (int j = 0; j < N_MUX_4067; j++) {
+      for (int i = 0; i < N_POTS_PER_MUX_4067[j]; i++) {
+
+#ifdef USING_MUX_4067
+
+        // 4067
+        potCState[i + nPotsPerMuxSum] = mux[j].readChannel(POT_MUX_PIN_4067[j][i]);
+#endif
+
+#ifdef USING_MUX_4051
+
+        // 4051
+        mux[j].SelectPin(POT_MUX_PIN_4067[j][i]);
+        potCState[i + nPotsPerMuxSum] = mux[j].AnalogRead();
+#endif
+
       }
-      nPotsPerMuxSum += N_POTS_PER_MUX[j];
+      nPotsPerMuxSum += N_POTS_PER_MUX_4067[j];
+    }
+#endif
+
+#ifdef USING_MUX_4051
+
+    //It will happen if using a mux
+    int nPotsPerMuxSum = N_POTS_ARDUINO; //offsets the buttonCState at every mux reading
+
+    // reads the pins from every mux
+    for (int j = 0; j < N_MUX_4067; j++) {
+      for (int i = 0; i < N_POTS_PER_MUX_4067[j]; i++) {
+
+#ifdef USING_MUX_4051
+
+        // 4051
+        mux[j].SelectPin(POT_MUX_PIN_4067[j][i]);
+        potCState[i + nPotsPerMuxSum] = mux[j].AnalogRead();
+#endif
+
+      }
+      nPotsPerMuxSum += N_POTS_PER_MUX_4067[j];
     }
 #endif
 
@@ -781,183 +775,6 @@ Serial.println(encoderValue[encoderChannel][i]);
   void controlChange(byte channel, byte control, byte value) {
     midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
     MidiUSB.sendMIDI(event);
-  }
-
-
-  void MIDIread() {
-
-    midiEventPacket_t rx = MidiUSB.read();
-    switch (rx.header) {
-      case 0:
-        break; //No pending events
-
-      case 0x9:
-        handlennOn(
-          rx.byte1 & 0xF,  //channel
-          rx.byte2,        //pitch
-          rx.byte3         //velocity
-        );
-        break;
-
-      case 0x8:
-        handlennOff(
-          rx.byte1 & 0xF,  //channel
-          rx.byte2,        //pitch
-          rx.byte3         //velocity
-        );
-        break;
-    }
-
-    if (rx.header != 0) {
-      //Serial.print("Unhandled MIDI message: ");
-      //      Serial.print(rx.byte1 & 0xF, DEC);
-      //      Serial.print("-");
-      //      Serial.print(rx.byte1, DEC);
-      //      Serial.print("-");
-      //      Serial.print(rx.byte2, DEC);
-      //      Serial.print("-");
-      //      Serial.println(rx.byte3, DEC);
-    }
-
-  }
-
-  void handleControlChange(byte channel, byte number, byte value)
-  {
-
-  }
-
-  void handlennOn(byte channel, byte number, byte value) {
-
-
-    // If yusing neopixel
-#ifdef USING_NEOPIXEL
-
-    if (channel == BUTTON_MIDI_CH) {
-
-      int ledN = number - NOTE;
-      byte tempHue = map(value, 0, 127, noteOffHue, noteOnHue);
-
-      leds[ledIndex[ledN]].setHue(tempHue);
-
-      FastLED.show();
-      //      // insert a delay to keep the framerate modest
-      //      FastLED.delay(1000 / FRAMES_PER_SECOND);
-    }
-#endif
-
-  }
-
-  void handlennOff(byte channel, byte number, byte value) {
-
-
-    // If yusing neopixel
-#ifdef USING_NEOPIXEL
-
-    if (channel == BUTTON_MIDI_CH) {
-      int ledN = number - NOTE;
-
-      byte offset = random(0, 20);
-      leds[ledIndex[ledN]].setHue(noteOffHue + offset);
-
-      FastLED.show();
-      //      // insert a delay to keep the framerate modest
-      //      FastLED.delay(1000 / FRAMES_PER_SECOND);
-    }
-#endif
-
-  }
-  ////////////////////////////////////////////
-
-#endif
-
-#ifdef USING_NEOPIXEL
-
-  ////////////////////////////////////////////
-  // Channel Menu
-  void channelMenu() {
-
-    while (digitalRead(CHANNEL_BUTTON_PIN) == LOW) {
-
-      setAllLeds(midiChMenuColor, 0); // turn all lights into the menu lights
-      leds[ledIndex[BUTTON_MIDI_CH]].setHue(midiChOnColor); // turn the specific channel light on
-      channelMenuOn = true;
-
-      // read pins from arduino
-      for (int i = 0; i < N_BUTTONS_ARDUINO; i++) {
-        buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);
-      }
-
-#ifdef USING_MUX
-
-      // It will happen if you are using MUX
-      int nButtonsPerMuxSum = N_BUTTONS_ARDUINO; // offsets the buttonCState at every mux reading
-
-      // read the pins from every mux
-      for (int j = 0; j < N_MUX; j++) {
-        for (int i = 0; i < N_BUTTONS_PER_MUX[j]; i++) {
-          buttonCState[i + nButtonsPerMuxSum] = mux[j].readChannel(BUTTON_MUX_PIN[j][i]);
-          // Scale values to 0-1
-          if (buttonCState[i + nButtonsPerMuxSum] > buttonMuxThreshold) {
-            buttonCState[i + nButtonsPerMuxSum] = HIGH;
-          }
-          else {
-            buttonCState[i + nButtonsPerMuxSum] = LOW;
-          }
-        }
-        nButtonsPerMuxSum += N_BUTTONS_PER_MUX[j];
-      }
-#endif
-
-      for (int i = 0; i < N_BUTTONS; i++) { // Read the buttons connected to the Arduino
-
-#ifdef pin13
-
-        // It will happen if you are using pin 13
-        if (i == pin13index) {
-          buttonCState[i] = !buttonCState[i]; // inverts the pin 13 because it has a pull down resistor instead of a pull up
-        }
-#endif
-
-        if ((millis() - lastDebounceTime[i]) > debounceDelay) {
-
-          if (buttonPState[i] != buttonCState[i]) {
-            lastDebounceTime[i] = millis();
-
-            if (buttonCState[i] == LOW) {
-              // DO STUFF
-              BUTTON_MIDI_CH = i;
-              //Serial.print("Channel ");
-              //Serial.println(BUTTON_MIDI_CH);
-
-            }
-            buttonPState[i] = buttonCState[i];
-          }
-        }
-      }
-      FastLED.show();
-      //      // insert a delay to keep the framerate modest
-      //      FastLED.delay(1000 / FRAMES_PER_SECOND);
-    }
-
-    if (channelMenuOn == true) {
-      setAllLeds(noteOffHue, 30);
-      //Serial.println("menu lights off");
-
-    }
-    channelMenuOn = false;
-    //
-    FastLED.show();
-    //    // insert a delay to keep the framerate modest
-    //    FastLED.delay(1000 / FRAMES_PER_SECOND);
-
-  } //end
-
-  void setAllLeds(byte hue_, byte randomness_) {
-
-    for (int i = 0; i < NUM_LEDS; i++) {
-      byte offset = random(0, randomness_);
-      leds[i].setHue(hue_  + offset);
-    }
   }
 
 #endif

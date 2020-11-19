@@ -22,3 +22,5 @@
     - Update 7: (06/02/20): Velocity Variable
     - Update 8: (06/02/20): Buttons using CC
     - Update 9: (06/08/20): Toggle mode added
+    - Update 10: (11/17/20): Addressable led Midi feedback with FastLed lib (ATmega32U4 only) 
+
