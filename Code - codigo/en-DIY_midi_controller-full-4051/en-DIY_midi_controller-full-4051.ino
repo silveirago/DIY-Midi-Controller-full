@@ -29,8 +29,8 @@
 
 /////////////////////////////////////////////
 // Are you using a multiplexer?
-//#define USING_MUX_4067 1 //* comment if not using a multiplexer 4067, uncomment if using it.
-#define USING_MUX_4051 1 //* comment if not using a multiplexer 4051, uncomment if using it.
+#define USING_MUX_4067 1 //* comment if not using a multiplexer 4067, uncomment if using it.
+//#define USING_MUX_4051 1 //* comment if not using a multiplexer 4051, uncomment if using it.
 
 /////////////////////////////////////////////
 // Are you using encoders?
@@ -82,7 +82,7 @@
 // 4067
 #ifdef USING_MUX_4067
 
-#define N_MUX 2 //* number of multiplexers
+#define N_MUX 6 //* number of multiplexers
 //* Define s0, s1, s2, s3, and x pins
 #define s0 2
 #define s1 3
@@ -90,12 +90,21 @@
 #define s3 5
 #define x1 A1 // analog pin of the first mux
 #define x2 A2 // analog pin of the second mux...
+#define x3 A3 // analog pin of the second mux...
+#define x4 A4 // analog pin of the second mux...
+#define x5 A5 // analog pin of the second mux...
+#define x6 A6 // analog pin of the second mux...
+
 // add more #define and the x number if you need
 
 // Initializes the multiplexer
 Multiplexer4067 mux[N_MUX] = {
   Multiplexer4067(s0, s1, s2, s3, x1), //*
-  Multiplexer4067(s0, s1, s2, s3, x2) //*
+  Multiplexer4067(s0, s1, s2, s3, x2), //*
+  Multiplexer4067(s0, s1, s2, s3, x3),
+  Multiplexer4067(s0, s1, s2, s3, x4),
+  Multiplexer4067(s0, s1, s2, s3, x5),
+  Multiplexer4067(s0, s1, s2, s3, x6),
   // ...
 };
 
