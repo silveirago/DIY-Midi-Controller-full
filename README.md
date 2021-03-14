@@ -23,4 +23,5 @@
     - Update 8: (06/02/20): Buttons using CC
     - Update 9: (06/08/20): Toggle mode added
     - Update 10: (11/17/20): Addressable led Midi feedback with FastLed lib (ATmega32U4 only) 
+    - Update 11: (03/14/21): Tabs; Oled displays, 75HC595 Bit shifter for LED feedback and VU; and many fixes.
 
