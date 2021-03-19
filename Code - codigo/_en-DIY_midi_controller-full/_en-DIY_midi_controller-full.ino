@@ -34,7 +34,7 @@
 
 /////////////////////////////////////////////
 // Are you using a multiplexer?
-//#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
+#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
 
 /////////////////////////////////////////////
 // Are you using encoders?
@@ -64,10 +64,10 @@
 //#define USING_74HC595 1 //* comment if not using 74HC595 Bit Shifter
 
 // Are you using a VU (led meter)?
-//#define USING_VU //* comment if not using a VU
+//#define USING_VU 1//* comment if not using a VU
 
 // Are you using LED note feedback?
-//#define USING_LED_FEEDBACK //* comment if not using a VU
+//#define USING_LED_FEEDBACK 1//* comment if not using a VU
 
 ///////////////////////////////////////////// /////////////////////////////////////////////
 

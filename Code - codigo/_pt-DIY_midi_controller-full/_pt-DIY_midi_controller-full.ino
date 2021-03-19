@@ -22,7 +22,7 @@
 // "TEENSY" se estiver usando uma placa Teensy
 // "DEBUG" se você deseja apenas debugar o código no monitor serial
 
-#define ATMEGA32U4 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
+#define DEBUG 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Você está usando botões?
@@ -34,40 +34,40 @@
 
 /////////////////////////////////////////////
 // Você esstá usando um multiplexer?
-#define USING_MUX 1 //* comente se não estiver usando multiplexers
+//#define USING_MUX 1 //* comente se não estiver usando multiplexers
 
 /////////////////////////////////////////////
 // Você esstá usando encoders?
-#define USING_ENCODER 1 //* comente se não estiver usando encoders
+//#define USING_ENCODER 1 //* comente se não estiver usando encoders
 
 /////////////////////////////////////////////
-// // Você esstá usando um neopixels? (qualquer fita de led endereçável)
+// // Você esstá usando um neopixel? (qualquer fita de led endereçável)
 //#define USING_NEOPIXEL 1 //* comente se não estiver usando neopixels
 
 /////////////////////////////////////////////
 // Você esstá usando Oled Display I2C?
-#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
+//#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
 
 /////////////////////////////////////////////
 // Você está usando bancos que podem ser alternados com 2 botões?
-#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
+//#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
 
 //#define BANKS_FOR_BUTTONS 1
 //#define BANKS_FOR_POTS 1
-#define BANKS_FOR_ENCODERS 1
+//#define BANKS_FOR_ENCODERS 1
 
 /////////////////////////////////////////////
 // Você está usando um bit shifter 74HC595?
-// Abaixo, use "USING_VU" ou "USING_LED_FEEDBACK"
+// Abaixo, use "USING_VU" ou use "USING_LED_FEEDBACK"
 // Use VU para monitorar os níveis de áudio ou feedback de LED para obter feedback de nota
 
 //#define USING_74HC595 1 //* comente se não estiver usando o 74HC595 Bit Shifter
 
 // Você está usando um VU (VU de led)?
-//#define USING_VU //* comente se não estiver usando um VU
+//#define USING_VU 1//* comente se não estiver usando um VU
 
 // Você está usando feedback de LED (notas)?
-//#define USING_LED_FEEDBACK //* comente se não estiver usando VU
+//#define USING_LED_FEEDBACK 1//* comente se não estiver usando VU
 
 ///////////////////////////////////////////// /////////////////////////////////////////////
 
@@ -257,10 +257,10 @@ byte velocity[N_BUTTONS] = {127};
 
 #ifdef USING_POTENTIOMETERS
 
-const byte N_POTS = 2 + 2; //* número total de pots (slide e rotativo). Número de pots no Arduino + número de pots no multiplexer 1 + número de pots no multiplexer 2 ...
+const byte N_POTS = 0 + 2; //* número total de pots (slide e rotativo). Número de pots no Arduino + número de pots no multiplexer 1 + número de pots no multiplexer 2 ...
 
-const byte N_POTS_ARDUINO = 2; //* número de pots conectados diretamente ao Arduino
-const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0, A1}; //* pinos de cada potenciômetro conectado diretamente ao Arduino
+const byte N_POTS_ARDUINO = 0; //* número de pots conectados diretamente ao Arduino
+const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {}; //* pinos de cada potenciômetro conectado diretamente ao Arduino
 
 //#define USING_CUSTOM_CC_N 1 //* comente se não estiver usando NÚMEROS CUSTOM CC, descomente se estiver usando.
 #ifdef USING_CUSTOM_CC_N
@@ -283,7 +283,7 @@ int potMidiCState[N_POTS] = {}; // Estado atual do valor midi
 int potMidiPState[N_POTS] = {}; // Estado anterior do valor midi
 
 const int TIMEOUT = 300; //* Quantidade de tempo que o potenciômetro será lido após exceder o varThreshold
-const int varThreshold = 14; //* Limiar para a variação do sinal do potenciômetro
+const int varThreshold = 20; //* Limiar para a variação do sinal do potenciômetro
 boolean potMoving = true; // Se o potenciômetro está se movendo
 unsigned long PTime[N_POTS] = {}; // Tempo previamente armazenado
 unsigned long timer[N_POTS] = {}; // Armazena o tempo decorrido desde que o cronômetro foi zerado
@@ -408,7 +408,7 @@ byte ledColor4 = 10;
 // VU
 #ifdef USING_VU
 
-const byte N_LED_PER_VU = 7;
+const byte N_LED_PER_VU = 7; // quantidade de led por VU
 byte VuL[N_LED_PER_VU] = {0, 1, 2, 3, 4, 5, 6}; // pinos do Vu da esquerda
 byte VuR[N_LED_PER_VU] = {7, 8, 9, 10, 11, 12, 13}; // pinos do Vu da esquerda
 
