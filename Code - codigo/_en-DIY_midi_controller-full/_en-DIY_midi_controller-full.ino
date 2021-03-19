@@ -60,7 +60,7 @@
 // Are you using a 74HC595 Bit Shifter?
 // Below, use either "USING_VU" or "USING_LED_FEEDBACK"
 // Use VU to monitor audio levels, or LED feedback to get note feedback
- 
+
 //#define USING_74HC595 1 //* comment if not using 74HC595 Bit Shifter
 
 // Are you using a VU (led meter)?
@@ -328,7 +328,7 @@ byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* stores presets to start
   {64, 64}, // ch 14
   {64, 64}, // ch 15
   {64, 64}  // ch 16
-  
+
 };
 
 int lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
@@ -352,13 +352,15 @@ byte CC = 1; //* Lowest MIDI CC to be used - if not using custom CC NUMBER
 
 /////////////////////////////////////////////
 // NEOPIXEL | MIDI CHANNEL MENU
-boolean channelMenuOn = false;
+#ifdef USING_NEOPIXEL
 
+boolean channelMenuOn = false;
 byte midiChMenuColor = 200; //* menu color HUE - 0-255
 byte midiChOnColor = midiChMenuColor + 60; // channel on menu color HUE
-
 byte noteOffHue = 135; //* HUE when the notes are not played - 135 (blue)
 byte noteOnHue = 240; //* HUE of the notes when they are played - 240 (magenta)
+
+#endif // USING_NEOPIXEL
 
 /////////////////////////////////////////////
 // THREADS
@@ -374,9 +376,9 @@ Thread threadBanksWithButtons;
 
 /////////////////////////////////////////////
 // DISPLAY
-byte display_pos_x = 27;
-byte display_pos_y = 7;
-byte display_text_size = 7;
+byte display_pos_x = 27; // pos x
+byte display_pos_y = 7; // pos y
+byte display_text_size = 7; // text font size
 
 /////////////////////////////////////////////
 // 75HC595
@@ -406,10 +408,10 @@ const byte N_LED_PER_VU = 7;
 byte VuL[N_LED_PER_VU] = {0, 1, 2, 3, 4, 5, 6}; // VU left pins
 byte VuR[N_LED_PER_VU] = {7, 8, 9, 10, 11, 12, 13}; // VU right pins
 
-byte VU_MIDI_CH = 10; // channel to listen to the VU -1 
+byte VU_MIDI_CH = 10; // channel to listen to the VU -1
 
 byte vuLcc = 12; // left CC
-byte vuRcc = 13; // right CC 
+byte vuRcc = 13; // right CC
 
 #endif //USING_VU
 
