@@ -112,7 +112,9 @@ void banksWithButtons() {
 
 #endif //DEBUG
 
+#ifdef USING_74HC595
           ShiftPWM.SetAll(0);
+#endif
 
         }
 

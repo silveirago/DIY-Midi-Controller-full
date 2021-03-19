@@ -34,11 +34,11 @@
 
 /////////////////////////////////////////////
 // Você esstá usando um multiplexer?
-//#define USING_MUX 1 //* comente se não estiver usando multiplexers
+#define USING_MUX 1 //* comente se não estiver usando multiplexers
 
 /////////////////////////////////////////////
 // Você esstá usando encoders?
-//#define USING_ENCODER 1 //* comente se não estiver usando encoders
+#define USING_ENCODER 1 //* comente se não estiver usando encoders
 
 /////////////////////////////////////////////
 // // Você esstá usando um neopixels? (qualquer fita de led endereçável)
@@ -46,21 +46,21 @@
 
 /////////////////////////////////////////////
 // Você esstá usando Oled Display I2C?
-//#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
+#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
 
 /////////////////////////////////////////////
 // Você está usando bancos que podem ser alternados com 2 botões?
-//#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
+#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
 
 //#define BANKS_FOR_BUTTONS 1
 //#define BANKS_FOR_POTS 1
-//#define BANKS_FOR_ENCODERS 1
+#define BANKS_FOR_ENCODERS 1
 
 /////////////////////////////////////////////
 // Você está usando um bit shifter 74HC595?
 // Abaixo, use "USING_VU" ou "USING_LED_FEEDBACK"
 // Use VU para monitorar os níveis de áudio ou feedback de LED para obter feedback de nota
- 
+
 //#define USING_74HC595 1 //* comente se não estiver usando o 74HC595 Bit Shifter
 
 // Você está usando um VU (VU de led)?
@@ -175,12 +175,13 @@ Adafruit_SSD1306 display(128, 64);  // Cria o display - tamanho da tela em pixel
 #define s2 5
 #define s3 4
 
-#define x1 A2 // pino analógico do primeiro mux
+#define x1 A2 // pino analógico do primeiro mux (sig)
+
 // adicione mais #define e o número x se precisar
 
 // Inicializa o multiplexer
 Multiplexer4067 mux[N_MUX] = {
-  Multiplexer4067(s0, s1, s2, s3, x1) // O pino SIG onde o multiplexador está conectado
+  Multiplexer4067(s0, s1, s2, s3, x1), // O pino SIG onde o multiplexador está conectado
   // ...
 };
 
@@ -192,12 +193,13 @@ Multiplexer4067 mux[N_MUX] = {
 // BOTÕES
 #ifdef USING_BUTTONS
 
-const byte N_BUTTONS = 4; //*  número total de botões. Número de botões no Arduino + número de botões no multiplexer 1 + número de botões no multiplexer 2 ...
+const byte N_BUTTONS = 0 + 4; //*  número total de botões. Número de botões no Arduino + número de botões no multiplexer 1 + número de botões no multiplexer 2 ...
+
 const byte N_BUTTONS_ARDUINO = 0; //* número de botões conectados diretamente ao Arduino
-const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {}; //* pinos de cada botão conectado diretamente ao Arduino
+const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {}; //* pinos de cada botão conectados diretamente ao Arduino
 
 #ifdef USING_MUX // Preencha se você estiver usando mux, caso contrário, deixe-o
-const byte N_BUTTONS_PER_MUX[N_MUX] = {4}; //* número de botões em cada mux (em ordem)
+const byte N_BUTTONS_PER_MUX[N_MUX] = {4}; //* número total de botões em cada mux (em ordem)
 const byte BUTTON_MUX_PIN[N_MUX][16] = { //* pino de cada botão de cada mux em ordem
 {2, 3, 4, 5}, //* pinos do primeiro mux
 // ...
@@ -220,14 +222,14 @@ const byte CHANNEL_BUTTON_PIN = 8;
 
 //#define USING_CUSTOM_NN 1 // * comentar se não estiver usando NÚMEROS DE NOTA PERSONALIZADOS (escalas), descomente se estiver usando.
 #ifdef USING_CUSTOM_NN
-byte BUTTON_NN[N_BUTTONS] = {36, 40, 44, 47};
+byte BUTTON_NN[N_BUTTONS] = {36, 38};
 
 // * Adicione o NÚMERO DE NOTA de cada botão / interruptor que você deseja
 #endif
 
 //#define USING_BUTTON_CC_N 1 //* comente se não estiver usando o BUTTON CC, descomente se estiver usando.
 #ifdef USING_BUTTON_CC_N // se estiver usando o botão com CC
-byte BUTTON_CC_N[N_BUTTONS] = {1, 3, 5, 6, 7, 18}; //* Adicione o NÚMERO CC de cada botão/switch que desejar
+byte BUTTON_CC_N[N_BUTTONS] = {10, 11}; //* Adicione o NÚMERO CC de cada botão/switch que desejar
 #endif
 
 //#define USING_TOGGLE 1 //* comente se não estiver usando o modo TOGGLE, descomente se estiver usando.
@@ -255,20 +257,20 @@ byte velocity[N_BUTTONS] = {127};
 
 #ifdef USING_POTENTIOMETERS
 
-const byte N_POTS = 2; //* número total de potes (slide e rotativo). Número de pots no Arduino + número de pots no multiplexer 1 + número de pots no multiplexer 2 ...
+const byte N_POTS = 2 + 2; //* número total de pots (slide e rotativo). Número de pots no Arduino + número de pots no multiplexer 1 + número de pots no multiplexer 2 ...
 
-const byte N_POTS_ARDUINO = 0; //* número de pots conectados diretamente ao Arduino
-const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {}; //* pinos de cada potenciômetro conectado diretamente ao Arduino
+const byte N_POTS_ARDUINO = 2; //* número de pots conectados diretamente ao Arduino
+const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0, A1}; //* pinos de cada potenciômetro conectado diretamente ao Arduino
 
-#define USING_CUSTOM_CC_N 1 //* comente se não estiver usando NÚMEROS CUSTOM CC, descomente se estiver usando.
+//#define USING_CUSTOM_CC_N 1 //* comente se não estiver usando NÚMEROS CUSTOM CC, descomente se estiver usando.
 #ifdef USING_CUSTOM_CC_N
-byte POT_CC_N[N_POTS] = {11, 13}; // Adicione o CC NUMBER de cada pote que você quiser
+byte POT_CC_N[N_POTS] = {20, 21}; // Adicione o CC NUMBER de cada pote que você quiser
 #endif
 
 #ifdef USING_MUX
 const byte N_POTS_PER_MUX[N_MUX] = {2}; //* número de pots em cada multiplexador (em ordem)
 const byte POT_MUX_PIN[N_MUX][16] = { //* pinos de cada pot de cada mux na ordem que você quer que eles sejam
-{0, 1} //* pinos do primeiro mux
+{0, 1}, //* pinos do primeiro mux
 // ...
 };
 #endif
@@ -304,9 +306,9 @@ const byte N_ENCODERS = 2; //* número de encoders
 const byte N_ENCODER_PINS = N_ENCODERS * 2; // número de pinos usados pelos codificadores
 const byte N_ENCODER_MIDI_CHANNELS = 16; // número de ENCODER_MIDI_CHs
 
-byte ENCODER_CC_N[N_ENCODERS] = {17, 18}; // Adicione o CC NUMBER de cada encoder que você deseja
+byte ENCODER_CC_N[N_ENCODERS] = {27, 28}; //* Adicione o CC NUMBER de cada encoder que você deseja
 
-Encoder encoder[N_ENCODERS] = {{10, 16}, {14, 15}}; // os dois pinos de cada encoder - Use pinos com interrupts!
+Encoder encoder[N_ENCODERS] = {{10, 16}, {14, 15}}; //* os dois pinos de cada encoder - Use pinos com interrupts!
 
 int encoderMinVal = 0; //* valor mínimo do encoder
 int encoderMaxVal = 127; //* vamor máximo do encoder
@@ -351,13 +353,15 @@ byte CC = 1; //* Menor CC MIDI a ser usado - se não estiver usando NÚMERO CC p
 
 /////////////////////////////////////////////
 // NEOPIXEL | MIDI CHANNEL MENU
-boolean channelMenuOn = false;
+#ifdef USING_NEOPIXEL
 
+boolean channelMenuOn = false;
 byte midiChMenuColor = 200; //* menu color HUE - 0-255
 byte midiChOnColor = midiChMenuColor + 60; // cor em HUE do menu
-
 byte noteOffHue = 135; //* HUE quando as notas não são tocadas - 135 (azul)
 byte noteOnHue = 240; //* HUE das notas quando são tocadas - 240 (magenta)
+
+#endif // USING_NEOPIXEL
 
 /////////////////////////////////////////////////////////////////////
 // THREADS
@@ -373,9 +377,12 @@ Thread threadBanksWithButtons;
 
 /////////////////////////////////////////////
 // DISPLAY
-byte display_pos_x = 27; // pos x
-byte display_pos_y = 7; / pos y
-byte display_text_size = 7; // tamanho da fonte
+#ifdef USING_DISPLAY
+
+byte display_pos_x = 28; //* pos x
+byte display_pos_y = 7; //* pos y
+byte display_text_size = 7; //* tamanho da fonte
+#endif
 
 /////////////////////////////////////////////
 // 75HC595
