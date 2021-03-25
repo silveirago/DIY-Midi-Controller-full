@@ -79,22 +79,22 @@ void buttons() {
 
 #ifndef USING_BUTTON_CC_N // if NOT using button CC
 
-#ifdef USING_CUSTOM_NN
+#ifdef USING_CUSTOM_NN          
 
           // if using custom NOTE numbers
-          MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
+          MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
 #else
 
           // if not using custom NOTE numbers
-          MIDI.sendNoteOn(NOTE + i, velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
+          MIDI.sendNoteOn(NOTE + i, velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
 #endif
 
 #else // if USING button CC
 
           if (buttonCState[i] == LOW) { // only sends note on when button is pressed, nothing when released
-            MIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
+            MIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
           }
-#endif
+#endif // ATMEGA328
 
           /////////////////////////////////////////////
 #elif ATMEGA32U4

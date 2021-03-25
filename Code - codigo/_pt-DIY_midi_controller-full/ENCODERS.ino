@@ -26,7 +26,7 @@ void encoders() {
       // Sends the MIDI CC accordingly to the chosen board
 #ifdef ATMEGA328
       // if using with ATmega328 (uno, mega, nano...)
-      MIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH);
+      MIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH + 1);
 
 #elif ATMEGA32U4
       // if using with ATmega32U4 (micro, pro micro, leonardo...)

@@ -2,7 +2,7 @@ void loop() {
 
 #ifdef ATMEGA32U4
 
-  // Ele lerá mensagens de entrada MIDI se estiver usando o ATMGA32U4
+  // it will read MIDI incoming messages if using ATMEGA32U4
   MIDIread();
 #endif
 
