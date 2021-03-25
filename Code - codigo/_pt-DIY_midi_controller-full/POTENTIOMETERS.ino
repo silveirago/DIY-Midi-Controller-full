@@ -57,15 +57,16 @@ void potentiometers() {
     if (potMoving == true) { // If the potentiometer is still moving, send the change control
       if (potMidiPState[i] != potMidiCState[i]) {
 
+
         // Sends the MIDI CC accordingly to the chosen board
 #ifdef ATMEGA328
         // use if using with ATmega328 (uno, mega, nano...)
 
 #ifdef USING_CUSTOM_CC_N
-        MIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel - custom cc
+        MIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH + 1); // CC number, CC value, midi channel - custom cc
 #else
-        MIDI.sendControlChange(CC + i, potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
-#endif
+        MIDI.sendControlChange(CC + i, potMidiCState[i], POT_MIDI_CH + 1); // CC number, CC value, midi channel
+#endif //ATMEGA328
 
 #elif ATMEGA32U4
         //use if using with ATmega32U4 (micro, pro micro, leonardo...)

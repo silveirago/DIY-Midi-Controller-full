@@ -3,7 +3,8 @@ void setup() {
   // Baud Rate
   // use if using with ATmega328 (uno, mega, nano...)
   // 31250 for MIDI class compliant | 115200 for Hairless MIDI
-  //Serial.begin(115200); //*
+
+  Serial.begin(115200); //*
 
 
 #ifdef DEBUG
