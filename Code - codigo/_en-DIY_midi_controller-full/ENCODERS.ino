@@ -35,7 +35,7 @@ void encoders() {
 
 #elif TEENSY
       // if using with Teensy
-      usbMIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH);
+      usbMIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH + 1);
 
 #elif DEBUG
       Serial.print("Encoder: ");
