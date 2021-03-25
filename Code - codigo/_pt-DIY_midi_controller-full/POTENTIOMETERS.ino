@@ -83,9 +83,9 @@ void potentiometers() {
         //do usbMIDI.sendControlChange if using with Teensy
 
 #ifdef USING_CUSTOM_CC_N
-        usbMIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
+        usbMIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH + 1); // CC number, CC value, midi channel
 #else
-        usbMIDI.sendControlChange(CC + i, potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
+        usbMIDI.sendControlChange(CC + i, potMidiCState[i], POT_MIDI_CH + 1); // CC number, CC value, midi channel
 #endif
 
 #elif DEBUG
