@@ -69,25 +69,35 @@ void banksWithButtons() {
 
           }
 
+#ifdef ATMEGA32U4
           // limits the value to a 16 range
           BUTTON_MIDI_CH %= 16;
           POT_MIDI_CH %= 16;
           ENCODER_MIDI_CH %= 16;
+#endif
+
+#ifdef ATMEGA328
+          // limits the value to a 16 range
+          //int clipValue(int in, int minVal, int maxVal) {
+          BUTTON_MIDI_CH = clipValue(BUTTON_MIDI_CH, 1, 16);
+          POT_MIDI_CH = clipValue(POT_MIDI_CH, 1, 16);
+          ENCODER_MIDI_CH = clipValue(ENCODER_MIDI_CH, 1, 16);
+#endif
 
 
 
 #ifdef USING_DISPLAY
 
 #ifdef BANKS_FOR_BUTTONS
-          printChannel(BUTTON_MIDI_CH + 1); // prints button midi channel in the oled display
+          printChannel(BUTTON_MIDI_CH); // prints button midi channel in the oled display
 #endif
 
 #ifdef BANKS_FOR_POTS
-          printChannel(POT_MIDI_CH + 1); // prints button midi channel in the oled display
+          printChannel(POT_MIDI_CH); // prints button midi channel in the oled display
 #endif
 
 #ifdef BANKS_FOR_ENCODERS
-          printChannel(ENCODER_MIDI_CH + 1); // prints button midi channel in the oled display
+          printChannel(ENCODER_MIDI_CH); // prints button midi channel in the oled display
 #endif
 
 #endif // USING_DISPLAY

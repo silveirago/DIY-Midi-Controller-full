@@ -6,12 +6,18 @@ void loop() {
   MIDIread();
 #endif
 
+#ifdef ATMEGA328
+  MIDI.read();
+#endif
+
 #ifdef USING_BUTTONS
   buttons();
 #endif
 
 #ifdef USING_ENCODER
   encoders();
+  isEncoderMoving();
+
 #endif
 
   cpu.run(); // for threads

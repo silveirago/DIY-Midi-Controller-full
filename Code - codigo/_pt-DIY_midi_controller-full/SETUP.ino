@@ -6,10 +6,28 @@ void setup() {
 
   Serial.begin(115200); //*
 
+  delay(1000);
+  Serial.println("TEST");
+
 
 #ifdef DEBUG
   Serial.println("Debug mode");
   Serial.println();
+#endif
+
+#ifdef ATMEGA328
+
+  POT_MIDI_CH++;
+  BUTTON_MIDI_CH++;
+  ENCODER_MIDI_CH++;
+
+
+  /////////////////////////////////////////////
+  // Midi in
+  MIDI.turnThruOff();
+  MIDI.setHandleControlChange(handleControlChange);
+  MIDI.setHandleNoteOn(handleNoteOn);
+  MIDI.setHandleNoteOff(handleNoteOff);
 #endif
 
 
@@ -172,7 +190,7 @@ void setup() {
   channel = ENCODER_MIDI_CH;
 #endif
 
-  printChannel(channel + 1); // displays the MIDI channel in the display
+  printChannel(channel); // displays the MIDI channel in the display
 
 #endif // USING_DISPLAY
 
@@ -198,5 +216,8 @@ void setup() {
   //ShiftPWM.SetAll(maxBrightness);
 
 #endif // USING_74HC595
+
+
+
 
 }

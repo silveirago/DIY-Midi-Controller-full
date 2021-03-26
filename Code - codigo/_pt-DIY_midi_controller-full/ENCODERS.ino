@@ -26,7 +26,7 @@ void encoders() {
       // Sends the MIDI CC accordingly to the chosen board
 #ifdef ATMEGA328
       // if using with ATmega328 (uno, mega, nano...)
-      MIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH + 1);
+      MIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH);
 
 #elif ATMEGA32U4
       // if using with ATmega32U4 (micro, pro micro, leonardo...)
@@ -35,7 +35,7 @@ void encoders() {
 
 #elif TEENSY
       // if using with Teensy
-      usbMIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH + 1);
+      usbMIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH);
 
 #elif DEBUG
       Serial.print("Encoder: ");
@@ -45,7 +45,7 @@ void encoders() {
       Serial.print(" | ");
       Serial.print("cc: ");
       Serial.print(ENCODER_CC_N[i]);
-      Serial.print(" | value: ");      
+      Serial.print(" | value: ");
       Serial.println(encoderValue[ENCODER_MIDI_CH][i]);
 #endif
 
@@ -68,5 +68,34 @@ void clipEncoderValue(int i, int minVal, int maxVal) {
     encoder[i].write(minVal);
   }
 }
+
+/* When receiving MIDI from the daw the encoder updates itself and send midi back
+  this causes some sort of feedack. This function prevents the encoder to update itself
+  unti it stopped receiving midi from the daw.
+*/
+void isEncoderMoving() {
+
+  for (int i = 0; i < N_ENCODERS; i++) {
+
+    if (encMoved[i] == true) {
+
+      encPTime[i] = millis(); // Stores the previous time
+    }
+
+    encTimer[i] = millis() - encPTime[i]; // Resets the encTimer 11000 - 11000 = 0ms
+
+    if (encTimer[i] < encTIMEOUT) { // If the encTimer is less than the maximum allowed time it means that the encoder is still moving
+      encMoving[i] = true;
+      encMoved[i] = false;
+    }
+    else {
+      if (encMoving[i] == true) {
+        encoder[encoder_n].write(encTempVal);
+        encMoving[i] = false;
+      }
+    }
+  }
+}
+
 
 #endif

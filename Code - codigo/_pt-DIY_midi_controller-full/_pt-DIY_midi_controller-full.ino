@@ -34,11 +34,11 @@
 
 /////////////////////////////////////////////
 // Você esstá usando um multiplexer?
-//#define USING_MUX 1 //* comente se não estiver usando multiplexers
+#define USING_MUX 1 //* comente se não estiver usando multiplexers
 
 /////////////////////////////////////////////
 // Você esstá usando encoders?
-//#define USING_ENCODER 1 //* comente se não estiver usando encoders
+#define USING_ENCODER 1 //* comente se não estiver usando encoders
 
 /////////////////////////////////////////////
 // // Você esstá usando um neopixel? (qualquer fita de led endereçável)
@@ -46,15 +46,15 @@
 
 /////////////////////////////////////////////
 // Você esstá usando Oled Display I2C?
-//#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
+#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
 
 /////////////////////////////////////////////
 // Você está usando bancos que podem ser alternados com 2 botões?
-//#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
+#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
 
-//#define BANKS_FOR_BUTTONS 1
-//#define BANKS_FOR_POTS 1
-//#define BANKS_FOR_ENCODERS 1
+#define BANKS_FOR_BUTTONS 1
+#define BANKS_FOR_POTS 1
+#define BANKS_FOR_ENCODERS 1
 
 /////////////////////////////////////////////
 // Você está usando um bit shifter 74HC595?
@@ -338,6 +338,14 @@ int encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
 // para os canais dos encoders - Usado para bancos diferentes
 
 byte lastEncoderChannel = 0;
+
+unsigned long encPTime[N_ENCODERS] = {0};
+unsigned long encTimer[N_ENCODERS] = {0};
+boolean encMoving[N_ENCODERS] = {false};
+boolean encMoved[N_ENCODERS] = {false};
+int encTIMEOUT = 50;
+byte encoder_n;
+byte encTempVal = 0;
 
 #endif
 /////////////////////////////////////////////

@@ -82,17 +82,17 @@ void buttons() {
 #ifdef USING_CUSTOM_NN          
 
           // if using custom NOTE numbers
-          MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
+          MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
 #else
 
           // if not using custom NOTE numbers
-          MIDI.sendNoteOn(NOTE + i, velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
+          MIDI.sendNoteOn(NOTE + i, velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
 #endif
 
 #else // if USING button CC
 
           if (buttonCState[i] == LOW) { // only sends note on when button is pressed, nothing when released
-            MIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
+            MIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
           }
 #endif // ATMEGA328
 
@@ -134,17 +134,17 @@ void buttons() {
 #ifdef USING_CUSTOM_NN
 
           // if using custom NOTE numbers
-          usbMIDI.sendNoteOn(BUTTON_NN[i], velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
+          usbMIDI.sendNoteOn(BUTTON_NN[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
 #else
 
           // if not using custom NOTE
-          usbMIDI.sendNoteOn(NOTE + i, velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
+          usbMIDI.sendNoteOn(NOTE + i, velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
 #endif
 
 #else // if USING button CC
 
           if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
-            usbMIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], BUTTON_MIDI_CH + 1); // CC number, CC value, midi channel
+            usbMIDI.sendControlChange(BUTTON_CC_N[i], velocity[i], ); // CC number, CC value, midi channel
           }
 #endif
 
