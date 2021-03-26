@@ -22,7 +22,7 @@
 // "TEENSY" if using a Teensy board
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define ATMEGA32U4 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA328 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using buttons?
@@ -34,11 +34,11 @@
 
 /////////////////////////////////////////////
 // Are you using a multiplexer?
-//#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
+#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
 
 /////////////////////////////////////////////
 // Are you using encoders?
-//#define USING_ENCODER 1 //* comment if not using encoders, uncomment if using it.
+#define USING_ENCODER 1 //* comment if not using encoders, uncomment if using it.
 
 /////////////////////////////////////////////
 // Are you using neopixels (any addressable strips)?
@@ -46,15 +46,15 @@
 
 /////////////////////////////////////////////
 // Are you using an I2C Oled Display?
-//#define USING_DISPLAY 1 //* comment if not using an I2C Oled Display.
+#define USING_DISPLAY 1 //* comment if not using an I2C Oled Display.
 
 /////////////////////////////////////////////
 // Are you using banks that can be switched with 2 buttons?
-//#define USING_BANKS_WITH_BUTTONS 1 //* comment if not using banks with buttons.
+#define USING_BANKS_WITH_BUTTONS 1 //* comment if not using banks with buttons.
 
-//#define BANKS_FOR_BUTTONS 1
-//#define BANKS_FOR_POTS 1
-//#define BANKS_FOR_ENCODERS 1
+#define BANKS_FOR_BUTTONS 1
+#define BANKS_FOR_POTS 1
+#define BANKS_FOR_ENCODERS 1
 
 /////////////////////////////////////////////
 // Are you using a 74HC595 Bit Shifter?
@@ -312,22 +312,22 @@ int encoderMinVal = 0; //* encoder minimum value
 int encoderMaxVal = 127; //* encoder max value
 
 byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* stores presets to start your encoders
-  {64, 64}, // ch 1
-  {64, 64}, // ch 2
-  {64, 64}, // ch 3
-  {64, 64}, // ch 4
-  {64, 64}, // ch 5
-  {64, 64}, // ch 6
-  {64, 64}, // ch 7
-  {64, 64}, // ch 8
-  {64, 64}, // ch 9
-  {64, 64}, // ch 10
-  {64, 64}, // ch 11
-  {64, 64}, // ch 12
-  {64, 64}, // ch 13
-  {64, 64}, // ch 14
-  {64, 64}, // ch 15
-  {64, 64}  // ch 16
+  //  {64, 64}, // ch 1
+  //  {64, 64}, // ch 2
+  //  {64, 64}, // ch 3
+  //  {64, 64}, // ch 4
+  //  {64, 64}, // ch 5
+  //  {64, 64}, // ch 6
+  //  {64, 64}, // ch 7
+  //  {64, 64}, // ch 8
+  //  {64, 64}, // ch 9
+  //  {64, 64}, // ch 10
+  //  {64, 64}, // ch 11
+  //  {64, 64}, // ch 12
+  //  {64, 64}, // ch 13
+  //  {64, 64}, // ch 14
+  //  {64, 64}, // ch 15
+  //  {64, 64}  // ch 16
 
 };
 
@@ -337,6 +337,15 @@ int encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
 // for the encoder Channels - Used for different banks
 
 byte lastEncoderChannel = 0;
+
+
+unsigned long encPTime[N_ENCODERS] = {0};
+unsigned long encTimer[N_ENCODERS] = {0};
+boolean encMoving[N_ENCODERS] = {false};
+boolean encMoved[N_ENCODERS] = {false};
+int encTIMEOUT = 50;
+byte encoder_n;
+byte encTempVal = 0;
 
 #endif
 /////////////////////////////////////////////

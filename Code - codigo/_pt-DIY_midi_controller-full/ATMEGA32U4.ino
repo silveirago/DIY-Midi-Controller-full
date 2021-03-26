@@ -28,7 +28,7 @@ void MIDIread() {
       break; //No pending events
 
     case 0x9:
-      handlennOn(
+      handleNoteOn(
         rx.byte1 & 0xF,  //channel
         rx.byte2,        //pitch
         rx.byte3         //velocity
@@ -36,7 +36,7 @@ void MIDIread() {
       break;
 
     case 0x8:
-      handlennOff(
+      handleNoteOff(
         rx.byte1 & 0xF,  //channel
         rx.byte2,        //pitch
         rx.byte3         //velocity
@@ -64,8 +64,18 @@ void MIDIread() {
 
 }
 
+#endif
+
 void handleControlChange(byte channel, byte number, byte value)
 {
+
+  byte encChannelAtmega328 = channel - 1;
+
+  //  Serial.print("ATMEGA328: ");
+  //  Serial.println(channel);
+  //  printChannel(channel);
+
+  encTempVal = value;
 
   byte _channel = channel;
   byte _number = number;
@@ -78,27 +88,28 @@ void handleControlChange(byte channel, byte number, byte value)
 
 #ifdef USING_ENCODER // only happens if encoders are defined in the setup
 
-  byte encoder_n;
-
   // finds which encoder it is judging by its CC
   for (int i = 0; i < N_ENCODERS; i++) {
     if (number == ENCODER_CC_N[i]) {
       encoder_n = i;
 
-      if (ENCODER_MIDI_CH ==  channel) {
-        encoder[encoder_n].write(value);
+      if (channel == ENCODER_MIDI_CH  ) {
+        encMoved[i] = true;
+
       }
+
+#endif
+
+
     }
   }
 
   encoderValue[channel][encoder_n] = value; // stores the incoming CC in the encoder's value
 
 
-#endif // USING_ENCODER
-
 }
 
-void handlennOn(byte channel, byte number, byte value) {
+void handleNoteOn(byte channel, byte number, byte value) {
 
 
   // If yusing neopixel
@@ -132,7 +143,7 @@ void handlennOn(byte channel, byte number, byte value) {
 
 }
 
-void handlennOff(byte channel, byte number, byte value) {
+void handleNoteOff(byte channel, byte number, byte value) {
 
 
   // If yusing neopixel
@@ -167,5 +178,3 @@ void handlennOff(byte channel, byte number, byte value) {
 }
 
 ////////////////////////////////////////////
-
-#endif
