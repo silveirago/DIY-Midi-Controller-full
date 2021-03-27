@@ -38,7 +38,7 @@
 
 /////////////////////////////////////////////
 // Você esstá usando encoders?
-//#define USING_ENCODER 1 //* comente se não estiver usando encoders
+#define USING_ENCODER 1 //* comente se não estiver usando encoders
 
 /////////////////////////////////////////////
 // // Você esstá usando um neopixel? (qualquer fita de led endereçável)
