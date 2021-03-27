@@ -34,11 +34,11 @@
 
 /////////////////////////////////////////////
 // Você esstá usando um multiplexer?
-#define USING_MUX 1 //* comente se não estiver usando multiplexers
+//#define USING_MUX 1 //* comente se não estiver usando multiplexers
 
 /////////////////////////////////////////////
 // Você esstá usando encoders?
-#define USING_ENCODER 1 //* comente se não estiver usando encoders
+//#define USING_ENCODER 1 //* comente se não estiver usando encoders
 
 /////////////////////////////////////////////
 // // Você esstá usando um neopixel? (qualquer fita de led endereçável)
@@ -46,25 +46,25 @@
 
 /////////////////////////////////////////////
 // Você esstá usando Oled Display I2C?
-#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
+//#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
 
 /////////////////////////////////////////////
 // Você está usando bancos que podem ser alternados com 2 botões?
-#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
+//#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
 
-#define BANKS_FOR_BUTTONS 1
-#define BANKS_FOR_POTS 1
-#define BANKS_FOR_ENCODERS 1
+//#define BANKS_FOR_BUTTONS 1
+//#define BANKS_FOR_POTS 1
+//#define BANKS_FOR_ENCODERS 1
 
 /////////////////////////////////////////////
 // Você está usando um bit shifter 74HC595?
 // Abaixo, use "USING_VU" ou use "USING_LED_FEEDBACK"
 // Use VU para monitorar os níveis de áudio ou feedback de LED para obter feedback de nota
 
-#define USING_74HC595 1 //* comente se não estiver usando o 74HC595 Bit Shifter
+//#define USING_74HC595 1 //* comente se não estiver usando o 74HC595 Bit Shifter
 
 // Você está usando um VU (VU de led)?
-#define USING_VU 1//* comente se não estiver usando um VU
+//#define USING_VU 1//* comente se não estiver usando um VU
 
 // Você está usando feedback de LED (notas)?
 //#define USING_LED_FEEDBACK 1//* comente se não estiver usando VU
