@@ -61,10 +61,10 @@
 // Below, use either "USING_VU" or "USING_LED_FEEDBACK"
 // Use VU to monitor audio levels, or LED feedback to get note feedback
 
-//#define USING_74HC595 1 //* comment if not using 74HC595 Bit Shifter
+#define USING_74HC595 1 //* comment if not using 74HC595 Bit Shifter
 
 // Are you using a VU (led meter)?
-//#define USING_VU 1//* comment if not using a VU
+#define USING_VU 1//* comment if not using a VU
 
 // Are you using LED note feedback?
 //#define USING_LED_FEEDBACK 1//* comment if not using a VU
@@ -281,7 +281,7 @@ int potMidiCState[N_POTS] = {}; // Current state of the midi value
 int potMidiPState[N_POTS] = {}; // Previous state of the midi value
 
 const int TIMEOUT = 300; //* Amount of time the potentiometer will be read after it exceeds the varThreshold
-const int varThreshold = 14; //* Threshold for the potentiometer signal variation
+const byte varThreshold = 14; //* Threshold for the potentiometer signal variation
 boolean potMoving = true; // If the potentiometer is moving
 unsigned long PTime[N_POTS] = {}; // Previously stored time
 unsigned long timer[N_POTS] = {}; // Stores the time that has elapsed since the timer was reset
@@ -308,8 +308,8 @@ byte ENCODER_CC_N[N_ENCODERS] = {17, 18}; // Add the CC NUMBER of each encoder y
 
 Encoder encoder[N_ENCODERS] = {{10, 16}, {14, 15}}; // the two pins of each encoder -  Use pins with Interrupts!
 
-int encoderMinVal = 0; //* encoder minimum value
-int encoderMaxVal = 127; //* encoder max value
+byte encoderMinVal = 0; //* encoder minimum value
+byte encoderMaxVal = 127; //* encoder max value
 
 byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* stores presets to start your encoders
   //  {64, 64}, // ch 1
@@ -331,8 +331,8 @@ byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* stores presets to start
 
 };
 
-int lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
-int encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
+byte lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
+byte encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
 
 // for the encoder Channels - Used for different banks
 
@@ -343,7 +343,7 @@ unsigned long encPTime[N_ENCODERS] = {0};
 unsigned long encTimer[N_ENCODERS] = {0};
 boolean encMoving[N_ENCODERS] = {false};
 boolean encMoved[N_ENCODERS] = {false};
-int encTIMEOUT = 50;
+byte encTIMEOUT = 50;
 byte encoder_n;
 byte encTempVal = 0;
 
@@ -407,7 +407,7 @@ byte brightness = 0;
 byte ledColor1 = 255; // 0-255
 byte ledColor2 = 100;
 byte ledColor3 = 180;
-byte ledColor4 = 10;
+//byte ledColor4 = 10;
 
 /////////////////////////////////////////////
 // VU

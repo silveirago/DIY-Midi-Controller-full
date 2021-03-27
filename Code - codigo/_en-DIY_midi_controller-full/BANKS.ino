@@ -128,11 +128,12 @@ void banksWithButtons() {
 
         }
 
+#ifdef USING_ENCODER
 #ifdef BANKS_FOR_ENCODERS // writes the value pre stored in the encoder 
-
         for (int j = 0; j < N_ENCODERS; j++) {
           encoder[j].write(encoderValue[ENCODER_MIDI_CH][j]);
         }
+#endif
 #endif
 
         buttonBankPState[i] = buttonBankCState[i];

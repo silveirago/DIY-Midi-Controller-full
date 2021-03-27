@@ -22,7 +22,7 @@
 // "TEENSY" se estiver usando uma placa Teensy
 // "DEBUG" se você deseja apenas debugar o código no monitor serial
 
-#define ATMEGA32U4 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA328 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Você está usando botões?
@@ -61,10 +61,10 @@
 // Abaixo, use "USING_VU" ou use "USING_LED_FEEDBACK"
 // Use VU para monitorar os níveis de áudio ou feedback de LED para obter feedback de nota
 
-//#define USING_74HC595 1 //* comente se não estiver usando o 74HC595 Bit Shifter
+#define USING_74HC595 1 //* comente se não estiver usando o 74HC595 Bit Shifter
 
 // Você está usando um VU (VU de led)?
-//#define USING_VU 1//* comente se não estiver usando um VU
+#define USING_VU 1//* comente se não estiver usando um VU
 
 // Você está usando feedback de LED (notas)?
 //#define USING_LED_FEEDBACK 1//* comente se não estiver usando VU
@@ -283,7 +283,7 @@ int potMidiCState[N_POTS] = {}; // Estado atual do valor midi
 int potMidiPState[N_POTS] = {}; // Estado anterior do valor midi
 
 const int TIMEOUT = 300; //* Quantidade de tempo que o potenciômetro será lido após exceder o varThreshold
-const int varThreshold = 20; //* Limiar para a variação do sinal do potenciômetro
+const byte varThreshold = 20; //* Limiar para a variação do sinal do potenciômetro
 boolean potMoving = true; // Se o potenciômetro está se movendo
 unsigned long PTime[N_POTS] = {}; // Tempo previamente armazenado
 unsigned long timer[N_POTS] = {}; // Armazena o tempo decorrido desde que o cronômetro foi zerado
@@ -310,8 +310,8 @@ byte ENCODER_CC_N[N_ENCODERS] = {27, 28}; //* Adicione o CC NUMBER de cada encod
 
 Encoder encoder[N_ENCODERS] = {{10, 16}, {14, 15}}; //* os dois pinos de cada encoder - Use pinos com interrupts!
 
-int encoderMinVal = 0; //* valor mínimo do encoder
-int encoderMaxVal = 127; //* vamor máximo do encoder
+byte encoderMinVal = 0; //* valor mínimo do encoder
+byte encoderMaxVal = 127; //* vamor máximo do encoder
 
 byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* armazena presets para o seu encoder
   {64, 64}, // ch 1
@@ -332,8 +332,8 @@ byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* armazena presets para o
   {64, 64}  // ch 16
 };
 
-int lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
-int encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
+byte lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
+byte encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
 
 // para os canais dos encoders - Usado para bancos diferentes
 
@@ -343,7 +343,7 @@ unsigned long encPTime[N_ENCODERS] = {0};
 unsigned long encTimer[N_ENCODERS] = {0};
 boolean encMoving[N_ENCODERS] = {false};
 boolean encMoved[N_ENCODERS] = {false};
-int encTIMEOUT = 50;
+byte encTIMEOUT = 50;
 byte encoder_n;
 byte encTempVal = 0;
 
@@ -410,7 +410,7 @@ byte brightness = 0;
 byte ledColor1 = 255; // 0-255
 byte ledColor2 = 100;
 byte ledColor3 = 180;
-byte ledColor4 = 10;
+//byte ledColor4 = 10;
 
 /////////////////////////////////////////////
 // VU
