@@ -19,7 +19,7 @@ void controlChange(byte channel, byte control, byte value) {
   MidiUSB.sendMIDI(event);
 }
 
-// Functions to RECEIVE MIDI
+// Functions to RECEIVE MIDI (MIDIUSB lib)
 void MIDIread() {
 
   midiEventPacket_t rx = MidiUSB.read();
@@ -69,13 +69,9 @@ void MIDIread() {
 void handleControlChange(byte channel, byte number, byte value)
 {
 
-  byte encChannelAtmega328 = channel - 1;
-
   //  Serial.print("ATMEGA328: ");
   //  Serial.println(channel);
   //  printChannel(channel);
-
-  encTempVal = value;
 
   byte _channel = channel;
   byte _number = number;
@@ -88,6 +84,8 @@ void handleControlChange(byte channel, byte number, byte value)
 
 #ifdef USING_ENCODER // only happens if encoders are defined in the setup
 
+  encTempVal = value;
+
   // finds which encoder it is judging by its CC
   for (int i = 0; i < N_ENCODERS; i++) {
     if (number == ENCODER_CC_N[i]) {
@@ -97,15 +95,11 @@ void handleControlChange(byte channel, byte number, byte value)
         encMoved[i] = true;
 
       }
-
-#endif
-
-
     }
   }
-
   encoderValue[channel][encoder_n] = value; // stores the incoming CC in the encoder's value
 
+#endif
 
 }
 
