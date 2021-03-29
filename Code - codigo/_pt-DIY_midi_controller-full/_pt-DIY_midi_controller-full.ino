@@ -34,11 +34,11 @@
 
 /////////////////////////////////////////////
 // Você esstá usando um multiplexer?
-//#define USING_MUX 1 //* comente se não estiver usando multiplexers
+#define USING_MUX 1 //* comente se não estiver usando multiplexers
 
 /////////////////////////////////////////////
 // Você esstá usando encoders?
-//#define USING_ENCODER 1 //* comente se não estiver usando encoders
+#define USING_ENCODER 1 //* comente se não estiver usando encoders
 
 /////////////////////////////////////////////
 // // Você esstá usando um neopixel? (qualquer fita de led endereçável)
@@ -46,15 +46,15 @@
 
 /////////////////////////////////////////////
 // Você esstá usando Oled Display I2C?
-//#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
+#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
 
 /////////////////////////////////////////////
 // Você está usando bancos que podem ser alternados com 2 botões?
-//#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
+#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
 
-//#define BANKS_FOR_BUTTONS 1
-//#define BANKS_FOR_POTS 1
-//#define BANKS_FOR_ENCODERS 1
+#define BANKS_FOR_BUTTONS 1
+#define BANKS_FOR_POTS 1
+#define BANKS_FOR_ENCODERS 1
 
 /////////////////////////////////////////////
 // Você está usando um bit shifter 74HC595?
@@ -79,7 +79,7 @@
 // If using Fast Led
 #ifdef USING_NEOPIXEL
 
-#include "FastLED.h"
+#include "FastLED.h" // by Daniel Garcia - http://fastled.io
 
 FASTLED_USING_NAMESPACE
 
@@ -306,7 +306,7 @@ const byte N_ENCODERS = 2; //* número de encoders
 const byte N_ENCODER_PINS = N_ENCODERS * 2; // número de pinos usados pelos codificadores
 const byte N_ENCODER_MIDI_CHANNELS = 16; // número de ENCODER_MIDI_CHs
 
-byte ENCODER_CC_N[N_ENCODERS] = {27, 28}; //* Adicione o CC NUMBER de cada encoder que você deseja
+byte ENCODER_CC_N[N_ENCODERS] = {17, 18}; //* Adicione o CC NUMBER de cada encoder que você deseja
 
 Encoder encoder[N_ENCODERS] = {{10, 16}, {14, 15}}; //* os dois pinos de cada encoder - Use pinos com interrupts!
 
@@ -314,22 +314,22 @@ byte encoderMinVal = 0; //* valor mínimo do encoder
 byte encoderMaxVal = 127; //* vamor máximo do encoder
 
 byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* armazena presets para o seu encoder
-  {64, 64}, // ch 1
-  {64, 64}, // ch 2
-  {64, 64}, // ch 3
-  {64, 64}, // ch 4
-  {64, 64}, // ch 5
-  {64, 64}, // ch 6
-  {64, 64}, // ch 7
-  {64, 64}, // ch 8
-  {64, 64}, // ch 9
-  {64, 64}, // ch 10
-  {64, 64}, // ch 11
-  {64, 64}, // ch 12
-  {64, 64}, // ch 13
-  {64, 64}, // ch 14
-  {64, 64}, // ch 15
-  {64, 64}  // ch 16
+//  {64, 64}, // ch 1
+//  {64, 64}, // ch 2
+//  {64, 64}, // ch 3
+//  {64, 64}, // ch 4
+//  {64, 64}, // ch 5
+//  {64, 64}, // ch 6
+//  {64, 64}, // ch 7
+//  {64, 64}, // ch 8
+//  {64, 64}, // ch 9
+//  {64, 64}, // ch 10
+//  {64, 64}, // ch 11
+//  {64, 64}, // ch 12
+//  {64, 64}, // ch 13
+//  {64, 64}, // ch 14
+//  {64, 64}, // ch 15
+//  {64, 64}  // ch 16
 };
 
 byte lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
