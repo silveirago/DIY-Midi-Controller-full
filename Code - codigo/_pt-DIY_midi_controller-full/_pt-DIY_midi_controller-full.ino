@@ -22,7 +22,7 @@
 // "TEENSY" se estiver usando uma placa Teensy
 // "DEBUG" se você deseja apenas debugar o código no monitor serial
 
-#define ATMEGA32U4 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
+#define DEBUG 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Você está usando botões?
@@ -34,11 +34,11 @@
 
 /////////////////////////////////////////////
 // Você esstá usando um multiplexer?
-#define USING_MUX 1 //* comente se não estiver usando multiplexers
+//#define USING_MUX 1 //* comente se não estiver usando multiplexers
 
 /////////////////////////////////////////////
 // Você esstá usando encoders?
-#define USING_ENCODER 1 //* comente se não estiver usando encoders
+//#define USING_ENCODER 1 //* comente se não estiver usando encoders
 
 /////////////////////////////////////////////
 // // Você esstá usando um neopixel? (qualquer fita de led endereçável)
@@ -46,15 +46,15 @@
 
 /////////////////////////////////////////////
 // Você esstá usando Oled Display I2C?
-#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
+//#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
 
 /////////////////////////////////////////////
 // Você está usando bancos que podem ser alternados com 2 botões?
-#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
+//#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
 
-#define BANKS_FOR_BUTTONS 1
-#define BANKS_FOR_POTS 1
-#define BANKS_FOR_ENCODERS 1
+//#define BANKS_FOR_BUTTONS 1
+//#define BANKS_FOR_POTS 1
+//#define BANKS_FOR_ENCODERS 1
 
 /////////////////////////////////////////////
 // Você está usando um bit shifter 74HC595?
@@ -257,10 +257,10 @@ byte velocity[N_BUTTONS] = {127};
 
 #ifdef USING_POTENTIOMETERS
 
-const byte N_POTS = 0 + 2; //* número total de pots (slide e rotativo). Número de pots no Arduino + número de pots no multiplexer 1 + número de pots no multiplexer 2 ...
+const byte N_POTS = 2; //* número total de pots (slide e rotativo). Número de pots no Arduino + número de pots no multiplexer 1 + número de pots no multiplexer 2 ...
 
-const byte N_POTS_ARDUINO = 0; //* número de pots conectados diretamente ao Arduino
-const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {}; //* pinos de cada potenciômetro conectado diretamente ao Arduino
+const byte N_POTS_ARDUINO = 2; //* número de pots conectados diretamente ao Arduino
+const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0, A1}; //* pinos de cada potenciômetro conectado diretamente ao Arduino
 
 //#define USING_CUSTOM_CC_N 1 //* comente se não estiver usando NÚMEROS CUSTOM CC, descomente se estiver usando.
 #ifdef USING_CUSTOM_CC_N
