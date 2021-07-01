@@ -1,7 +1,26 @@
 #ifdef USING_BUTTONS
 
+
 /////////////////////////////////////////////
-// BUTTONS
+// variables you don't need to change
+
+#ifdef USING_BANKS_WITH_BUTTONS
+int buttonBankCState[2] = {0};
+int buttonBankPState[2] = {0};
+#endif
+
+int buttonCState[N_BUTTONS] = {0};        // stores the button current value
+int buttonPState[N_BUTTONS] = {0};        // stores the button previous value
+
+// debounce
+unsigned long lastDebounceTime[N_BUTTONS] = {0};  // the last time the output pin was toggled
+
+// velocity
+byte velocity[N_BUTTONS] = {127};
+
+
+/////////////////////////////////////////////
+// Function
 void buttons() {
 
   // read pins from arduino
@@ -79,7 +98,7 @@ void buttons() {
 
 #ifndef USING_BUTTON_CC_N // if NOT using button CC
 
-#ifdef USING_CUSTOM_NN          
+#ifdef USING_CUSTOM_NN
 
           // if using custom NOTE numbers
           MIDI.sendNoteOn(BUTTON_NN[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel

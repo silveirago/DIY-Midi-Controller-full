@@ -3,6 +3,28 @@
 
 #ifdef USING_ENCODER // only happens if encoders are defined in the setup
 
+
+/////////////////////////////////////////////
+// variables you don't need to change
+
+byte lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
+byte encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
+
+// for the encoder Channels - Used for different banks
+
+byte lastEncoderChannel = 0;
+
+unsigned long encPTime[N_ENCODERS] = {0};
+unsigned long encTimer[N_ENCODERS] = {0};
+boolean encMoving[N_ENCODERS] = {false};
+boolean encMoved[N_ENCODERS] = {false};
+byte encTIMEOUT = 50;
+byte encoder_n;
+byte encTempVal = 0;
+
+
+/////////////////////////////////////////////
+// Function
 void encoders() {
 
   for (int i = 0; i < N_ENCODERS; i++) {
