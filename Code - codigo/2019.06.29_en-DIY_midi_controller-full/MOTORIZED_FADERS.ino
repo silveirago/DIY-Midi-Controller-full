@@ -1,6 +1,28 @@
 #ifdef USING_MOTORIZED_FADERS
 
-//Calibrates the min and max pos_ition of the fader
+/////////////////////////////////////////////
+// variables you don't need to change
+int faderPos[N_M_FADERS] = {0}; // position of the fader
+int faderPPos[N_M_FADERS] = {0}; // previous position of the fader
+int faderMax[N_M_FADERS] = {0};   //Value read by fader's maximum position (0-1023)
+int faderMin[N_M_FADERS] = {0};   //Value read by fader's minimum position (0-1023)
+
+
+// Midi
+byte pFaderInVal[16][N_M_FADERS] = {0};
+byte pFaderPBInVal[N_M_FADERS] = {0}; // Pitch bend for Mackie
+
+// Cap Sense
+boolean isTouched[N_M_FADERS] = {false}; // Is the fader currently being touched?
+boolean pIsTouched[N_M_FADERS] = {false}; // previous Is the fader currently being touched?
+
+long touchLine[N_M_FADERS] = {0};
+
+unsigned long capTimeNow[N_M_FADERS] = {0};
+
+/////////////////////////////////////////////
+// Functions
+
 void calibrateFader(byte index_) {
 
   int reading;

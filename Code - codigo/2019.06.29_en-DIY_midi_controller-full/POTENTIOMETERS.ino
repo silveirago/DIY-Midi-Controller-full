@@ -1,9 +1,45 @@
 #ifdef USING_POTENTIOMETERS
 
+/////////////////////////////////////////////
+// variables you don't need to change
 int reading;
 
+// Responsive Analog Read
+float snapMultiplier = 0.01; // (0.0 - 1.0) - Increase for faster, but less smooth reading
+ResponsiveAnalogRead responsivePot[N_POTS] = {}; // creates an array for the responsive pots. It gets filled in the Setup.
+
+int potCState[N_POTS] = {}; // Current state of the pot
+int potPState[N_POTS] = {}; // Previous state of the pot
+int potVar = 0; // Difference between the current and previous state of the pot
+
+int potMidiCState[N_POTS] = {}; // Current state of the midi value
+int potMidiPState[N_POTS] = {}; // Previous state of the midi value
+
+#ifdef USING_HIGH_RES_FADERS
+// Use this to send CC using 2 bytes (14 bit res)
+unsigned int highResFader = 0; // stores the high res val
+byte faderMSB = 0; // Most Significant Byte
+byte faderLSB = 0; // Least Significant Byte
+byte pFaderLSB = 0; // Previous Most Significant Byte
+#endif
+
+#ifdef USING_REMOTE_SCRIPT
+int PBVal[N_POTS] = {};
+#endif
+
+boolean potMoving = true; // If the potentiometer is moving
+unsigned long PTime[N_POTS] = {}; // Previously stored time
+unsigned long timer[N_POTS] = {}; // Stores the time that has elapsed since the timer was reset
+
+// one pole filter
+// y[n] = A0 * x[n] + B1 * y[n-1];
+// A = 0.15 and B = 0.85
+float filterA = 0.3;
+float filterB = 0.7;
+
+
 /////////////////////////////////////////////
-// POTENTIOMETERS
+// Function
 void potentiometers() {
 
   // reads the pins from arduino

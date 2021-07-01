@@ -225,14 +225,16 @@ const byte BUTTON_MUX_PIN[N_MUX][16] = { //* pin of each button of each mux in o
 {2, 3, 4, 5}, //* pins of the first mux
 // ...
 };
-#endif
+
+int buttonMuxThreshold = 300;
+
+#endif //USING_MUX
 
 #ifdef USING_BANKS_WITH_BUTTONS
 
 const byte BANK_BUTTON_PIN[2] = {16, 10}; //* first will decrease MIDI chennel and second will increase
-int buttonBankCState[2] = {0};
-int buttonBankPState[2] = {0};
-#endif
+
+#endif //USING_BANKS_WITH_BUTTONS
 
 // it will happen if you are using neo pixel
 // this button will open the menu so you can change the MIDI channel
@@ -243,9 +245,8 @@ const byte CHANNEL_BUTTON_PIN = 8;
 
 //#define USING_CUSTOM_NN 1 //* comment if not using CUSTOM NOTE NUMBERS (scales), uncomment if using it.
 #ifdef USING_CUSTOM_NN
-byte BUTTON_NN[N_BUTTONS] = {36, 40, 44, 47};
-
 //* Add the NOTE NUMBER of each button/switch you want
+byte BUTTON_NN[N_BUTTONS] = {36, 40, 44, 47};
 #endif
 
 //#define USING_BUTTON_CC_N 1 //* comment if not using BUTTON CC, uncomment if using it.
@@ -256,22 +257,15 @@ byte BUTTON_CC_N[N_BUTTONS] = {1, 3, 5, 6, 7, 18}; //* Add the CC NUMBER of each
 //#define USING_TOGGLE 1 //* comment if not using BUTTON TOGGLE mode, uncomment if using it.
 // With toggle mode on, when you press the button once it sends a note on, when you press it again it sends a note off
 
-int buttonMuxThreshold = 300;
-
-int buttonCState[N_BUTTONS] = {0};        // stores the button current value
-int buttonPState[N_BUTTONS] = {0};        // stores the button previous value
 
 //#define pin13 1 // uncomment if you are using pin 13 (pin with led), or comment the line if it is not
 byte pin13index = 12; //* put the index of the pin 13 of the buttonPin[] array if you are using, if not, comment
 
 // debounce
-unsigned long lastDebounceTime[N_BUTTONS] = {0};  // the last time the output pin was toggled
 unsigned long debounceDelay = 5;    //* the debounce time; increase if the output flickers
 
-// velocity
-byte velocity[N_BUTTONS] = {127};
-
 #endif // USING_BUTTONS
+
 
 /////////////////////////////////////////////
 // POTENTIOMETERS
@@ -296,47 +290,16 @@ const byte POT_MUX_PIN[N_MUX][16] = { //* pins of each pot of each mux in the or
 };
 #endif
 
-// Responsive Analog Read
-float snapMultiplier = 0.01; // (0.0 - 1.0) - Increase for faster, but less smooth reading
-ResponsiveAnalogRead responsivePot[N_POTS] = {}; // creates an array for the responsive pots. It gets filled in the Setup.
-
-int potCState[N_POTS] = {}; // Current state of the pot
-int potPState[N_POTS] = {}; // Previous state of the pot
-int potVar = 0; // Difference between the current and previous state of the pot
-
-int potMidiCState[N_POTS] = {}; // Current state of the midi value
-int potMidiPState[N_POTS] = {}; // Previous state of the midi value
-
-#ifdef USING_HIGH_RES_FADERS
-// Use this to send CC using 2 bytes (14 bit res)
-unsigned int highResFader = 0; // stores the high res val
-byte faderMSB = 0; // Most Significant Byte
-byte faderLSB = 0; // Least Significant Byte
-byte pFaderLSB = 0; // Previous Most Significant Byte
-#endif
-
-#ifdef USING_REMOTE_SCRIPT
-int PBVal[N_POTS] = {};
-#endif
-
 const int TIMEOUT = 300; //* Amount of time the potentiometer will be read after it exceeds the varThreshold
 const byte varThreshold = 2; //* Threshold for the potentiometer signal variation
-boolean potMoving = true; // If the potentiometer is moving
-unsigned long PTime[N_POTS] = {}; // Previously stored time
-unsigned long timer[N_POTS] = {}; // Stores the time that has elapsed since the timer was reset
 
 // put here the min and max reading in the potCState
 // in the potMin put a little bit more and in the potMax put a little bit less
 int potMin = 95;
 int potMax = 970;
 
-// one pole filter
-// y[n] = A0 * x[n] + B1 * y[n-1];
-// A = 0.15 and B = 0.85
-float filterA = 0.3;
-float filterB = 0.7;
+#endif // USING_POTENTIOMETERS
 
-#endif USING_POTENTIOMETERS
 
 /////////////////////////////////////////////
 // ENCODERS
@@ -375,24 +338,8 @@ byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* stores presets to start
 
 };
 
-byte lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
-byte encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
+#endif //USING_ENCODER
 
-// for the encoder Channels - Used for different banks
-
-byte lastEncoderChannel = 0;
-
-
-unsigned long encPTime[N_ENCODERS] = {0};
-unsigned long encTimer[N_ENCODERS] = {0};
-boolean encMoving[N_ENCODERS] = {false};
-boolean encMoved[N_ENCODERS] = {false};
-byte encTIMEOUT = 50;
-byte encoder_n;
-byte encTempVal = 0;
-
-#endif
-/////////////////////////////////////////////
 
 /////////////////////////////////////////////
 // MIDI CHANNEL
@@ -427,11 +374,13 @@ Thread threadChannelMenu; // thread to control the pots
 Thread threadBanksWithButtons;
 #endif
 
+
 /////////////////////////////////////////////
 // DISPLAY
 byte display_pos_x = 27; // pos x
 byte display_pos_y = 7; // pos y
 byte display_text_size = 7; // text font size
+
 
 /////////////////////////////////////////////
 // 75HC595
@@ -452,6 +401,7 @@ byte ledColor1 = 255; // 0-255
 byte ledColor2 = 100;
 byte ledColor3 = 180;
 //byte ledColor4 = 10;
+
 
 /////////////////////////////////////////////
 // VU
@@ -475,6 +425,7 @@ byte ledPin[numOutputs] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 #endif //USING_LED_FEEDBACK
 #endif // USING_74HC595
 
+
 /////////////////////////////////////////////
 // MOTORIZED FADERS
 #ifdef USING_MOTORIZED_FADERS
@@ -485,40 +436,24 @@ const byte motorDownPin[N_M_FADERS] = {4};   //H-Bridge control to make the moto
 const byte motorUpPin[N_M_FADERS] = {5};   //H-Bridge control to make the motor go up
 const byte faderSpeedPin[N_M_FADERS] = {9}; // motor speed pin (PWM)
 
-//Variables
-int faderPos[N_M_FADERS] = {0}; // position of the fader
-int faderPPos[N_M_FADERS] = {0}; // previous position of the fader
-int faderMax[N_M_FADERS] = {0};   //Value read by fader's maximum position (0-1023)
-int faderMin[N_M_FADERS] = {0};   //Value read by fader's minimum position (0-1023)
-const byte motorStopPoint = 18; // motor will stop X values before it reaches its goal. Increase to avoid jittery (it will be less precise).
-
-// Midi
-byte pFaderInVal[16][N_M_FADERS] = {0};
-byte pFaderPBInVal[N_M_FADERS] = {0}; // Pitch bend for Mackie
-
 byte faderSpeed[N_M_FADERS] = {240}; // 0-255
 byte faderSpeedMin = 150; // 0-255 - 140?
 byte faderSpeedMax = 255; // 0-255 -  250?
 
+const byte motorStopPoint = 18; // motor will stop X values before it reaches its goal. Increase to avoid jittery (it will be less precise).
+
 // Capacitive Sensor - Touch Pin
-//CapacitiveSensor   capSense = CapacitiveSensor(7, 8);       // 10M resistor between pins 7 & 8, pin 2 is sensor pin, add a wire and or foil if desired
+// 10M resistor between pins 7 & 8, pin 2 is sensor pin, add a wire and or foil if desired
 CapacitiveSensor capSense[N_M_FADERS] = {
   CapacitiveSensor(7, 8)
 }; // capSense = CapacitiveSensor(7, 8)
 
 const int touchSendPin[N_M_FADERS] = {7};   // Send pin for Capacitance Sensing Circuit (Digital 7)
 const int touchReceivePin[N_M_FADERS] = {8};   // Receive pin for Capacitance Sensing Circuit (Digital 8)
-boolean isTouched[N_M_FADERS] = {false}; // Is the fader currently being touched?
-boolean pIsTouched[N_M_FADERS] = {false}; // previous Is the fader currently being touched?
 
-long touchLine[N_M_FADERS] = {0};
 byte capSenseSpeed = 15; // number of samples
 int capSensitivity = 150; // touch threshold
 
-unsigned long capTimeNow[N_M_FADERS] = {0};
 int capTimeout = 500;
-
-//volatile bool touched  = false; //Is the fader currently being touched?
-
 
 #endif // USING_MOTORIZED_FADERS
