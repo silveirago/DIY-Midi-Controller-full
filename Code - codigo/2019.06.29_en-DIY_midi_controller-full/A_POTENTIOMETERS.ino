@@ -2,18 +2,18 @@
 
 /////////////////////////////////////////////
 // variables you don't need to change
-int reading;
+int reading = 0;
 
 // Responsive Analog Read
 float snapMultiplier = 0.01; // (0.0 - 1.0) - Increase for faster, but less smooth reading
 ResponsiveAnalogRead responsivePot[N_POTS] = {}; // creates an array for the responsive pots. It gets filled in the Setup.
 
-int potCState[N_POTS] = {}; // Current state of the pot
-int potPState[N_POTS] = {}; // Previous state of the pot
+int potCState[N_POTS] = {0}; // Current state of the pot
+int potPState[N_POTS] = {0}; // Previous state of the pot
 int potVar = 0; // Difference between the current and previous state of the pot
 
-int potMidiCState[N_POTS] = {}; // Current state of the midi value
-int potMidiPState[N_POTS] = {}; // Previous state of the midi value
+int potMidiCState[N_POTS] = {0}; // Current state of the midi value
+int potMidiPState[N_POTS] = {0}; // Previous state of the midi value
 
 #ifdef USING_HIGH_RES_FADERS
 // Use this to send CC using 2 bytes (14 bit res)
@@ -24,18 +24,18 @@ byte pFaderLSB = 0; // Previous Most Significant Byte
 #endif
 
 #ifdef USING_REMOTE_SCRIPT
-int PBVal[N_POTS] = {};
+int PBVal[N_POTS] = {0};
 #endif
 
 boolean potMoving = true; // If the potentiometer is moving
-unsigned long PTime[N_POTS] = {}; // Previously stored time
-unsigned long timer[N_POTS] = {}; // Stores the time that has elapsed since the timer was reset
+unsigned long PTime[N_POTS] = {0}; // Previously stored time
+unsigned long timer[N_POTS] = {0}; // Stores the time that has elapsed since the timer was reset
 
 // one pole filter
 // y[n] = A0 * x[n] + B1 * y[n-1];
 // A = 0.15 and B = 0.85
-float filterA = 0.3;
-float filterB = 0.7;
+//float filterA = 0.3;
+//float filterB = 0.7;
 
 
 /////////////////////////////////////////////
@@ -93,14 +93,17 @@ void potentiometers() {
     highResFader = map(potCState[i], faderMin[i], faderMax[i], 0, 16383); // converts the 10bit range to 14bit (it will skip some values on 14bit)
     faderMSB = highResFader / 128; // Most Sigficant Byte
     faderLSB = highResFader % 128; // Least Sigficant Byte
-#else
+    
+#else // if not USING_MOTORIZED_FADERS
+
     highResFader = map(potCState[i], potMin, potMax, 0, 16383); // converts the 10bit range to 14bit (it will skip some values on 14bit)
     faderMSB = highResFader / 128; // Most Sigficant Byte
     faderLSB = highResFader % 128; // Least Sigficant Byte
-#endif
+#endif // USING_MOTORIZED_FADERS
+
 #endif // USING_HIGH_RES_FADERS
 
-#ifdef USING_MACKIE // if using Mackie
+#ifdef USING_REMOTE_SCRIPT // if using Remote Script
     PBVal[i] = map(potCState[i], faderMin[i], faderMax[i] , 0, 16383);
 
     if (PBVal[i] < 0) {
@@ -109,7 +112,7 @@ void potentiometers() {
     if (PBVal[i] > 16383) {
       PBVal[i] = 16383;
     }
-#endif // USING_MACKIE
+#endif // USING_REMOTE_SCRIPT
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -151,38 +154,37 @@ void potentiometers() {
 
 #ifdef USING_CUSTOM_CC_N
 
-#ifndef USING_HIGH_RES_FADERS // if NOT def
-          MIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel - custom cc
-#endif // USING_HIGH_RES_FADERS
-
 #ifdef USING_HIGH_RES_FADERS // if def
 
           MIDI.sendControlChange(POT_CC_N[i], faderMSB, POT_MIDI_CH); // MSB
           MIDI.sendControlChange(POT_CC_N[i] + 32, faderLSB, POT_MIDI_CH); // LSB
-
+#else
+          MIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel - custom cc
 #endif // USING_HIGH_RES_FADERS
 
-#else // USING_CUSTOM_CC_N
 
-#ifndef USING_HIGH_RES_FADERS // if NOT def
-          MIDI.sendControlChange(CC + i, potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
-#endif // USING_HIGH_RES_FADERS
+#else // if not USING_CUSTOM_CC_N
+
 
 #ifdef USING_HIGH_RES_FADERS // if def
 
           MIDI.sendControlChange(CC + i, faderMSB, POT_MIDI_CH); // MSB
           MIDI.sendControlChange(CC + i + 32, faderLSB, POT_MIDI_CH); // LSB
 
+#else // if not USING_HIGH_RES_FADERS
+
+          MIDI.sendControlChange(CC + i, potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
+
 #endif // USING_HIGH_RES_FADERS
 
-#endif //ATMEGA328
+#endif //USING_CUSTOM_CC_N
 
 
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #elif ATMEGA32U4 //use if using with ATmega32U4 (micro, pro micro, leonardo...)
 
-#ifdef USING_MACKIE // if USING Mackie protocol
+#ifdef USING_REMOTE_SCRIPT // if USING Remote Script protocol
           pitchBend(POT_MIDI_CH + i, PBVal[i]);
           MidiUSB.flush();
 
@@ -203,7 +205,7 @@ void potentiometers() {
           MidiUSB.flush();
 #endif // USING_CUSTOM_CC_N
 
-#endif // NOT USING_MACKIE
+#endif // NOT USING_REMOTE_SCRIPT
 
 
           //#endif //use if using with ATmega32U4 (micro, pro micro, leonardo...)
@@ -212,46 +214,46 @@ void potentiometers() {
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #elif TEENSY
-//do usbMIDI.sendControlChange if using with Teensy
+          //do usbMIDI.sendControlChange if using with Teensy
 
 #ifdef USING_CUSTOM_CC_N
-usbMIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
+          usbMIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
 #else
-usbMIDI.sendControlChange(CC + i, potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
+          usbMIDI.sendControlChange(CC + i, potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
 #endif
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #elif DEBUG
-Serial.print("Pot: ");
-Serial.print(i);
-Serial.print("  |  ch: ");
-Serial.print(POT_MIDI_CH);
-Serial.print("  |  cc: ");
+          Serial.print("Pot: ");
+          Serial.print(i);
+          Serial.print("  |  ch: ");
+          Serial.print(POT_MIDI_CH);
+          Serial.print("  |  cc: ");
 #ifdef USING_CUSTOM_CC_N
-Serial.print(POT_CC_N[i]);
+          Serial.print(POT_CC_N[i]);
 #else
-Serial.print(CC + i);
+          Serial.print(CC + i);
 #endif
-Serial.print("  |  value: ");
-Serial.print(potMidiCState[i]);
-Serial.print("  |  Responsive Value: ");
-Serial.print(responsivePot[i].getValue());
+          Serial.print("  |  value: ");
+          Serial.print(potMidiCState[i]);
+          Serial.print("  |  Responsive Value: ");
+          Serial.print(responsivePot[i].getValue());
 
 #ifdef USING_HIGH_RES_FADERS // if def
-Serial.print("  | |  High Res Fader: ");
-Serial.print(highResFader);
-Serial.print("  MSB: ");
-Serial.print(faderMSB);
-Serial.print("  LSB: ");
-Serial.print(faderLSB);
+          Serial.print("  | |  High Res Fader: ");
+          Serial.print(highResFader);
+          Serial.print("  MSB: ");
+          Serial.print(faderMSB);
+          Serial.print("  LSB: ");
+          Serial.print(faderLSB);
 #endif
 
-#ifdef USING_MACKIE // if def
-Serial.print("  |  Pitch Bend Val: ");
-Serial.print(PBVal[i]);
+#ifdef USING_REMOTE_SCRIPT // if def
+          Serial.print("  |  Pitch Bend Val: ");
+          Serial.print(PBVal[i]);
 #endif
-Serial.println();
+          Serial.println();
 #endif
 
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
