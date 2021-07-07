@@ -6,8 +6,7 @@ void setup() {
 
   Serial.begin(115200); //*
 
-  delay(1000);
-  Serial.println("TEST");
+  delay(100);
 
 
 #ifdef DEBUG
@@ -80,19 +79,24 @@ void setup() {
 #endif //USING_BUTTONS
   ////////////////////////////////////
 
+
   //////////////////////////////////////
   // Potentiometer
 
 #ifdef USING_POTENTIOMETERS
 
   // Initialize pots with pull up resistors
-  for (int i = 0; i < N_POTS_ARDUINO; i++) {
-    pinMode(POT_ARDUINO_PIN[i], INPUT_PULLUP);
+  //  for (int i = 0; i < N_POTS_ARDUINO; i++) {
+  //    pinMode(POT_ARDUINO_PIN[i], INPUT_PULLUP);
+  //
+  //  }
+
+  for (int i = 0; i < N_POTS; i++) {
+    responsivePot[i] = ResponsiveAnalogRead(0, true, snapMultiplier);
   }
 
 #endif
   ////////////////////////////////////
-
 
 
   /////////////////////////////////////////////
@@ -115,7 +119,7 @@ void setup() {
 #ifdef USING_POTENTIOMETERS
 
   // Potentiometers
-  threadPotentiometers.setInterval(15); // every how many millisiconds
+  threadPotentiometers.setInterval(5); // every how many millisiconds
   threadPotentiometers.onRun(potentiometers); // the function that will be added to the thread
   cpu.add(&threadPotentiometers); // add every thread here
 #endif
@@ -176,21 +180,21 @@ void setup() {
   //display.setFont(&FreeMono9pt7b);  // Set a custom font
   //display.setFont(&FreeSansBoldOblique9pt7b);  // Set a custom font
 
-  byte channel;
+  byte tempChannel;
 
 #ifdef BANKS_FOR_BUTTONS
-  channel = BUTTON_MIDI_CH;
+  tempChannel = BUTTON_MIDI_CH;
 #endif
 
 #ifdef BANKS_FOR_POTS
-  channel = POT_MIDI_CH;
+  tempChannel = POT_MIDI_CH;
 #endif
 
 #ifdef BANKS_FOR_ENCODERS
-  channel = ENCODER_MIDI_CH;
+  tempChannel = ENCODER_MIDI_CH;
 #endif
 
-  printChannel(channel); // displays the MIDI channel in the display
+  printChannel(tempChannel); // displays the MIDI channel in the display
 
 #endif // USING_DISPLAY
 
@@ -217,7 +221,26 @@ void setup() {
 
 #endif // USING_74HC595
 
+  /////////////////////////////////////////////
+  // MOTORIZED FADERS
+#ifdef USING_MOTORIZED_FADERS
 
+  for (int i = 0; i < N_M_FADERS; i++) {
+    pinMode (motorUpPin[i], OUTPUT);
+    pinMode (motorDownPin[i], OUTPUT);
+    pinMode (faderSpeedPin[i], OUTPUT);
+    analogWrite(faderSpeedPin[i], 255);
 
+    //capSense[i] = CapacitiveSensor(touchSendPin[i], touchReceivePin[i]);
+
+    calibrateFader(i);
+  }
+
+#ifdef DEBUG
+  Serial.println("Faders Calibrated");
+  Serial.println();
+#endif
+
+#endif
 
 }

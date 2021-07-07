@@ -22,7 +22,7 @@
 // "TEENSY" if using a Teensy board
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define DEBUG 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA32U4 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using buttons?
@@ -70,10 +70,10 @@
 //#define USING_LED_FEEDBACK 1 //* comment if not using a VU
 
 // Are you using high res faders?
-//#define USING_HIGH_RES_FADERS 1 //* comment if not using high res faders (any fader can be high res)
+#define USING_HIGH_RES_FADERS 1 //* comment if not using high res faders (any fader can be high res)
 
 // Are you using Motorized Faders?
-//#define USING_MOTORIZED_FADERS 1 //* comment if not using a motorized fader
+#define USING_MOTORIZED_FADERS 1 //* comment if not using a motorized fader
 
 // Are you using the Mackie Protocol?
 //#define USING_REMOTE_SCRIPT 1
@@ -441,6 +441,26 @@ byte faderSpeedMin = 150; // 0-255 - 140?
 byte faderSpeedMax = 255; // 0-255 -  250?
 
 const byte motorStopPoint = 18; // motor will stop X values before it reaches its goal. Increase to avoid jittery (it will be less precise).
+
+/////////////////////////////////////////////
+// variables you don't need to change
+int faderPos[N_M_FADERS] = {0}; // position of the fader
+int faderPPos[N_M_FADERS] = {0}; // previous position of the fader
+int faderMax[N_M_FADERS] = {0};   //Value read by fader's maximum position (0-1023)
+int faderMin[N_M_FADERS] = {0};   //Value read by fader's minimum position (0-1023)
+
+
+// Midi
+byte pFaderInVal[16][N_M_FADERS] = {0};
+byte pFaderPBInVal[N_M_FADERS] = {0}; // Pitch bend for Mackie
+
+// Cap Sense
+boolean isTouched[N_M_FADERS] = {false}; // Is the fader currently being touched?
+boolean pIsTouched[N_M_FADERS] = {false}; // previous Is the fader currently being touched?
+
+long touchLine[N_M_FADERS] = {0};
+
+unsigned long capTimeNow[N_M_FADERS] = {0};
 
 // Capacitive Sensor - Touch Pin
 // 10M resistor between pins 7 & 8, pin 2 is sensor pin, add a wire and or foil if desired
