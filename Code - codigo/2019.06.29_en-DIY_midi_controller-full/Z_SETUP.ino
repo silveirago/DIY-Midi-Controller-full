@@ -4,7 +4,7 @@ void setup() {
   // use if using with ATmega328 (uno, mega, nano...)
   // 31250 for MIDI class compliant | 115200 for Hairless MIDI
 
-  Serial.begin(115200); //*
+  Serial1.begin(115200); //*
 
   delay(100);
 
@@ -23,6 +23,7 @@ void setup() {
 
   /////////////////////////////////////////////
   // Midi in
+  MIDI.begin();
   MIDI.turnThruOff();
   MIDI.setHandleControlChange(handleControlChange);
   MIDI.setHandleNoteOn(handleNoteOn);

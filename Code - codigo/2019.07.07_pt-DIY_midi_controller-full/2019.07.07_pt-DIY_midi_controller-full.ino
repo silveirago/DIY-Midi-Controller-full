@@ -336,12 +336,12 @@ byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* armazena presets para o
 
 /////////////////////////////////////////////
 // MIDI CHANNEL
-byte POT_MIDI_CH = 0; //* MIDI channel to be used
+byte POT_MIDI_CH = 0; //* Canal MIDI a ser usado
 byte BUTTON_MIDI_CH = 0;
 byte ENCODER_MIDI_CH = 0;
 
-byte NOTE = 36; //* Lowest NOTE to be used - if not using custom NOTE NUMBER
-byte CC = 1; //* Lowest MIDI CC to be used - if not using custom CC NUMBER
+byte NOTE = 36; //* NOTA mais baixa a ser usada - se não estiver usando NÚMERO DE NOTA personalizado
+byte CC = 1; //* Menor CC MIDI a ser usado - se não estiver usando NÚMERO CC personalizado
 
 /////////////////////////////////////////////
 // NEOPIXEL | MIDI CHANNEL MENU
@@ -349,20 +349,20 @@ byte CC = 1; //* Lowest MIDI CC to be used - if not using custom CC NUMBER
 
 boolean channelMenuOn = false;
 byte midiChMenuColor = 200; //* menu color HUE - 0-255
-byte midiChOnColor = midiChMenuColor + 60; // channel on menu color HUE
-byte noteOffHue = 135; //* HUE when the notes are not played - 135 (blue)
+byte midiChOnColor = midiChMenuColor + 60; // canal na cor do menu HUE
+byte noteOffHue = 135; //* HUE quando as notas não são tocadas - 135 (azul)
 byte noteOnHue = 240; //* HUE of the notes when they are played - 240 (magenta)
 
 #endif // USING_NEOPIXEL
 
 /////////////////////////////////////////////
 // THREADS
-// This libs create a "fake" thread. This means you can make something happen every x milisseconds
-// We can use that to read something in an interval, instead of reading it every single loop
-// In this case we'll read the potentiometers in a thread, making the reading of the buttons faster
-ThreadController cpu; //thread master, where the other threads will be added
-Thread threadPotentiometers; // thread to control the pots
-Thread threadChannelMenu; // thread to control the pots
+// Este libs cria uma thread "falsa". Isso significa que você pode fazer algo acontecer a cada x milissegundos
+// Podemos usar isso para ler algo em um intervalo, em vez de ler a cada loop
+// Neste caso vamos ler os potenciômetros em um thread, tornando a leitura dos botões mais rápida
+ThreadController cpu; // thread master, onde os outros threads serão adicionados
+Thread threadPotentiometers; // thread para controlar os pots
+Thread threadChannelMenu; // thread to control o menu
 #ifdef USING_BANKS_WITH_BUTTONS
 Thread threadBanksWithButtons;
 #endif
@@ -401,13 +401,13 @@ byte ledColor3 = 180;
 #ifdef USING_VU
 
 const byte N_LED_PER_VU = 7;
-byte VuL[N_LED_PER_VU] = {0, 1, 2, 3, 4, 5, 6}; // VU left pins
-byte VuR[N_LED_PER_VU] = {7, 8, 9, 10, 11, 12, 13}; // VU right pins
+byte VuL[N_LED_PER_VU] = {0, 1, 2, 3, 4, 5, 6}; // VU esquerda pins
+byte VuR[N_LED_PER_VU] = {7, 8, 9, 10, 11, 12, 13}; // VU direita pins
 
-byte VU_MIDI_CH = 10; // channel to listen to the VU -1
+byte VU_MIDI_CH = 10; // channel para ouvir o VU
 
-byte vuLcc = 12; // left CC
-byte vuRcc = 13; // right CC
+byte vuLcc = 12; // esquerda CC
+byte vuRcc = 13; // direta CC
 
 #endif //USING_VU
 
@@ -425,9 +425,9 @@ byte ledPin[numOutputs] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
 //Arduino Pin Assignments
 const byte N_M_FADERS = 1;
-const byte motorDownPin[N_M_FADERS] = {4};   //H-Bridge control to make the motor go down
-const byte motorUpPin[N_M_FADERS] = {5};   //H-Bridge control to make the motor go up
-const byte faderSpeedPin[N_M_FADERS] = {false}; // motor speed pin (PWM)
+const byte motorDownPin[N_M_FADERS] = {4};   //Controle ponte-H para fazer o motor descer
+const byte motorUpPin[N_M_FADERS] = {5};   // Controle ponte-H para fazer o motor subir
+const byte faderSpeedPin[N_M_FADERS] = {false}; // pino de velocidade do motor (PWM)
 
 byte faderSpeed[N_M_FADERS] = {240}; // 0-255
 byte faderSpeedMin = 150; // 0-255 - 140?
@@ -437,35 +437,35 @@ const byte motorStopPoint = 18; // motor will stop X values before it reaches it
 
 /////////////////////////////////////////////
 // variables you don't need to change
-int faderPos[N_M_FADERS] = {0}; // position of the fader
-int faderPPos[N_M_FADERS] = {0}; // previous position of the fader
-int faderMax[N_M_FADERS] = {0};   //Value read by fader's maximum position (0-1023)
-int faderMin[N_M_FADERS] = {0};   //Value read by fader's minimum position (0-1023)
+int faderPos[N_M_FADERS] = {0}; // posição do fader
+int faderPPos[N_M_FADERS] = {0}; // posição anterior do fader
+int faderMax[N_M_FADERS] = {0}; // Valor lido pela posição máxima do fader (0-1023)
+int faderMin[N_M_FADERS] = {0}; // Valor lido pela posição mínima do fader (0-1023)
 
 
 // Midi
 byte pFaderInVal[16][N_M_FADERS] = {0};
-byte pFaderPBInVal[N_M_FADERS] = {0}; // Pitch bend for Mackie
+byte pFaderPBInVal[N_M_FADERS] = {0}; // Pitch bend para Mackie
 
 // Cap Sense
-boolean isTouched[N_M_FADERS] = {false}; // Is the fader currently being touched?
-boolean pIsTouched[N_M_FADERS] = {false}; // previous Is the fader currently being touched?
+boolean isTouched[N_M_FADERS] = {false}; // O fader está sendo tocado?
+boolean pIsTouched[N_M_FADERS] = {false}; // anterior O fader está sendo tocado?
 
 long touchLine[N_M_FADERS] = {0};
 
 unsigned long capTimeNow[N_M_FADERS] = {0};
 
-// Capacitive Sensor - Touch Pin
-// 10M resistor between pins 7 & 8, pin 2 is sensor pin, add a wire and or foil if desired
+// Sensor capacitivo - Touch Pin
+// resistor de 10M entre os pinos 7 e 8, pino 2 é o pino do sensor, adicione um fio e / ou folha se desejar
 CapacitiveSensor capSense[N_M_FADERS] = {
   CapacitiveSensor(7, 8)
 }; // capSense = CapacitiveSensor(7, 8)
 
-const int touchSendPin[N_M_FADERS] = {7};   // Send pin for Capacitance Sensing Circuit (Digital 7)
-const int touchReceivePin[N_M_FADERS] = {8};   // Receive pin for Capacitance Sensing Circuit (Digital 8)
+const int touchSendPin[N_M_FADERS] = {7}; // Enviar pino para circuito de detecção de capacitância (Digital 7)
+const int touchReceivePin[N_M_FADERS] = {8}; // Receber pino para circuito de detecção de capacitância (Digital 8)
 
-byte capSenseSpeed = 15; // number of samples
-int capSensitivity = 150; // touch threshold
+byte capSenseSpeed = 15; // Número de amostras
+int capSensitivity = 150; // toque threshold
 
 int capTimeout = 500;
 

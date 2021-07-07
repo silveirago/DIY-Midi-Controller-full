@@ -30,11 +30,9 @@ void loop() {
 
     touchLine[i] = capSense[i].capacitiveSensor(capSenseSpeed); // cs_7_8.capacitiveSensor(20); // checks the capacitance in each fader
     checkTouch(i, touchLine[i]); // checks if the fader is beign touched
-    
-    //if (abs(faderPos[i] - faderPPos[i]) > 10 ) {
-      updateFader(i, faderPos[i]); // moves the fader if it receives a MIDI in message
-      faderPPos[i] = faderPos[i];
-    //}
+
+    updateFader(i, faderPos[i]); // moves the fader if it receives a MIDI in message
+    faderPPos[i] = faderPos[i];
 
   }
 

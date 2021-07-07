@@ -22,7 +22,7 @@
 // "TEENSY" if using a Teensy board
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define ATMEGA32U4 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA328 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using buttons?
@@ -70,10 +70,10 @@
 //#define USING_LED_FEEDBACK 1 //* comment if not using a VU
 
 // Are you using high res faders?
-#define USING_HIGH_RES_FADERS 1 //* comment if not using high res faders (any fader can be high res)
+//#define USING_HIGH_RES_FADERS 1 //* comment if not using high res faders (any fader can be high res)
 
 // Are you using Motorized Faders?
-#define USING_MOTORIZED_FADERS 1 //* comment if not using a motorized fader
+//#define USING_MOTORIZED_FADERS 1 //* comment if not using a motorized fader
 
 // Are you using the Mackie Protocol?
 //#define USING_REMOTE_SCRIPT 1
@@ -343,9 +343,9 @@ byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* stores presets to start
 
 /////////////////////////////////////////////
 // MIDI CHANNEL
-byte POT_MIDI_CH = 0; //* MIDI channel to be used
-byte BUTTON_MIDI_CH = 0;
-byte ENCODER_MIDI_CH = 0;
+byte POT_MIDI_CH = 1; //* MIDI channel to be used
+byte BUTTON_MIDI_CH = 1;
+byte ENCODER_MIDI_CH = 1;
 
 byte NOTE = 36; //* Lowest NOTE to be used - if not using custom NOTE NUMBER
 byte CC = 1; //* Lowest MIDI CC to be used - if not using custom CC NUMBER
