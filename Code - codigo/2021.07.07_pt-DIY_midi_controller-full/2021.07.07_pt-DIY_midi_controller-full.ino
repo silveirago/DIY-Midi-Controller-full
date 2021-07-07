@@ -73,7 +73,7 @@
 //#define USING_HIGH_RES_FADERS 1 //* comment if not using high res faders (any fader can be high res)
 
 // Are you using Motorized Faders?
-#define USING_MOTORIZED_FADERS 1 //* comment if not using a motorized fader
+//#define USING_MOTORIZED_FADERS 1 //* comment if not using a motorized fader
 
 // Are you using the Mackie Protocol?
 //#define USING_REMOTE_SCRIPT 
