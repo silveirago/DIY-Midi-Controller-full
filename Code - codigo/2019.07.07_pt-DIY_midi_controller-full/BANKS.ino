@@ -39,7 +39,19 @@ void banksWithButtons() {
 
         if (buttonBankCState[i] == LOW) {
 
-          if (i == 0) {
+          if (i == 0) { // button left
+
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+            //#ifdef USING_REMOTE_SCRIPT
+#ifdef USING_REMOTE_SCRIPT
+
+            noteOn(0, 46, 127);  // channel, note, velocity
+            MidiUSB.flush();
+            noteOn(0, 46, 0);  // channel, note, velocity
+            MidiUSB.flush();
+
+#else // if NOT USING_REMOTE_SCRIPT
 
 #ifdef BANKS_FOR_BUTTONS
             BUTTON_MIDI_CH--;
@@ -52,8 +64,20 @@ void banksWithButtons() {
 #ifdef BANKS_FOR_ENCODERS
             ENCODER_MIDI_CH--;
 #endif
+
+#endif // USING_REMOTE_SCRIPT
+
           }
-          else if (i == 1) {
+          else if (i == 1) { // button right
+
+#ifdef USING_REMOTE_SCRIPT
+
+            noteOn(0, 47, 127);  // channel, note, velocity
+            MidiUSB.flush();
+            noteOn(0, 47, 0);  // channel, note, velocity
+            MidiUSB.flush();
+
+#else // if NOT USING_REMOTE_SCRIPT
 
 #ifdef BANKS_FOR_BUTTONS
             BUTTON_MIDI_CH++;
@@ -67,7 +91,11 @@ void banksWithButtons() {
             ENCODER_MIDI_CH++;
 #endif
 
+#endif // USING_REMOTE_SCRIPT
+
           }
+
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #ifdef ATMEGA32U4
           // limits the value to a 16 range
@@ -75,6 +103,8 @@ void banksWithButtons() {
           POT_MIDI_CH %= 16;
           ENCODER_MIDI_CH %= 16;
 #endif
+
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #ifdef ATMEGA328
           // limits the value to a 16 range
@@ -85,6 +115,7 @@ void banksWithButtons() {
 #endif
 
 
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #ifdef USING_DISPLAY
 
@@ -103,7 +134,25 @@ void banksWithButtons() {
 #endif // USING_DISPLAY
 
 
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+#ifdef USING_MOTORIZED_FADERS
+#ifdef BANKS_FOR_POTS // writes the value pre stored in the encoder
+
+          for (int i = 0; i < N_POTS; i++) {
+
+            faderPos[i] = map(pFaderInVal[POT_MIDI_CH][i], 0, 127, faderMin[i], faderMax[i]);
+          }
+#endif
+#endif
+
+          // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 #ifdef DEBUG
+
+          BUTTON_MIDI_CH %= 16;
+          POT_MIDI_CH %= 16;
+          ENCODER_MIDI_CH %= 16;
 
 #ifdef BANKS_FOR_BUTTONS
           Serial.print("Button MIDI ch: ");
@@ -112,7 +161,7 @@ void banksWithButtons() {
 
 #ifdef BANKS_FOR_POTS
           Serial.print("Pot MIDI ch: ");
-          Serial.println(BANKS_FOR_POTS);
+          Serial.println(POT_MIDI_CH);
 #endif
 
 #ifdef BANKS_FOR_ENCODERS
@@ -128,6 +177,8 @@ void banksWithButtons() {
 
         }
 
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 #ifdef USING_ENCODER
 #ifdef BANKS_FOR_ENCODERS // writes the value pre stored in the encoder 
         for (int j = 0; j < N_ENCODERS; j++) {
@@ -135,6 +186,11 @@ void banksWithButtons() {
         }
 #endif
 #endif
+
+
+
+
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
         buttonBankPState[i] = buttonBankCState[i];
       }
