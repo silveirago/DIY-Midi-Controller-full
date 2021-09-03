@@ -22,7 +22,7 @@
 // "TEENSY" if using a Teensy board
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define ATMEGA328 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA32U4 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using buttons?
@@ -30,11 +30,11 @@
 
 /////////////////////////////////////////////
 // Are you using potentiometers?
-#define USING_POTENTIOMETERS 1 //* comment if not using potentiometers
+//#define USING_POTENTIOMETERS 1 //* comment if not using potentiometers
 
 /////////////////////////////////////////////
 // Are you using a multiplexer?
-//#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
+#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
 
 /////////////////////////////////////////////
 // Are you using encoders?
@@ -46,13 +46,13 @@
 
 /////////////////////////////////////////////
 // Are you using an I2C Oled Display?
-//#define USING_DISPLAY 1 //* comment if not using an I2C Oled Display.
+#define USING_DISPLAY 1 //* comment if not using an I2C Oled Display.
 
 /////////////////////////////////////////////
 // Are you using banks that can be switched with 2 buttons?
-//#define USING_BANKS_WITH_BUTTONS 1 //* comment if not using banks with buttons.
+#define USING_BANKS_WITH_BUTTONS 1 //* comment if not using banks with buttons.
 
-//#define BANKS_FOR_BUTTONS 1
+#define BANKS_FOR_BUTTONS 1
 //#define BANKS_FOR_POTS 1
 //#define BANKS_FOR_ENCODERS 1
 
@@ -76,7 +76,10 @@
 //#define USING_MOTORIZED_FADERS 1 //* comment if not using a motorized fader
 
 // Are you using the Mackie Protocol?
-//#define USING_REMOTE_SCRIPT 1
+//#define USING_MACKIE 1
+
+// Are you using two buttons for octave change?
+#define USING_OCTAVE 1
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -182,12 +185,12 @@ Adafruit_SSD1306 display(128, 64);  // Create display - size of the display in p
 
 #define N_MUX 1 //* number of multiplexers
 //* Define s0, s1, s2, s3, and x pins
-#define s0 7
-#define s1 6
-#define s2 5
-#define s3 4
+#define s0 14
+#define s1 15
+#define s2 18
+#define s3 19
 
-#define x1 A2 // analog pin of the first mux
+#define x1 A3 // analog pin of the first mux
 // add more #define and the x number if you need
 
 // Initializes the multiplexer
@@ -206,6 +209,9 @@ Multiplexer4067 mux[N_MUX] = {
 #include <CapacitiveSensor.h> // Ads touch capabilities for the motorized fader
 #endif
 
+#ifdef USING_MACKIE
+#include "MACKIE.h"
+#endif
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -215,14 +221,16 @@ Multiplexer4067 mux[N_MUX] = {
 // BUTTONS
 #ifdef USING_BUTTONS
 
-const byte N_BUTTONS = 1; //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2...
-const byte N_BUTTONS_ARDUINO = 1; //* number of buttons connected straight to the Arduino
-const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {21}; //* pins of each button connected straight to the Arduino
+const byte N_BUTTONS = 2; //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2... (DON'T put Octave and MIDI channel (bank) buttons here)
+const byte N_BUTTONS_ARDUINO = 0; //* number of buttons connected straight to the Arduino
+const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {}; //* pins of each button connected straight to the Arduino
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #ifdef USING_MUX // Fill if you are using mux, otherwise just leave it
-const byte N_BUTTONS_PER_MUX[N_MUX] = {4}; //* number of buttons in each mux (in order)
+const byte N_BUTTONS_PER_MUX[N_MUX] = {2}; //* number of buttons in each mux (in order)
 const byte BUTTON_MUX_PIN[N_MUX][16] = { //* pin of each button of each mux in order
-{2, 3, 4, 5}, //* pins of the first mux
+{3, 2}, //* pins of the first mux
 // ...
 };
 
@@ -230,36 +238,57 @@ int buttonMuxThreshold = 300;
 
 #endif //USING_MUX
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// What type of message do you want to send?
+// Note Number - Control Change - Toggle
+
+byte NN = 0; // Note number
+byte CC = 1; // Control change
+byte T = 2;  // Toggle
+
+//* Put here the type of message you want to send, in the same order you declared the button pins
+// "NN" for Note Number | "CC" for Control Change | "T" for Note Number but in toggle mode
+byte MESSAGE_TYPE[N_BUTTONS] = {NN, NN};
+
+//* Put here the number of the message you want to send, in the right order, no matter if it's a note number or CC.
+byte MESSAGE_VAL[N_BUTTONS] = {36, 38}; 
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 #ifdef USING_BANKS_WITH_BUTTONS
 
+//#define USING_MUX_BANK_BUTTON_PIN 1; // Define if you are using the bank buttons on the Mux pin. It has to be the first mux.
 const byte BANK_BUTTON_PIN[2] = {16, 10}; //* first will decrease MIDI chennel and second will increase
 
 #endif //USING_BANKS_WITH_BUTTONS
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+#ifdef USING_OCTAVE
+
+#define USING_MUX_OCTAVE_PIN 1; // Define if you are using the octave buttons on the Mux pin. It has to be the first mux.
+const byte OCTAVE_BUTTON_PIN[2] = {5, 4}; //* first will decrease MIDI channel and second will increase
+
+#endif // USING_OCTAVE
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//#define pin13 1 // uncomment if you are using pin 13 (pin with led), or comment the line if it is not
+byte pin13index = 12; //* put the index of the pin 13 of the buttonPin[] array if you are using, if not, comment
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 // it will happen if you are using neo pixel
 // this button will open the menu so you can change the MIDI channel
 // pressing one button. Each button will be one differente channel
+
 #ifdef USING_NEOPIXEL
 const byte CHANNEL_BUTTON_PIN = 8;
 #endif
 
-//#define USING_CUSTOM_NN 1 //* comment if not using CUSTOM NOTE NUMBERS (scales), uncomment if using it.
-#ifdef USING_CUSTOM_NN
-//* Add the NOTE NUMBER of each button/switch you want
-byte BUTTON_NN[N_BUTTONS] = {36, 40, 44, 47};
-#endif
-
-//#define USING_BUTTON_CC_N 1 //* comment if not using BUTTON CC, uncomment if using it.
-#ifdef USING_BUTTON_CC_N // if using button with CC
-byte BUTTON_CC_N[N_BUTTONS] = {1, 3, 5, 6, 7, 18}; //* Add the CC NUMBER of each button/switch you want
-#endif
-
-//#define USING_TOGGLE 1 //* comment if not using BUTTON TOGGLE mode, uncomment if using it.
-// With toggle mode on, when you press the button once it sends a note on, when you press it again it sends a note off
-
-
-//#define pin13 1 // uncomment if you are using pin 13 (pin with led), or comment the line if it is not
-byte pin13index = 12; //* put the index of the pin 13 of the buttonPin[] array if you are using, if not, comment
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // debounce
 unsigned long debounceDelay = 5;    //* the debounce time; increase if the output flickers
@@ -272,26 +301,32 @@ unsigned long debounceDelay = 5;    //* the debounce time; increase if the outpu
 
 #ifdef USING_POTENTIOMETERS
 
-const byte N_POTS = 1; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
+const byte N_POTS = 2; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
 
-const byte N_POTS_ARDUINO = 1; //* number of pots connected straight to the Arduino
-const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0}; //* pins of each pot connected straight to the Arduino
+const byte N_POTS_ARDUINO = 0; //* number of pots connected straight to the Arduino
+const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {}; //* pins of each pot connected straight to the Arduino
 
-//#define USING_CUSTOM_CC_N 1 //* comment if not using CUSTOM CC NUMBERS, uncomment if using it.
-#ifdef USING_CUSTOM_CC_N
-byte POT_CC_N[N_POTS] = {11, 13}; // Add the CC NUMBER of each pot you want
-#endif
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #ifdef USING_MUX
-const byte N_POTS_PER_MUX[N_MUX] = {2}; //* number of pots in each multiplexer (in order)
+const byte N_POTS_PER_MUX[N_MUX] = {0}; //* number of pots in each multiplexer (in order)
 const byte POT_MUX_PIN[N_MUX][16] = { //* pins of each pot of each mux in the order you want them to be
-{0, 1} //* pins of the first mux
+{} //* pins of the first mux
 // ...
 };
 #endif
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+#define USING_CUSTOM_CC_N 1 //* comment if not using CUSTOM CC NUMBERS, uncomment if using it.
+#ifdef USING_CUSTOM_CC_N
+byte POT_CC_N[N_POTS] = {1, 2}; // Add the CC NUMBER of each pot you want
+#endif
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 const int TIMEOUT = 300; //* Amount of time the potentiometer will be read after it exceeds the varThreshold
-const byte varThreshold = 2; //* Threshold for the potentiometer signal variation
+const byte varThreshold = 8; //* Threshold for the potentiometer signal variation
 
 // put here the min and max reading in the potCState
 // in the potMin put a little bit more and in the potMax put a little bit less
@@ -300,6 +335,7 @@ int potMax = 970;
 
 #endif // USING_POTENTIOMETERS
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 /////////////////////////////////////////////
 // ENCODERS
@@ -307,16 +343,20 @@ int potMax = 970;
 
 //#define TRAKTOR 1 // uncomment if using with traktor, comment if not
 
-const byte N_ENCODERS = 2; //* number of encoders
+const byte N_ENCODERS = 1; //* number of encoders
 const byte N_ENCODER_PINS = N_ENCODERS * 2; //number of pins used by the encoders
 const byte N_ENCODER_MIDI_CHANNELS = 16; // number of ENCODER_MIDI_CHs
 
-byte ENCODER_CC_N[N_ENCODERS] = {17, 18}; // Add the CC NUMBER of each encoder you want
+byte ENCODER_CC_N[N_ENCODERS] = {11}; // Add the CC NUMBER of each encoder you want
 
-Encoder encoder[N_ENCODERS] = {{10, 16}, {14, 15}}; // the two pins of each encoder -  Use pins with Interrupts!
+Encoder encoder[N_ENCODERS] = {{2, 3}}; // the two pins of each encoder -  Use pins with Interrupts!
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 byte encoderMinVal = 0; //* encoder minimum value
 byte encoderMaxVal = 127; //* encoder max value
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* stores presets to start your encoders
   //  {64, 64}, // ch 1
@@ -338,17 +378,23 @@ byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { //* stores presets to start
 
 };
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+#ifdef USING_MACKIE
+byte encoderSens = 1; // 1-63
+#endif
+
 #endif //USING_ENCODER
 
 
 /////////////////////////////////////////////
 // MIDI CHANNEL
-byte POT_MIDI_CH = 1; //* MIDI channel to be used
-byte BUTTON_MIDI_CH = 1;
-byte ENCODER_MIDI_CH = 1;
+byte POT_MIDI_CH = 0; //* MIDI channel to be used
+byte BUTTON_MIDI_CH = 0;
+byte ENCODER_MIDI_CH = 0;
 
 byte NOTE = 36; //* Lowest NOTE to be used - if not using custom NOTE NUMBER
-byte CC = 1; //* Lowest MIDI CC to be used - if not using custom CC NUMBER
+byte CC_NUMBER = 1; //* Lowest MIDI CC to be used - if not using custom CC NUMBER
 
 /////////////////////////////////////////////
 // NEOPIXEL | MIDI CHANNEL MENU
@@ -370,8 +416,13 @@ byte noteOnHue = 240; //* HUE of the notes when they are played - 240 (magenta)
 ThreadController cpu; //thread master, where the other threads will be added
 Thread threadPotentiometers; // thread to control the pots
 Thread threadChannelMenu; // thread to control the pots
+
 #ifdef USING_BANKS_WITH_BUTTONS
 Thread threadBanksWithButtons;
+#endif
+
+#ifdef USING_OCTAVE
+Thread threadChangeOctave;
 #endif
 
 
@@ -442,18 +493,19 @@ byte faderSpeedMax = 255; // 0-255 -  250?
 
 const byte motorStopPoint = 18; // motor will stop X values before it reaches its goal. Increase to avoid jittery (it will be less precise).
 
-/////////////////////////////////////////////
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // variables you don't need to change
 int faderPos[N_M_FADERS] = {0}; // position of the fader
 int faderPPos[N_M_FADERS] = {0}; // previous position of the fader
 int faderMax[N_M_FADERS] = {0};   //Value read by fader's maximum position (0-1023)
 int faderMin[N_M_FADERS] = {0};   //Value read by fader's minimum position (0-1023)
 
-
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Midi
 byte pFaderInVal[16][N_M_FADERS] = {0};
 byte pFaderPBInVal[N_M_FADERS] = {0}; // Pitch bend for Mackie
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Cap Sense
 boolean isTouched[N_M_FADERS] = {false}; // Is the fader currently being touched?
 boolean pIsTouched[N_M_FADERS] = {false}; // previous Is the fader currently being touched?
