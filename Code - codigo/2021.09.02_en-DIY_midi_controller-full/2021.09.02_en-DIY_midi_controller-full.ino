@@ -30,11 +30,11 @@
 
 /////////////////////////////////////////////
 // Are you using potentiometers?
-//#define USING_POTENTIOMETERS 1 //* comment if not using potentiometers
+#define USING_POTENTIOMETERS 1 //* comment if not using potentiometers
 
 /////////////////////////////////////////////
 // Are you using a multiplexer?
-#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
+//#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
 
 /////////////////////////////////////////////
 // Are you using encoders?
@@ -46,13 +46,13 @@
 
 /////////////////////////////////////////////
 // Are you using an I2C Oled Display?
-#define USING_DISPLAY 1 //* comment if not using an I2C Oled Display.
+//#define USING_DISPLAY 1 //* comment if not using an I2C Oled Display.
 
 /////////////////////////////////////////////
 // Are you using banks that can be switched with 2 buttons?
-#define USING_BANKS_WITH_BUTTONS 1 //* comment if not using banks with buttons.
+//#define USING_BANKS_WITH_BUTTONS 1 //* comment if not using banks with buttons.
 
-#define BANKS_FOR_BUTTONS 1
+//#define BANKS_FOR_BUTTONS 1
 //#define BANKS_FOR_POTS 1
 //#define BANKS_FOR_ENCODERS 1
 
@@ -79,7 +79,7 @@
 //#define USING_MACKIE 1
 
 // Are you using two buttons for octave change?
-#define USING_OCTAVE 1
+//#define USING_OCTAVE 1
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ byte ledIndex[NUM_LEDS] = {0, 1, 2, 3};
 
 // if using with ATmega328 - Uno, Mega, Nano...
 #ifdef ATMEGA328
-#include <MIDI.h>
+#include <MIDI.h> // https://github.com/FortySevenEffects/arduino_midi_library?fbclid=IwAR0zHNemdtNvONtysP5HZY_YrVbTSlir0zDhPQPq8EPfnliFZQZ0jjRC81g
 //MIDI_CREATE_DEFAULT_INSTANCE();
 
 // if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
@@ -221,9 +221,9 @@ Multiplexer4067 mux[N_MUX] = {
 // BUTTONS
 #ifdef USING_BUTTONS
 
-const byte N_BUTTONS = 2; //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2... (DON'T put Octave and MIDI channel (bank) buttons here)
-const byte N_BUTTONS_ARDUINO = 0; //* number of buttons connected straight to the Arduino
-const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {}; //* pins of each button connected straight to the Arduino
+const byte N_BUTTONS = 3; //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2... (DON'T put Octave and MIDI channel (bank) buttons here)
+const byte N_BUTTONS_ARDUINO = 3; //* number of buttons connected straight to the Arduino
+const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {2, 3, 4}; //* pins of each button connected straight to the Arduino
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -249,10 +249,10 @@ byte T = 2;  // Toggle
 
 //* Put here the type of message you want to send, in the same order you declared the button pins
 // "NN" for Note Number | "CC" for Control Change | "T" for Note Number but in toggle mode
-byte MESSAGE_TYPE[N_BUTTONS] = {NN, NN};
+byte MESSAGE_TYPE[N_BUTTONS] = {CC, NN, NN};
 
 //* Put here the number of the message you want to send, in the right order, no matter if it's a note number or CC.
-byte MESSAGE_VAL[N_BUTTONS] = {36, 38}; 
+byte MESSAGE_VAL[N_BUTTONS] = {11, 60, 64}; 
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -303,8 +303,8 @@ unsigned long debounceDelay = 5;    //* the debounce time; increase if the outpu
 
 const byte N_POTS = 2; //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
 
-const byte N_POTS_ARDUINO = 0; //* number of pots connected straight to the Arduino
-const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {}; //* pins of each pot connected straight to the Arduino
+const byte N_POTS_ARDUINO = 2; //* number of pots connected straight to the Arduino
+const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0, A1}; //* pins of each pot connected straight to the Arduino
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -349,7 +349,7 @@ const byte N_ENCODER_MIDI_CHANNELS = 16; // number of ENCODER_MIDI_CHs
 
 byte ENCODER_CC_N[N_ENCODERS] = {11}; // Add the CC NUMBER of each encoder you want
 
-Encoder encoder[N_ENCODERS] = {{2, 3}}; // the two pins of each encoder -  Use pins with Interrupts!
+Encoder encoder[N_ENCODERS] = {{2, 3}}; //* the two pins of each encoder -  Use pins with Interrupts!
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
