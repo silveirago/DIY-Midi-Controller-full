@@ -112,7 +112,7 @@ byte ledIndex[NUM_LEDS] = {0, 1, 2, 3};
 
 // if using with ATmega328 - Uno, Mega, Nano...
 #ifdef ATMEGA328
-#include <MIDI.h>
+#include <MIDI.h> // https://github.com/FortySevenEffects/arduino_midi_library?fbclid=IwAR0zHNemdtNvONtysP5HZY_YrVbTSlir0zDhPQPq8EPfnliFZQZ0jjRC81g
 //MIDI_CREATE_DEFAULT_INSTANCE();
 
 // if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
