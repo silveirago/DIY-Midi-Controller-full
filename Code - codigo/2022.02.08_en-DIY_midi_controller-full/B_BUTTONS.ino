@@ -138,7 +138,7 @@ void buttons() {
 #elif TEENSY
 
             if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
-              usbMIDI.sendControlChange(MESSAGE_VAL[i], velocity[i], ); // CC number, CC value, midi channel
+              usbMIDI.sendControlChange(MESSAGE_VAL[i], velocity[i], BUTTON_MIDI_CH); // CC number, CC value, midi channel
             }
 
 #elif DEBUG
