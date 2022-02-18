@@ -22,7 +22,7 @@
 // "TEENSY" se estiver usando uma placa Teensy
 // "DEBUG" se você deseja apenas debugar o código no monitor serial
 
-#define ATMEGA32U4 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
+#define DEBUG 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Você está usando botões?
