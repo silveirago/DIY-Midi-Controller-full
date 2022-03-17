@@ -124,22 +124,22 @@ void buttons() {
 
 #ifdef ATMEGA328
 
-            if (buttonCState[i] == LOW) { // only sends note on when button is pressed, nothing when released
+            //if (buttonCState[i] == LOW) { // only sends note on when button is pressed, nothing when released
               MIDI.sendControlChange(MESSAGE_VAL[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
-            }
+            //}
 
 #elif ATMEGA32U4
 
-            if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
+            //if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
               controlChange(BUTTON_MIDI_CH, MESSAGE_VAL[i], velocity[i]); //  (channel, CC number,  CC value)
               MidiUSB.flush();
-            }
+            //}
 
 #elif TEENSY
 
-            if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
+            //if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
               usbMIDI.sendControlChange(MESSAGE_VAL[i], velocity[i], BUTTON_MIDI_CH); // CC number, CC value, midi channel
-            }
+            //}
 
 #elif DEBUG
             Serial.print("Button: ");
