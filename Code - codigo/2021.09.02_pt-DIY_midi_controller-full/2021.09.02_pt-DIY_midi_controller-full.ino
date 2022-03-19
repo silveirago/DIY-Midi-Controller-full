@@ -249,7 +249,7 @@ byte T = 2;  // Toggle
 byte MESSAGE_TYPE[N_BUTTONS] = {NN, NN};
 
 //* Coloque aqui o número da mensagem que deseja enviar, na ordem certa, não importa se é um número de nota ou CC.
-byte MESSAGE_VAL[N_BUTTONS] = {36, 38};
+byte MESSAGE_VAL[N_BUTTONS] = {REC_RDY_1, RECORD};
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -342,7 +342,7 @@ const byte N_ENCODERS = 1; //* número de encoders
 const byte N_ENCODER_PINS = N_ENCODERS * 2; // número de pinos usados pelos codificadores
 const byte N_ENCODER_MIDI_CHANNELS = 16; // número de ENCODER_MIDI_CHs
 
-byte ENCODER_CC_N[N_ENCODERS] = {11}; //* Adicione o CC NUMBER de cada encoder que você deseja
+byte ENCODER_CC_N[N_ENCODERS] = {V_POT_1}; //* Adicione o CC NUMBER de cada encoder que você deseja
 
 Encoder encoder[N_ENCODERS] = {{2, 3}}; //* os dois pinos de cada encoder - Use pinos com interrupts!
 
