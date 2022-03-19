@@ -9,7 +9,7 @@
 // NOTES - value/On = 127 or value/Off = 0 | Channel = 1
 // PITCH BEND - Value/Max = 8176 / Value/Min -8192  | Channel (fader number)
 
-
+// BUTTONS - NN
 constexpr uint8_t   REC_RDY_1 = 0x00; //Record/Ready 1 (In/Out) 
 constexpr uint8_t   REC_RDY_2 = 0x01; //Record/Ready 2 (In/Out) 
 constexpr uint8_t   REC_RDY_3 = 0x02; //Record/Ready 3 (In/Out) 
@@ -127,6 +127,8 @@ constexpr uint8_t   SMPTE = 0x71; //SMPTE LED (In)
 constexpr uint8_t   BEATS = 0x72; //Beats LED (In) 
 constexpr uint8_t   RUDE_SOLO = 0x73; //Rude solo light (In) 
 constexpr uint8_t   RELAY = 0x76; //Relay (In) 
+
+// ENCODER - CC
 constexpr uint8_t   V_POT_1 = 0x10; //V-Pot 1 (Relative) (Out) 
 constexpr uint8_t   V_POT_2 = 0x11; //V-Pot 2 (Relative) (Out) 
 constexpr uint8_t   V_POT_3 = 0x12; //V-Pot 3 (Relative) (Out) 
@@ -138,6 +140,7 @@ constexpr uint8_t   V_POT_8 = 0x17; //V-Pot 8 (Relative) (Out)
 constexpr uint8_t   EXTERNAL_CONTROLLER = 0x2E; //External controller (Out) 
 constexpr uint8_t   JOG_WHEEL = 0x3C; //Jog wheel (Relative) (Out) 
 
+// FADER - PITCH BEND
 constexpr uint8_t   VOLUME_1 = 0; //Volume fader 1 (In/Out) 
 constexpr uint8_t   VOLUME_2 = 1; //Volume fader 2 (In/Out) 
 constexpr uint8_t   VOLUME_3 = 2; //Volume fader 3 (In/Out) 
