@@ -9,6 +9,7 @@
 
 int lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
 int encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
+int encoderMidiValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
 int encoderMackieValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {127};
 
 // for the encoder Channels - Used for different banks
@@ -32,7 +33,15 @@ void encoders() {
 
   for (int i = 0; i < N_ENCODERS; i++) {
     encoderValue[ENCODER_MIDI_CH][i] = encoder[i].read(); // reads each encoder and stores the value
+
+#if !defined(TRAKTOR) && !defined(USING_MACKIE) // if not define
+//#ifndef TRAKTOR // if not def Traktor
+//#ifndef USING_MACKIE
     clipEncoderValue(i, encoderMinVal, encoderMaxVal); // checks if it's greater than the max value or less than the min value
+//#endif
+#endif
+
+    encoderMidiValue[ENCODER_MIDI_CH][i] = encoderValue[ENCODER_MIDI_CH][i];
   }
 
   for (int i = 0; i < N_ENCODERS; i++) {
@@ -43,9 +52,11 @@ void encoders() {
 
 #ifdef TRAKTOR // to use with Traktor
       if (encoderValue[ENCODER_MIDI_CH][i] > lastEncoderValue[ENCODER_MIDI_CH][i]) {
-        encoderValue[ENCODER_MIDI_CH][i] = 127;
+        encoderMidiValue[ENCODER_MIDI_CH][i] = 127;
+        //encoder[i].write(127);
       } else {
-        encoderValue[ENCODER_MIDI_CH][i] = 0;
+        encoderMidiValue[ENCODER_MIDI_CH][i] = 0;
+        //encoder[i].write(0);
       }
 #endif // TRAKTOR
 
@@ -66,7 +77,7 @@ void encoders() {
       // Sends the MIDI CC accordingly to the chosen board
 #ifdef ATMEGA328
       // if using with ATmega328 (uno, mega, nano...)
-      MIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH);
+      MIDI.sendControlChange(ENCODER_CC_N[i], encoderMidiValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH);
 
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -77,7 +88,7 @@ void encoders() {
       controlChange(ENCODER_MIDI_CH, ENCODER_CC_N[i], encoderMackieValue[ENCODER_MIDI_CH][i]); //  (channel, CC number,  CC value)
       MidiUSB.flush();
 #else
-      controlChange(ENCODER_MIDI_CH, ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i]); //  (channel, CC number,  CC value)
+      controlChange(ENCODER_MIDI_CH, ENCODER_CC_N[i], encoderMidiValue[ENCODER_MIDI_CH][i]); //  (channel, CC number,  CC value)
       MidiUSB.flush();
 #endif
 
@@ -85,7 +96,7 @@ void encoders() {
 
 #elif TEENSY
       // if using with Teensy
-      usbMIDI.sendControlChange(ENCODER_CC_N[i], encoderValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH);
+      usbMIDI.sendControlChange(ENCODER_CC_N[i], encoderMidiValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH);
 
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -101,7 +112,7 @@ void encoders() {
 #ifdef USING_MACKIE // to use with Mackie
       Serial.println(encoderMackieValue[ENCODER_MIDI_CH][i]);
 #else
-      Serial.println(encoderValue[ENCODER_MIDI_CH][i]);
+      Serial.println(encoderMidiValue[ENCODER_MIDI_CH][i]);
 #endif
 #endif
 

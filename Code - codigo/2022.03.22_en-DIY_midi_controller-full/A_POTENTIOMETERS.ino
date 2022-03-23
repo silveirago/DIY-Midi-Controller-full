@@ -82,6 +82,7 @@ void potentiometers() {
     potMidiCState[i] = clipValue( potMidiCState[i], 0, 127);
 #else
     potCState[i] = clipValue(potCState[i], potMin, potMax);
+    //potMidiCState[i] = map(potCState[i], potMin, potMax, 0, 127); // Maps the reading of the potCState to a value usable in midi
     potMidiCState[i] = map(potCState[i], potMin, potMax, 0, 127); // Maps the reading of the potCState to a value usable in midi
     potMidiCState[i] = clipValue(potMidiCState[i], 0, 127);
 #endif
