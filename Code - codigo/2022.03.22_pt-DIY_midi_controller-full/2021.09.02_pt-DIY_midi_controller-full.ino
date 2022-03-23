@@ -22,7 +22,7 @@
 // "TEENSY" se estiver usando uma placa Teensy
 // "DEBUG" se você deseja apenas debugar o código no monitor serial
 
-#define DEBUG 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA32U4 1//* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Você está usando botões?
@@ -30,15 +30,15 @@
 
 /////////////////////////////////////////////
 // Você está usando potenciometros?
-//#define USING_POTENTIOMETERS 1 //* comente se não estiver usando potenciometros
+#define USING_POTENTIOMETERS 1 //* comente se não estiver usando potenciometros
 
 /////////////////////////////////////////////
 // Você esstá usando um multiplexer?
-#define USING_MUX 1 //* comente se não estiver usando multiplexers
+//#define USING_MUX 1 //* comente se não estiver usando multiplexers
 
 /////////////////////////////////////////////
 // Você está usando encoders?
-//#define USING_ENCODER 1 //* comente se não estiver usando encoders
+#define USING_ENCODER 1 //* comente se não estiver usando encoders
 
 /////////////////////////////////////////////
 // // Você está usando um neopixel? (qualquer fita de led endereçável)
@@ -46,13 +46,13 @@
 
 /////////////////////////////////////////////
 // Você está usando Oled Display I2C?
-#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
+//#define USING_DISPLAY 1 //* comente se não estiver usando um Oled Display I2C
 
 /////////////////////////////////////////////
 // Você está usando bancos que podem ser alternados com 2 botões?
-#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
+//#define USING_BANKS_WITH_BUTTONS 1 //* comente se não estiver usando bancos com botões.
 
-#define BANKS_FOR_BUTTONS 1
+//#define BANKS_FOR_BUTTONS 1
 //#define BANKS_FOR_POTS 1
 //#define BANKS_FOR_ENCODERS 1
 
@@ -76,10 +76,10 @@
 //#define USING_MOTORIZED_FADERS 1 //* comente se não estiver usando um fader motorizado
 
 // Are you using the Mackie Protocol?
-//#define USING_MACKIE 1
+#define USING_MACKIE 1
 
 // Você está usando dois botões para alterar a oitava?
-#define USING_OCTAVE 1
+//#define USING_OCTAVE 1
 
 ///////////////////////////////////////////// /////////////////////////////////////////////
 
@@ -217,10 +217,10 @@ Multiplexer4067 mux[N_MUX] = {
 // BOTÕES
 #ifdef USING_BUTTONS
 
-const byte N_BUTTONS = 2; //*  número total de botões. Número de botões no Arduino + número de botões no multiplexer 1 + número de botões no multiplexer 2 ...
+const byte N_BUTTONS = 3; //*  número total de botões. Número de botões no Arduino + número de botões no multiplexer 1 + número de botões no multiplexer 2 ...
 
-const byte N_BUTTONS_ARDUINO = 0; //* número de botões conectados diretamente ao Arduino
-const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {}; //* pinos de cada botão conectados diretamente ao Arduino
+const byte N_BUTTONS_ARDUINO = 3; //* número de botões conectados diretamente ao Arduino
+const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {2,3,4}; //* pinos de cada botão conectados diretamente ao Arduino
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -240,16 +240,16 @@ int buttonMuxThreshold = 300;
 // Que tipo de mensagem você deseja enviar?
 // Note Number - Control Change - Toggle
 
-byte NN = 0; // Note number
+byte NN = 0; // Note number ou MACKIE
 byte CC = 1; // Control change
 byte T = 2;  // Toggle
 
 //* Coloque aqui o tipo de mensagem que deseja enviar, na mesma ordem em que declarou os pinos do botão
 // "NN" para Note Number | "CC" para Control Change | "T" para Note Number mas em modo toggle
-byte MESSAGE_TYPE[N_BUTTONS] = {NN, NN};
+byte MESSAGE_TYPE[N_BUTTONS] = {NN, NN, NN};
 
 //* Coloque aqui o número da mensagem que deseja enviar, na ordem certa, não importa se é um número de nota ou CC.
-byte MESSAGE_VAL[N_BUTTONS] = {REC_RDY_1, RECORD};
+byte MESSAGE_VAL[N_BUTTONS] = {REC_RDY_1, SOLO_2, PLAY};
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -297,10 +297,10 @@ unsigned long debounceDelay = 5;    //* tempo de debounce; aumentar se a saída 
 
 #ifdef USING_POTENTIOMETERS
 
-const byte N_POTS = 1; //* número total de pots (slide e rotativo). Número de pots no Arduino + número de pots no multiplexer 1 + número de pots no multiplexer 2 ...
+const byte N_POTS = 2; //* número total de pots (slide e rotativo). Número de pots no Arduino + número de pots no multiplexer 1 + número de pots no multiplexer 2 ...
 
-const byte N_POTS_ARDUINO = 1; //* número de pots conectados diretamente ao Arduino
-const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0}; //* pinos de cada potenciômetro conectado diretamente ao Arduino
+const byte N_POTS_ARDUINO = 2; //* número de pots conectados diretamente ao Arduino
+const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0, A1}; //* pinos de cada potenciômetro conectado diretamente ao Arduino
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -314,9 +314,9 @@ const byte POT_MUX_PIN[N_MUX][16] = { //* pinos de cada pot de cada mux na ordem
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//#define USING_CUSTOM_CC_N 1 //* comente se não estiver usando NÚMEROS CUSTOM CC, descomente se estiver usando.
+#define USING_CUSTOM_CC_N 1 //* comente se não estiver usando NÚMEROS CUSTOM CC, descomente se estiver usando.
 #ifdef USING_CUSTOM_CC_N
-byte POT_CC_N[N_POTS] = {20, 21}; // Adicione o CC NUMBER de cada pote que você quiser
+byte POT_CC_N[N_POTS] = {VOLUME_1, VOLUME_2}; // Adicione o CC NUMBER de cada pote que você quiser OU MACKIE
 #endif
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -337,14 +337,19 @@ int potMax = 970;
 
 //#define TRAKTOR 1 // descomente se estiver usando com traktor, comente se não
 
-const byte N_ENCODERS = 1; //* número de encoders
+const byte N_ENCODERS = 2; //* número de encoders
 
 const byte N_ENCODER_PINS = N_ENCODERS * 2; // número de pinos usados pelos codificadores
 const byte N_ENCODER_MIDI_CHANNELS = 16; // número de ENCODER_MIDI_CHs
 
-byte ENCODER_CC_N[N_ENCODERS] = {V_POT_1}; //* Adicione o CC NUMBER de cada encoder que você deseja
+byte ENCODER_CC_N[N_ENCODERS] = {V_POT_1, V_POT_2}; //* Adicione o CC NUMBER de cada encoder que você deseja OU MACKIE (V-Pot)
 
-Encoder encoder[N_ENCODERS] = {{2, 3}}; //* os dois pinos de cada encoder - Use pinos com interrupts!
+#ifdef USING_MACKIE
+// sensibilidade do ENCODER 
+byte encoderSens = 1; // 1-63
+#endif
+
+Encoder encoder[N_ENCODERS] = {{10, 16}, {14, 15}}; //* os dois pinos de cada encoder - Use pinos com interrupts!
 
 byte encoderMinVal = 0; //* valor mínimo do encoder
 byte encoderMaxVal = 127; //* vamor máximo do encoder
