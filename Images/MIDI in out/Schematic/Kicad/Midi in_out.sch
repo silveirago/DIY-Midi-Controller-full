@@ -1,0 +1,258 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text GLabel 7900 3300 2    50   Input ~ 0
+RX
+Wire Wire Line
+	7750 3500 7850 3500
+Wire Wire Line
+	7750 3400 7750 3500
+Wire Wire Line
+	7600 3400 7750 3400
+Wire Wire Line
+	7650 3100 7650 3600
+Wire Wire Line
+	7600 3100 7650 3100
+Wire Wire Line
+	7650 3800 7650 3900
+$Comp
+L power:GND #PWR?
+U 1 1 628E4D8C
+P 7650 3900
+AR Path="/628E4D8C" Ref="#PWR?"  Part="1" 
+AR Path="/609A051B/628E4D8C" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 7650 3650 50  0001 C CNN
+F 1 "GND" V 7655 3772 50  0000 R CNN
+F 2 "" H 7650 3900 50  0001 C CNN
+F 3 "" H 7650 3900 50  0001 C CNN
+	1    7650 3900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R_Small_US R?
+U 1 1 628E4D86
+P 7650 3700
+AR Path="/628E4D86" Ref="R?"  Part="1" 
+AR Path="/609A051B/628E4D86" Ref="R?"  Part="1" 
+F 0 "R?" H 7582 3654 50  0001 R CNN
+F 1 "4.7k" H 7582 3745 50  0000 R CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 7650 3700 50  0001 C CNN
+F 3 "~" H 7650 3700 50  0001 C CNN
+F 4 "C23162" H 7650 3700 50  0001 C CNN "LCSC Part Number"
+F 5 "C23162" H 7650 3700 50  0001 C CNN "LCSC"
+	1    7650 3700
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 628E4D7E
+P 7850 3500
+AR Path="/628E4D7E" Ref="#PWR?"  Part="1" 
+AR Path="/609A051B/628E4D7E" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 7850 3250 50  0001 C CNN
+F 1 "GND" V 7855 3372 50  0000 R CNN
+F 2 "" H 7850 3500 50  0001 C CNN
+F 3 "" H 7850 3500 50  0001 C CNN
+	1    7850 3500
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	7750 3300 7900 3300
+Connection ~ 7750 3300
+Wire Wire Line
+	7750 3250 7750 3300
+Wire Wire Line
+	7750 3000 7900 3000
+Connection ~ 7750 3000
+Wire Wire Line
+	7750 3050 7750 3000
+$Comp
+L Device:R_Small_US R?
+U 1 1 628E4D72
+P 7750 3150
+AR Path="/628E4D72" Ref="R?"  Part="1" 
+AR Path="/609A051B/628E4D72" Ref="R?"  Part="1" 
+F 0 "R?" H 7682 3104 50  0001 R CNN
+F 1 "220Ω" H 7682 3195 50  0000 R CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 7750 3150 50  0001 C CNN
+F 3 "~" H 7750 3150 50  0001 C CNN
+F 4 "C22962" H 7750 3150 50  0001 C CNN "LCSC Part Number"
+F 5 "C22962" H 7750 3150 50  0001 C CNN "LCSC"
+	1    7750 3150
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	7600 3300 7750 3300
+Wire Wire Line
+	7600 3000 7750 3000
+$Comp
+L power:VCC #PWR?
+U 1 1 628E4D68
+P 7900 3000
+AR Path="/628E4D68" Ref="#PWR?"  Part="1" 
+AR Path="/609A051B/628E4D68" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 7900 2850 50  0001 C CNN
+F 1 "VCC" V 7915 3127 50  0000 L CNN
+F 2 "" H 7900 3000 50  0001 C CNN
+F 3 "" H 7900 3000 50  0001 C CNN
+	1    7900 3000
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6900 3400 6750 3400
+Wire Wire Line
+	6900 3300 6900 3400
+Wire Wire Line
+	7000 3300 6900 3300
+Wire Wire Line
+	6750 3100 7000 3100
+Connection ~ 6750 3100
+$Comp
+L Diode:1N4148 D?
+U 1 1 628E4D5D
+P 6750 3250
+AR Path="/628E4D5D" Ref="D?"  Part="1" 
+AR Path="/609A051B/628E4D5D" Ref="D?"  Part="1" 
+F 0 "D?" V 6704 3330 50  0001 L CNN
+F 1 "1N4148" V 7050 3150 50  0000 L CNN
+F 2 "Diode_SMD:D_SOD-323F" H 6750 3075 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/1N4148_1N4448.pdf" H 6750 3250 50  0001 C CNN
+F 4 "C2128" H 6750 3250 50  0001 C CNN "LCSC Part Number"
+F 5 "C2128" H 6750 3250 50  0001 C CNN "LCSC"
+	1    6750 3250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6700 3100 6750 3100
+$Comp
+L Device:R_Small_US R?
+U 1 1 628E4D54
+P 6600 3100
+AR Path="/628E4D54" Ref="R?"  Part="1" 
+AR Path="/609A051B/628E4D54" Ref="R?"  Part="1" 
+F 0 "R?" V 6395 3100 50  0001 C CNN
+F 1 "220Ω" V 6486 3100 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 6600 3100 50  0001 C CNN
+F 3 "~" H 6600 3100 50  0001 C CNN
+F 4 "C22962" H 6600 3100 50  0001 C CNN "LCSC Part Number"
+F 5 "C22962" H 6600 3100 50  0001 C CNN "LCSC"
+	1    6600 3100
+	0    1    1    0   
+$EndComp
+$Comp
+L Isolator:6N138 Opto_coupler
+U 1 1 628E4D4C
+P 7300 3200
+AR Path="/628E4D4C" Ref="Opto_coupler"  Part="1" 
+AR Path="/609A051B/628E4D4C" Ref="U?"  Part="1" 
+F 0 "Opto_coupler" H 7300 3667 50  0000 C CNN
+F 1 "6N138" H 7300 3576 50  0000 C CNN
+F 2 "Package_DIP:DIP-8_W7.62mm_Socket_LongPads" H 7590 2900 50  0001 C CNN
+F 3 "http://www.onsemi.com/pub/Collateral/HCPL2731-D.pdf" H 7590 2900 50  0001 C CNN
+	1    7300 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:DIN-5_180degree MIDI_IN
+U 1 1 628DED5B
+P 5850 3250
+F 0 "MIDI_IN" H 5850 2975 50  0000 C CNN
+F 1 "DIN-5_180degree" H 5850 2884 50  0000 C CNN
+F 2 "" H 5850 3250 50  0001 C CNN
+F 3 "http://www.mouser.com/ds/2/18/40_c091_abd_e-75918.pdf" H 5850 3250 50  0001 C CNN
+	1    5850 3250
+	-1   0    0    1   
+$EndComp
+NoConn ~ 5850 3550
+Text GLabel 3350 3350 0    50   Input ~ 0
+TX
+$Comp
+L power:GND #PWR?
+U 1 1 629319FA
+P 3850 3650
+AR Path="/629319FA" Ref="#PWR?"  Part="1" 
+AR Path="/609A051B/629319FA" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 3850 3400 50  0001 C CNN
+F 1 "GND" V 3855 3522 50  0000 R CNN
+F 2 "" H 3850 3650 50  0001 C CNN
+F 3 "" H 3850 3650 50  0001 C CNN
+	1    3850 3650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4450 3350 4650 3350
+$Comp
+L power:VCC #PWR?
+U 1 1 6292912A
+P 4650 3350
+AR Path="/6292912A" Ref="#PWR?"  Part="1" 
+AR Path="/609A051B/6292912A" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 4650 3200 50  0001 C CNN
+F 1 "VCC" V 4665 3477 50  0000 L CNN
+F 2 "" H 4650 3350 50  0001 C CNN
+F 3 "" H 4650 3350 50  0001 C CNN
+	1    4650 3350
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3850 3650 3850 3550
+Wire Wire Line
+	4250 3350 4150 3350
+$Comp
+L Device:R_Small_US R?
+U 1 1 628C8325
+P 4350 3350
+AR Path="/628C8325" Ref="R?"  Part="1" 
+AR Path="/609A051B/628C8325" Ref="R?"  Part="1" 
+F 0 "R?" V 4145 3350 50  0001 C CNN
+F 1 "220Ω" V 4236 3350 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 4350 3350 50  0001 C CNN
+F 3 "~" H 4350 3350 50  0001 C CNN
+F 4 "C22962" H 4350 3350 50  0001 C CNN "LCSC Part Number"
+F 5 "C22962" H 4350 3350 50  0001 C CNN "LCSC"
+	1    4350 3350
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Connector:DIN-5_180degree MIDI_OUT
+U 1 1 628BDE65
+P 3850 3250
+F 0 "MIDI_OUT" H 3850 2975 50  0000 C CNN
+F 1 "DIN-5_180degree" H 3850 2884 50  0000 C CNN
+F 2 "" H 3850 3250 50  0001 C CNN
+F 3 "http://www.mouser.com/ds/2/18/40_c091_abd_e-75918.pdf" H 3850 3250 50  0001 C CNN
+	1    3850 3250
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6150 3350 6350 3350
+Wire Wire Line
+	6350 3350 6350 3100
+Wire Wire Line
+	6350 3100 6500 3100
+Wire Wire Line
+	5550 3350 5400 3350
+Wire Wire Line
+	5400 3350 5400 3650
+Wire Wire Line
+	5400 3650 6450 3650
+Wire Wire Line
+	6450 3650 6450 3400
+Wire Wire Line
+	6450 3400 6750 3400
+Connection ~ 6750 3400
+Wire Wire Line
+	3550 3350 3350 3350
+$EndSCHEMATC
