@@ -4,6 +4,11 @@ void loop() {
 
   // it will read MIDI incoming messages if using ATMEGA32U4
   MIDIread();
+
+#ifdef MIDI_DIN
+  midi2.read();
+#endif
+
 #endif
 
 #ifdef ATMEGA328

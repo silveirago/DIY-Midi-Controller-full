@@ -35,10 +35,10 @@ void encoders() {
     encoderValue[ENCODER_MIDI_CH][i] = encoder[i].read(); // reads each encoder and stores the value
 
 #if !defined(TRAKTOR) && !defined(USING_MACKIE) // if not define
-//#ifndef TRAKTOR // if not def Traktor
-//#ifndef USING_MACKIE
+    //#ifndef TRAKTOR // if not def Traktor
+    //#ifndef USING_MACKIE
     clipEncoderValue(i, encoderMinVal, encoderMaxVal); // checks if it's greater than the max value or less than the min value
-//#endif
+    //#endif
 #endif
 
     encoderMidiValue[ENCODER_MIDI_CH][i] = encoderValue[ENCODER_MIDI_CH][i];
@@ -84,6 +84,27 @@ void encoders() {
 #elif ATMEGA32U4
       // if using with ATmega32U4 (micro, pro micro, leonardo...)
 
+#ifdef MIDI_DIN
+      // if using MIDI din cable
+
+#ifdef USING_MACKIE // to use with Mackie
+
+      // usb
+      controlChange(ENCODER_MIDI_CH, ENCODER_CC_N[i], encoderMackieValue[ENCODER_MIDI_CH][i]); //  (channel, CC number,  CC value)
+      MidiUSB.flush();
+      // din
+      midi2.sendControlChange(ENCODER_CC_N[i], encoderMackieValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH + 1);
+#else
+      // usb
+      controlChange(ENCODER_MIDI_CH, ENCODER_CC_N[i], encoderMidiValue[ENCODER_MIDI_CH][i]); //  (channel, CC number,  CC value)
+      MidiUSB.flush();
+      // din
+      midi2.sendControlChange(ENCODER_CC_N[i], encoderMidiValue[ENCODER_MIDI_CH][i], ENCODER_MIDI_CH + 1);
+
+#endif // no MACKIE
+
+#else // if not using MIDI_DIN
+
 #ifdef USING_MACKIE // to use with Mackie
       controlChange(ENCODER_MIDI_CH, ENCODER_CC_N[i], encoderMackieValue[ENCODER_MIDI_CH][i]); //  (channel, CC number,  CC value)
       MidiUSB.flush();
@@ -91,6 +112,8 @@ void encoders() {
       controlChange(ENCODER_MIDI_CH, ENCODER_CC_N[i], encoderMidiValue[ENCODER_MIDI_CH][i]); //  (channel, CC number,  CC value)
       MidiUSB.flush();
 #endif
+
+#endif // MIDI_DIN
 
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

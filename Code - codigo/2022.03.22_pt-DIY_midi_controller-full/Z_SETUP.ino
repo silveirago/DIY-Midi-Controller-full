@@ -25,9 +25,9 @@ void setup() {
   // Midi in
   MIDI.begin();
   MIDI.turnThruOff();
-  MIDI.setHandleControlChange(handleControlChange);
-  MIDI.setHandleNoteOn(handleNoteOn);
-  MIDI.setHandleNoteOff(handleNoteOff);
+  MIDI.setHandleControlChange(handleControlChange2);
+  MIDI.setHandleNoteOn(handleNoteOn2);
+  MIDI.setHandleNoteOff(handleNoteOff2);
 #endif
 
 

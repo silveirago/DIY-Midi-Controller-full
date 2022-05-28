@@ -97,8 +97,21 @@ void buttons() {
             MIDI.sendNoteOn(MESSAGE_VAL[i] + octave, velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
 
 #elif ATMEGA32U4
+
+#ifdef MIDI_DIN
+            // if using midi din cable
+
+            // usb
             noteOn(BUTTON_MIDI_CH, MESSAGE_VAL[i] + octave, velocity[i]);  // channel, note, velocity
             MidiUSB.flush();
+            // din
+            midi2.sendNoteOn(MESSAGE_VAL[i] + octave, velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
+
+#else // not sing MIDI_DIN
+            noteOn(BUTTON_MIDI_CH, MESSAGE_VAL[i] + octave, velocity[i]);  // channel, note, velocity
+            MidiUSB.flush();
+
+#endif // MIDI_DIN
 
 #elif TEENSY
             // if using custom NOTE numbers
@@ -125,20 +138,30 @@ void buttons() {
 #ifdef ATMEGA328
 
             //if (buttonCState[i] == LOW) { // only sends note on when button is pressed, nothing when released
-              MIDI.sendControlChange(MESSAGE_VAL[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
+            MIDI.sendControlChange(MESSAGE_VAL[i], velocity[i], BUTTON_MIDI_CH); // note, velocity, channel
             //}
 
 #elif ATMEGA32U4
 
-            //if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
-              controlChange(BUTTON_MIDI_CH, MESSAGE_VAL[i], velocity[i]); //  (channel, CC number,  CC value)
-              MidiUSB.flush();
-            //}
+#ifdef MIDI_DIN
+            // if using MIDI din cable
+
+            // usb
+            controlChange(BUTTON_MIDI_CH, MESSAGE_VAL[i], velocity[i]); //  (channel, CC number,  CC value)
+            MidiUSB.flush();
+            // din
+            midi2.sendControlChange(MESSAGE_VAL[i], velocity[i], BUTTON_MIDI_CH + 1); // note, velocity, channel
+
+#else // no MIDI din
+            controlChange(BUTTON_MIDI_CH, MESSAGE_VAL[i], velocity[i]); //  (channel, CC number,  CC value)
+            MidiUSB.flush();
+
+#endif // MIDI_DIN
 
 #elif TEENSY
 
             //if (velocity[i] > 0) { // only sends note on when button is pressed, nothing when released
-              usbMIDI.sendControlChange(MESSAGE_VAL[i], velocity[i], BUTTON_MIDI_CH); // CC number, CC value, midi channel
+            usbMIDI.sendControlChange(MESSAGE_VAL[i], velocity[i], BUTTON_MIDI_CH); // CC number, CC value, midi channel
             //}
 
 #elif DEBUG

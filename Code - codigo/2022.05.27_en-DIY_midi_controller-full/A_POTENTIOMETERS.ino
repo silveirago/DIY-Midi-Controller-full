@@ -158,37 +158,70 @@ void potentiometers() {
 #ifdef ATMEGA328
           // use if using with ATmega328 (uno, mega, nano...)
 
-#ifdef USING_CUSTOM_CC_N
+#ifdef USING_MACKIE // if USING Remote Script protocol
+          MIDI.sendPitchBend(PBVal[i], POT_CC_N[i]);
 
-#ifdef USING_HIGH_RES_FADERS // if def
+#elif USING_HIGH_RES_FADERS // if def
 
           MIDI.sendControlChange(POT_CC_N[i], faderMSB, POT_MIDI_CH); // MSB
           MIDI.sendControlChange(POT_CC_N[i] + 32, faderLSB, POT_MIDI_CH); // LSB
-#else
+
+#else // not using Mackie or HighRes
+
+#ifdef USING_CUSTOM_CC_N
           MIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel - custom cc
-#endif // USING_HIGH_RES_FADERS
-
-
-#else // if not USING_CUSTOM_CC_N
-
-
-#ifdef USING_HIGH_RES_FADERS // if def
-
-          MIDI.sendControlChange(CC_NUMBER + i, faderMSB, POT_MIDI_CH); // MSB
-          MIDI.sendControlChange(CC_NUMBER + i + 32, faderLSB, POT_MIDI_CH); // LSB
-
-#else // if not USING_HIGH_RES_FADERS
-
+#else
           MIDI.sendControlChange(CC_NUMBER + i, potMidiCState[i], POT_MIDI_CH); // CC number, CC value, midi channel
+#endif // USING_CUSTOM_CC_N
 
-#endif // USING_HIGH_RES_FADERS
-
-#endif //USING_CUSTOM_CC_N
-
+#endif // NOT USING_MACKIE
 
           // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #elif ATMEGA32U4 //use if using with ATmega32U4 (micro, pro micro, leonardo...)
+
+#ifdef MIDI_DIN // if using MIDI din - uses hardware serial
+
+#ifdef USING_MACKIE // if USING Remote Script protocol
+          // usb
+          pitchBend(POT_CC_N[i], PBVal[i]);
+          MidiUSB.flush();
+          // din
+          midi2.sendPitchBend(PBVal[i], POT_CC_N[i] + 1);
+
+#elif USING_HIGH_RES_FADERS // if def
+
+          // usb
+          controlChange(POT_MIDI_CH, CC_NUMBER + i, faderMSB); //  (channel, CC number,  CC value)
+          MidiUSB.flush();
+          controlChange(POT_MIDI_CH, CC_NUMBER + i + 32, faderLSB); //  (channel, CC number,  CC value)
+          MidiUSB.flush();
+          // din
+          midi2.sendControlChange(POT_CC_N[i], faderMSB, POT_MIDI_CH + 1); // MSB
+          midi2.sendControlChange(POT_CC_N[i] + 32, faderLSB, POT_MIDI_CH + 1); // LSB
+
+#else // not using Mackie or HighRes
+
+#ifdef USING_CUSTOM_CC_N
+          // usb
+          controlChange(POT_MIDI_CH, POT_CC_N[i], potMidiCState[i]); //  (channel, CC number,  CC value)
+          MidiUSB.flush();
+          // din
+          midi2.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH + 1); // CC number, CC value, midi channel - custom cc
+#else
+          // usb
+          controlChange(POT_MIDI_CH, CC_NUMBER + i, potMidiCState[i]); //  (channel, CC number,  CC value)
+          MidiUSB.flush();
+          // din
+          midi2.sendControlChange(CC_NUMBER + i, potMidiCState[i], POT_MIDI_CH + 1); // CC number, CC value, midi channel
+#endif // USING_CUSTOM_CC_N
+
+#endif // NOT USING_MACKIE
+
+          // - - - - - - - - - -
+
+          // If using 5-pin MIDI cable at the same time
+#else // ends MIDI DIN
 
 #ifdef USING_MACKIE // if USING Remote Script protocol
           pitchBend(POT_CC_N[i], PBVal[i]);
@@ -212,6 +245,8 @@ void potentiometers() {
 #endif // USING_CUSTOM_CC_N
 
 #endif // NOT USING_MACKIE
+
+#endif // MIDI_DIN
 
 
           //#endif //use if using with ATmega32U4 (micro, pro micro, leonardo...)
