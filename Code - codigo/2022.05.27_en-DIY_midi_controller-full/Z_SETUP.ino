@@ -4,13 +4,28 @@ void setup() {
   // use if using with ATmega328 (uno, mega, nano...)
   // 31250 for MIDI class compliant | 115200 for Hairless MIDI
 
-int baudRate = 115200;
+  int baudRate = 115200;
 
 #ifdef MIDI_DIN
-baudRate = 31250;
+  baudRate = 31250;
 #endif
 
-  Serial.begin(baudRate); //*
+
+#ifdef ATMEGA32U4
+#ifdef MIDI_DIN
+  Serial1.begin(31250);
+  midi2.begin();
+
+    /////////////////////////////////////////////
+  // Midi in
+  midi2.begin();
+  midi2.turnThruOff();
+  midi2.setHandleControlChange(myHandleControlChange);
+  midi2.setHandleNoteOn(myHandleNoteOn);
+  midi2.setHandleNoteOff(myHandleNoteOff);
+#endif
+#endif
+
 
   delay(100);
 
@@ -26,14 +41,15 @@ baudRate = 31250;
   BUTTON_MIDI_CH++;
   ENCODER_MIDI_CH++;
 
+  Serial.begin(baudRate); //*
 
   /////////////////////////////////////////////
   // Midi in
   MIDI.begin();
   MIDI.turnThruOff();
-  MIDI.setHandleControlChange(handleControlChange);
-  MIDI.setHandleNoteOn(handleNoteOn);
-  MIDI.setHandleNoteOff(handleNoteOff);
+  MIDI.setHandleControlChange(myHandleControlChange);
+  MIDI.setHandleNoteOn(myHandleNoteOn);
+  MIDI.setHandleNoteOff(myHandleNoteOff);
 #endif
 
 

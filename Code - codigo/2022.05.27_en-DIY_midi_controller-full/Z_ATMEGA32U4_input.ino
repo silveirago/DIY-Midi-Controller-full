@@ -86,7 +86,6 @@ void MIDIread() {
 
 void handleNoteOn(byte channel, byte number, byte value) {
 
-
   // If yusing neopixel
 #ifdef USING_NEOPIXEL
 

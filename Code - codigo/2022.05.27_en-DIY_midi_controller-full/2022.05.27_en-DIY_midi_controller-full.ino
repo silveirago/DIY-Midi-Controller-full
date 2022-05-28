@@ -22,7 +22,7 @@
 // "TEENSY" if using a Teensy board
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define ATMEGA328 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA32U4 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using buttons?
@@ -38,7 +38,7 @@
 
 /////////////////////////////////////////////
 // Are you using encoders?
-#define USING_ENCODER 1 //* comment if not using encoders, uncomment if using it.
+//#define USING_ENCODER 1 //* comment if not using encoders, uncomment if using it.
 //#define TRAKTOR 1 // uncomment if using with traktor, comment if not
 
 /////////////////////////////////////////////
@@ -77,7 +77,7 @@
 //#define USING_MOTORIZED_FADERS 1 //* comment if not using a motorized fader
 
 // Are you using the Mackie Protocol?
-#define USING_MACKIE 1
+//#define USING_MACKIE 1
 
 // Are you using two buttons for octave change?
 //#define USING_OCTAVE 1
@@ -121,12 +121,18 @@ byte ledIndex[NUM_LEDS] = {0, 1, 2, 3};
 #ifdef ATMEGA328
 #include <MIDI.h>
 //MIDI_CREATE_DEFAULT_INSTANCE();
+#endif
 
 // if using with ATmega32U4 - Micro, Pro Micro, Leonardo...
-#elif ATMEGA32U4
-#include "MIDIUSB.h"
+#ifdef ATMEGA32U4
+#include <MIDIUSB.h>
 
-#endif
+#ifdef MIDI_DIN
+#include <MIDI.h> // adds the MIDI library to use the hardware serial with a MIDI cable
+MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, midi2);
+#endif //MIDI_DIN
+
+#endif // ATMEGA32U4
 
 //////////////////////////////////////
 // if using the 74HC595 bit shifter
@@ -187,7 +193,7 @@ Adafruit_SSD1306 display(128, 64);  // Create display - size of the display in p
 // MULTIPLEXERS
 #ifdef USING_MUX
 
-#define N_MUX 3 //* number of multiplexers
+#define N_MUX 1 //* number of multiplexers
 //* Define s0, s1, s2, s3, and x pins
 #define s0 18
 #define s1 19
@@ -236,7 +242,7 @@ Multiplexer4067 mux[N_MUX] = {
 
 const byte N_BUTTONS = 3; //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2... (DON'T put Octave and MIDI channel (bank) buttons here)
 const byte N_BUTTONS_ARDUINO = 3; //* number of buttons connected straight to the Arduino
-const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {2, 3, 4}; //* pins of each button connected straight to the Arduino
+const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = {10, 16, 14}; //* pins of each button connected straight to the Arduino
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -268,7 +274,7 @@ byte T = 2;  // Toggle
 byte MESSAGE_TYPE[N_BUTTONS] = {NN, NN, NN};
 
 //* Put here the number of the message you want to send, in the right order, no matter if it's a note number or CC (or MACKIE).
-byte MESSAGE_VAL[N_BUTTONS] = {REC_RDY_1, SOLO_2, PLAY};
+byte MESSAGE_VAL[N_BUTTONS] = {36, 37, 38};
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -338,7 +344,7 @@ const byte POT_MUX_PIN[N_MUX][16] = { //* pins of each pot of each mux in the or
 
 #define USING_CUSTOM_CC_N 1 //* comment if not using CUSTOM CC NUMBERS, uncomment if using it.
 #ifdef USING_CUSTOM_CC_N
-byte POT_CC_N[N_POTS] = {VOLUME_1, VOLUME_2}; // Add the CC NUMBER or MACKIE of each pot you want
+byte POT_CC_N[N_POTS] = {1, 2}; // Add the CC NUMBER or MACKIE of each pot you want
 #endif
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -

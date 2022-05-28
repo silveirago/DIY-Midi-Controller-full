@@ -191,8 +191,6 @@ F 3 "" H 3850 3650 50  0001 C CNN
 	1    3850 3650
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	4450 3350 4650 3350
 $Comp
 L power:VCC #PWR?
 U 1 1 6292912A
@@ -253,6 +251,8 @@ Wire Wire Line
 Wire Wire Line
 	6450 3400 6750 3400
 Connection ~ 6750 3400
+Wire Wire Line
+	4450 3350 4650 3350
 Wire Wire Line
 	3550 3350 3350 3350
 $EndSCHEMATC
