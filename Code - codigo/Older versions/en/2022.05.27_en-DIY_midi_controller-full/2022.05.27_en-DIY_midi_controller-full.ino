@@ -22,7 +22,7 @@
 // "TEENSY" if using a Teensy board
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define ATMEGA32U4 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define DEBUG 1//* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using buttons?
@@ -83,7 +83,7 @@
 //#define USING_OCTAVE 1
 
 // Are you using Physical MIDI din 5-pin connector?
-#define MIDI_DIN 1
+//#define MIDI_DIN 1
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
