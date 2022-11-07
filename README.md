@@ -26,4 +26,6 @@
     - Update 12 (06/25/21): Better pot reading; High Res Faders; Motorized Faders.
     - Update 13 (01/09/21): Custom Note Numbers, CC and Toggle: Now you can use them at the same time with different buttons.  
     - Update 14 (01/09/21): How to change octaves and show it on the display.
-
+    - Update 15 (01/04/22): Motorized Faders
+    - Update 16 (01/08/22): MIDI Din
+    - Update 16 (01/11/22): BLE MIDI
