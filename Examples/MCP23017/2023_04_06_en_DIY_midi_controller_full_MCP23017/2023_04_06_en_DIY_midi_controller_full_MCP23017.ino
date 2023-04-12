@@ -23,7 +23,7 @@
 // "BLEMIDI" if using BLE MIDI (ESP32)
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define ATMEGA32U4 1  //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define TEENSY 1  //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 //#define DEBUG 1
 
 /////////////////////////////////////////////
@@ -42,12 +42,12 @@
 
 /////////////////////////////////////////////
 // Are you using a multiplexer?
-//#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
+#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
 
 /////////////////////////////////////////////
 // Are you using encoders?
-#define USING_ENCODER 1  //* comment if not using encoders, uncomment if using it.
-//#define USING_ENCODER_MCP23017 1
+//#define USING_ENCODER 1  //* comment if not using encoders, uncomment if using it.
+#define USING_ENCODER_MCP23017 1
 //#define TRAKTOR 1 // uncomment if using with traktor, comment if not
 
 // Are you using high res ENCODER?
@@ -210,28 +210,25 @@ Adafruit_SSD1306 display(128, 64);  // Create display - size of the display in p
 // MULTIPLEXERS
 #ifdef USING_MUX
 
-#define N_MUX 1  //* number of multiplexers
+
+#define N_MUX 3  //* number of multiplexers
 //* Define s0, s1, s2, s3, and x pins
 #define s0 18
 #define s1 19
 #define s2 20
 #define s3 21
 
-#define x1 A0  // analog pin of the first mux
-//#define x2 A1 // analog pin of the first mux
-//#define x3 A2 // analog pin of the first mux
+#define x1 A2   // analog pin of the first mux
+#define x2 A11  // analog pin of the first mux
+#define x3 A10  // analog pin of the first mux
 
 // add more #define and the x number if you need
-
-// *** IMPORTANT: if you want to add more than one mux! ***
-// In the Setup tab, line 123, add another "pinMode(x2, INPUT_PULLUP);" if you want to add a second mux,
-// and "pinMode(x3, INPUT_PULLUP);" for a third mux, and so on...
 
 // Initializes the multiplexer
 Multiplexer4067 mux[N_MUX] = {
   Multiplexer4067(s0, s1, s2, s3, x1),  // The SIG pin where the multiplexer is connnected
-  //  Multiplexer4067(s0, s1, s2, s3, x2), // The SIG pin where the multiplexer is connnected
-  //  Multiplexer4067(s0, s1, s2, s3, x3) // The SIG pin where the multiplexer is connnected
+  Multiplexer4067(s0, s1, s2, s3, x2),  // The SIG pin where the multiplexer is connnected
+  Multiplexer4067(s0, s1, s2, s3, x3)   // The SIG pin where the multiplexer is connnected
   // ...
 };
 #endif
@@ -262,31 +259,31 @@ byte PB = 4;  // Pitch Bend
 // BUTTONS
 #ifdef USING_BUTTONS
 
-const byte N_BUTTONS = 3;                                //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2... (DON'T put Octave and MIDI channel (bank) buttons here)
-const byte N_BUTTONS_ARDUINO = 3;                        //* number of buttons connected straight to the Arduino
-const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = { 2, 3, 4 };  //* pins of each button connected straight to the Arduino
+const byte N_BUTTONS = 46;                                //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2... (DON'T put Octave and MIDI channel (bank) buttons here)
+const byte N_BUTTONS_ARDUINO = 1;                        //* number of buttons connected straight to the Arduino
+const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = { 7 };  //* pins of each button connected straight to the Arduino
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #ifdef USING_MUX                                      // Fill if you are using mux, otherwise just leave it
-const byte N_BUTTONS_PER_MUX[N_MUX] = { 16, 13, 5 };  //* number of buttons in each mux (in order)
+const byte N_BUTTONS_PER_MUX[N_MUX] = { 16, 13, 15 };  //* number of buttons in each mux (in order)
 const byte BUTTON_MUX_PIN[N_MUX][16] = {
-  //* pin of each button of each mux in order
+//* pin of each button of each mux in order
 
-  { 1, 2, 0, 5, 4, 3, 6, 7, 10, 9, 8, 13, 12, 11, 15, 14 },  // 1
-  { 2, 1, 0, 5, 4, 3, 7, 6, 9, 8, 13, 12, 15 },              // 2
-  { 6, 5, 4, 3, 8 },
-  // ...
+{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },  // 1
+{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 15 },              // 2
+{ 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },     // 3
+// ...
 };
 
-int buttonMuxThreshold = 850;
+int buttonMuxThreshold = 900;
 
 #endif  //USING_MUX
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // What type of message do you want to send?
-// Note Number - Control Change - Toggle - Program Change 
+// Note Number - Control Change - Toggle - Program Change
 
 // NN: Note number or MACKIE
 // CC: Control change
@@ -295,10 +292,13 @@ int buttonMuxThreshold = 850;
 
 //* Put here the type of message you want to send, in the same order you declared the button pins
 // "NN" for Note Number | "CC" for Control Change | "T" for Note Number but in toggle mode | "PC" for Program Change
-byte MESSAGE_TYPE[N_BUTTONS] = { NN, NN, NN };
+byte MESSAGE_TYPE[N_BUTTONS] = { NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN, NN };
 
-//* Put here the number of the message you want to send, in the right order, no matter if it's a note number, CC (or MACKIE), Program Change
-byte MESSAGE_VAL[N_BUTTONS] = { 36, 37, 38 };
+//* Put here the number of the message you want to send, in the right order, no matter if it's a note number or CC.
+
+// indexs not to use (they are used by the menu = {0, 3, 6, 8, 11, 33};
+byte MESSAGE_VAL[N_BUTTONS] = { 127, 28, 30, 0, 26, 31, 0, 32, 0, 23, 33, 0, 21, 34, 19, 35, 17, 38, 36, 14, 39, 37, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+//byte MESSAGE_VAL[N_BUTTONS] {0  , 1,  2,  3, 4,  5,  6, 7,  8, 9,  10, 11,12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33};
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -347,23 +347,23 @@ unsigned long debounceDelay = 50;  //* the debounce time; increase if the output
 
 #ifdef USING_POTENTIOMETERS
 
-const byte N_POTS = 2;  //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
+const byte N_POTS = 5;  //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
 
-const byte N_POTS_ARDUINO = 2;  //* number of pots connected straight to the Arduino
+const byte N_POTS_ARDUINO = 1;  //* number of pots connected straight to the Arduino
 // If using the Arduino declare as "A1, A2"
 // If using ESP32 only use the GPIO number as "11, 10"
-const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = { A2, A1 };  //* pins of each pot connected straight to the Arduino (don't use "A" if you are using ESP32, only the number)
+const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = { A0 };  //* pins of each pot connected straight to the Arduino (don't use "A" if you are using ESP32, only the number)
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #ifdef USING_MUX
 const byte N_POTS_PER_MUX[N_MUX] = { 0, 3, 1 };  //* number of pots in each multiplexer (in order)
 const byte POT_MUX_PIN[N_MUX][16] = {
-  //* pins of each pot of each mux in the order you want them to be
-  {},  //* pins of the first mux
-  { 10, 11, 14 },
-  { 7 }
-  // ...
+//* pins of each pot of each mux in the order you want them to be
+{},  //* pins of the first mux
+{ 10, 11, 14 },
+{ 4 }
+// ...
 };
 #endif
 
@@ -380,16 +380,16 @@ const byte POT_MUX_PIN[N_MUX][16] = {
 
 //* Put here the type of message you want to send, in the same order you declared the button pins
 // "CC" for Control Change | "PB" for Pitch Bend
-byte MESSAGE_TYPE_POT[N_POTS] = { CC, PB };
+byte MESSAGE_TYPE_POT[N_POTS] = { CC, CC, CC, CC, CC };
 
-byte POT_CC_N[N_POTS] = { 1, 2 };  // Add the CC NUMBER or MACKIE of each pot you want
+byte POT_CC_N[N_POTS] = { 1, 2, 3, 4, 5 };  // Add the CC NUMBER of each pot you want
 
 #endif
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 const int TIMEOUT = 300;      //* Amount of time the potentiometer will be read after it exceeds the varThreshold
-const byte varThreshold = 8;  //* Threshold for the potentiometer signal variation - Increase if using ESP32
+const byte varThreshold = 40;  //* Threshold for the potentiometer signal variation - Increase if using ESP32
 // For varThreshold I usually use "8" for normal Arduino and "30" for ESP32
 
 // put here the min and max reading in the potCState
@@ -397,8 +397,8 @@ const byte varThreshold = 8;  //* Threshold for the potentiometer signal variati
 // IMPORTANT:
 // Regular Arduinos have 10 bit resolution: 0 - 1023
 // ESP32 boards have 12 bit resolution: 0 - 4095
-const int potMin = 20;
-const unsigned int potMax = 940;
+const int potMin = 10;
+const unsigned int potMax = 1020;
 
 #endif  // USING_POTENTIOMETERS
 
