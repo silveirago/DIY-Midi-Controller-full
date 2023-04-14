@@ -3,7 +3,7 @@
    Made by Gustavo Silveira, 2021.
   - This Sketch rmakes the Arduino a full MIDI controller.
 
-  http://www.musiconerd.com
+  http://go.musiconerd.com
   http://www.youtube.com/musiconerd
   http://facebook.com/musiconerdmusiconerd
   http://instagram.com/musiconerd/
@@ -28,4 +28,9 @@
     - Update 14 (01/09/21): How to change octaves and show it on the display.
     - Update 15 (01/04/22): Motorized Faders
     - Update 16 (01/08/22): MIDI Din
-    - Update 16 (01/11/22): BLE MIDI
+    - Update 17 (01/11/22): BLE MIDI
+    - Update 18 (04/14/23): More MIDI Messages
+    - Update 19 (04/14/23): LED MIDI In in the Arduino (w/o bit shifter)
+    - Update 20 (04/14/23): Encoder Sensitivity
+    - Update 21 (04/14/23): Encoder High Resolution
+    - Update 22 (04/14/23): MCP23017 Encoder "multiplexing"

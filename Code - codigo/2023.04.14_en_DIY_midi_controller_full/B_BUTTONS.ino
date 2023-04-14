@@ -117,8 +117,9 @@ void buttons() {
 
 #elif BLEMIDI
             BLEMidiServer.noteOn(BUTTON_MIDI_CH, MESSAGE_VAL[i] + octave, velocity[i]);          // channel, note, velocity
+#endif
 
-#elif DEBUG
+#ifdef DEBUG
             Serial.print("Button: ");
             Serial.print(i);
             Serial.print("  | ch: ");
