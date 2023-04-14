@@ -325,9 +325,11 @@ void potentiometers() {
 
 #endif  // NOT USING_MACKIE
 
+#endif // BOARD
+
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#elif DEBUG
+#ifdef DEBUG
       Serial.print("Pot: ");
       Serial.print(i);
       Serial.print("  |  ch: ");

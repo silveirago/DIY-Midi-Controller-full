@@ -234,7 +234,7 @@ void setup() {
 #ifdef USING_ENCODER_MCP23017
 
   // uncomment appropriate mcp.begin
-  if (!mcp.begin_I2C(0x20, &Wire)) { // Wire1 or Wire    
+  if (!mcp.begin_I2C(0x20, &Wire1)) { // Wire1 or Wire    
     //if (!mcp.begin_SPI(CS_PIN)) {
     Serial.println("MCP23017 Error.");
     while (1)

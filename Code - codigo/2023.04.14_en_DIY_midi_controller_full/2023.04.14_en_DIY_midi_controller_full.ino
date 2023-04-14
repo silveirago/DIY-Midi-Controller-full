@@ -28,11 +28,11 @@
 
 /////////////////////////////////////////////
 // Are you using buttons?
-#define USING_BUTTONS 1  //* comment if not using buttons
+//#define USING_BUTTONS 1  //* comment if not using buttons
 
 /////////////////////////////////////////////
 // Are you using potentiometers?
-#define USING_POTENTIOMETERS 1  //* comment if not using potentiometers
+//#define USING_POTENTIOMETERS 1  //* comment if not using potentiometers
 
 // Are you using high res faders?
 //#define USING_HIGH_RES_FADERS 1 //* comment if not using high res faders (any fader can be high res)
@@ -46,12 +46,12 @@
 
 /////////////////////////////////////////////
 // Are you using encoders?
-#define USING_ENCODER 1  //* comment if not using encoders, uncomment if using it.
+//#define USING_ENCODER 1  //* comment if not using encoders, uncomment if using it.
 //#define USING_ENCODER_MCP23017 1
 //#define TRAKTOR 1 // uncomment if using with traktor, comment if not
 
 // Are you using high res ENCODER?
-#define USING_HIGH_RES_ENC 1  //* comment if not using high res faders (any fader can be high res)
+//#define USING_HIGH_RES_ENC 1  //* comment if not using high res faders (any fader can be high res)
 
 /////////////////////////////////////////////
 // Are you using neopixels (any addressable strips)?
@@ -70,7 +70,7 @@
 //#define BANKS_FOR_ENCODERS 1
 
 // Are you using LED note feedback?
-#define USING_LED_FEEDBACK 1  //* comment if not using a VU
+//#define USING_LED_FEEDBACK 1  //* comment if not using a VU
 
 /////////////////////////////////////////////
 // Are you using a 74HC595 Bit Shifter?
@@ -271,12 +271,12 @@ const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = { 2, 3, 4 };  //* pins of each button
 #ifdef USING_MUX                                      // Fill if you are using mux, otherwise just leave it
 const byte N_BUTTONS_PER_MUX[N_MUX] = { 16, 13, 5 };  //* number of buttons in each mux (in order)
 const byte BUTTON_MUX_PIN[N_MUX][16] = {
-  //* pin of each button of each mux in order
+//* pin of each button of each mux in order
 
-  { 1, 2, 0, 5, 4, 3, 6, 7, 10, 9, 8, 13, 12, 11, 15, 14 },  // 1
-  { 2, 1, 0, 5, 4, 3, 7, 6, 9, 8, 13, 12, 15 },              // 2
-  { 6, 5, 4, 3, 8 },
-  // ...
+{ 1, 2, 0, 5, 4, 3, 6, 7, 10, 9, 8, 13, 12, 11, 15, 14 },  // 1
+{ 2, 1, 0, 5, 4, 3, 7, 6, 9, 8, 13, 12, 15 },              // 2
+{ 6, 5, 4, 3, 8 },
+// ...
 };
 
 int buttonMuxThreshold = 850;
@@ -286,7 +286,7 @@ int buttonMuxThreshold = 850;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // What type of message do you want to send?
-// Note Number - Control Change - Toggle - Program Change 
+// Note Number - Control Change - Toggle - Program Change
 
 // NN: Note number or MACKIE
 // CC: Control change
@@ -359,11 +359,11 @@ const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = { A2, A1 };  //* pins of each pot c
 #ifdef USING_MUX
 const byte N_POTS_PER_MUX[N_MUX] = { 0, 3, 1 };  //* number of pots in each multiplexer (in order)
 const byte POT_MUX_PIN[N_MUX][16] = {
-  //* pins of each pot of each mux in the order you want them to be
-  {},  //* pins of the first mux
-  { 10, 11, 14 },
-  { 7 }
-  // ...
+//* pins of each pot of each mux in the order you want them to be
+{},  //* pins of the first mux
+{ 10, 11, 14 },
+{ 7 }
+// ...
 };
 #endif
 
@@ -424,7 +424,7 @@ const byte encoderMaxVal = 127;  //* encoder max value NORMAL MIDI 7bit
 // "1" will give you 4 readings per click, it will increament in 4, like 4, 8, 12...
 // "4" will give you 1 reading per click, like 1, 2, 3, 4...
 // so "4" will give the most precise reading
-const float encSensitivity = 1;  //* change the encoder sensitivity here
+const float encSensitivity = 0.1;  //* change the encoder sensitivity here
 
 const byte N_ENCODER_MIDI_CHANNELS = 16;  // number of ENCODER_MIDI_CHs (DO NOT CHANGE)
 
@@ -485,7 +485,7 @@ const int I2C_ADDRESS = 0x20;  //* MCP23017 I2C address
 const byte N_ENC_MCP23017 = 6;      // Number of encoders used
 const byte N_ENC_CH_MCP23017 = 16;  // number of ENCODER_MIDI_CHs
 
-int encoderPin[N_ENC_MCP23017][2] = { { 8, 9 }, { 0, 1 }, { 12, 13 }, { 10, 11 }, { 2, 3 }, { 14, 15 } };  // Pin numbers for the A and B channels of each encoder
+int encoderPin[N_ENC_MCP23017][2] = {{8, 9}, {0, 1}, {12, 13}, {10, 11}, {2, 3}, {14, 15}};  // Pin numbers for the A and B channels of each encoder
 int INT_PIN = 8;                                                                                           // microcontroller pin attached to INTA/B
 
 int count[N_ENC_MCP23017] = { 0 };      // Current count of each encoder
