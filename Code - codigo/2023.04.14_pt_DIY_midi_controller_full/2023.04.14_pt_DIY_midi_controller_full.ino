@@ -286,7 +286,7 @@ int buttonMuxThreshold = 850;
 
 //* Coloque aqui o tipo de mensagem que você deseja enviar, na mesma ordem em que declarou os pinos do botão
 // "NN" para número da nota | "CC" para mudança de controle | "T" para número da nota, mas no modo de alternância | "PC" para mudança de programa
-byte MESSAGE_TYPE[N_BUTTONS] = { NN, NN, NN };
+byte MESSAGE_TYPE[N_BUTTONS] = { NN, CC, PC };
 
 //* Coloque aqui o número da mensagem que você deseja enviar, na ordem correta, não importa se é um número de nota
 byte MESSAGE_VAL[N_BUTTONS] = { 36, 37, 38 };
