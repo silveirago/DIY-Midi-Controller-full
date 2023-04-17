@@ -13,10 +13,12 @@ void setup() {
 
 #ifdef ATMEGA32U4
 
+#ifdef DEBUG
   while (!Serial) {
     Serial.println("waiting...");
   }
   Serial.println();
+#endif
 
 #ifdef MIDI_DIN
   Serial1.begin(31250);
@@ -69,10 +71,14 @@ void setup() {
   // TEENSY
 #ifdef TEENSY
 
+#ifdef DEBUG
   while (!Serial) {
     Serial.println("waiting...");
   }
   Serial.println();
+#endif // DEBUG
+
+
 #endif
 
 #ifdef DEBUG
@@ -234,7 +240,7 @@ void setup() {
 #ifdef USING_ENCODER_MCP23017
 
   // uncomment appropriate mcp.begin
-  if (!mcp.begin_I2C(0x20, &Wire1)) { // Wire1 or Wire    
+  if (!mcp.begin_I2C(0x20, &Wire1)) { // Wire1 or Wire
     //if (!mcp.begin_SPI(CS_PIN)) {
     Serial.println("MCP23017 Error.");
     while (1)
