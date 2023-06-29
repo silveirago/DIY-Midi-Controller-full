@@ -33,7 +33,7 @@ void setup() {
   midi2.setHandleNoteOff(myHandleNoteOff);
   midi2.setHandlePitchBend(myHandlePitchBend);
 #endif
-#endif //ATMEGA32U4
+#endif
 
 
   delay(100);
