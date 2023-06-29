@@ -32,7 +32,7 @@
 
 /////////////////////////////////////////////
 // Are you using potentiometers?
-//#define USING_POTENTIOMETERS 1  //* comment if not using potentiometers
+#define USING_POTENTIOMETERS 1  //* comment if not using potentiometers
 
 // Are you using high res faders?
 //#define USING_HIGH_RES_FADERS 1 //* comment if not using high res faders (any fader can be high res)
