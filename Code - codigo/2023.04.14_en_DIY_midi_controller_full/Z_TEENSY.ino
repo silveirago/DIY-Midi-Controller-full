@@ -396,7 +396,7 @@ void processMIDI(void) {
       //      Serial.print(LSB);
       //      Serial.print("  MSB:  ");
       //      Serial.print(MSB);
-      //      Serial.print("  PB Val:  ");
+      //      Serial.print("  PBend Val:  ");
       //      Serial.print((MSB << 7) + LSB);
       //
       //      Serial.println();

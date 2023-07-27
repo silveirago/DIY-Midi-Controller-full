@@ -214,7 +214,7 @@ void buttons() {
             break;
 
             // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // PC - PROGRAM CHANGE
+            // PChange - PROGRAM CHANGE
 
           case 3:
 

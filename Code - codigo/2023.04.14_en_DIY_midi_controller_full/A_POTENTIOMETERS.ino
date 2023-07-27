@@ -174,7 +174,7 @@ void potentiometers() {
             case 1:                                                                // CC
               MIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH);  // CC number, CC value, midi channel - custom cc
               break;
-            case 4:  // PB
+            case 4:  // PBend
               MIDI.sendPitchBend(PBVal[i], POT_CC_N[i]);
               break;
           }
@@ -252,7 +252,7 @@ void potentiometers() {
             controlChange(POT_MIDI_CH, POT_CC_N[i], potMidiCState[i]);  //  (channel, CC number,  CC value)
             MidiUSB.flush();
             break;
-          case 4:  // PB
+          case 4:  // PBend
             pitchBend(POT_CC_N[i] -1, PBVal[i]);
             MidiUSB.flush();
             break;
@@ -281,7 +281,7 @@ void potentiometers() {
         case 1:                                                                   // CC
           usbMIDI.sendControlChange(POT_CC_N[i], potMidiCState[i], POT_MIDI_CH);  // CC number, CC value, midi channel
           break;
-        case 4:  // PB
+        case 4:  // PBend
           usbMIDI.sendPitchBend(PBVal[i], POT_CC_N[i]);
           break;
       }
@@ -313,7 +313,7 @@ void potentiometers() {
         case 1:
           BLEMidiServer.controlChange(POT_MIDI_CH, POT_CC_N[i], potMidiCState[i]);  // channel, cc number, cc value                                            // CC
           break;
-        case 4:                                            // PB
+        case 4:                                            // PBend
           BLEMidiServer.pitchBend(POT_CC_N[i], PBVal[i]);  // NOT TESTED
           break;
       }
@@ -339,8 +339,8 @@ void potentiometers() {
         case 1:  // CC
           Serial.print("  |  cc: ");
           break;
-        case 4:  // PB
-          Serial.print("  |  pb: ");
+        case 4:  // PBend
+          Serial.print("  |  PBend: ");
           break;
       }
 
@@ -357,7 +357,7 @@ void potentiometers() {
           Serial.print("  |  Responsive Value: ");
           Serial.print(responsivePot[i].getValue());
           break;
-        case 4:  // PB
+        case 4:  // PBend
           Serial.print("  |  Pitch Bend Val: ");
           Serial.print(PBVal[i]);
           Serial.print("  |  Responsive Value: ");

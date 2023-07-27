@@ -255,8 +255,8 @@ Multiplexer4067 mux[N_MUX] = {
 byte NN = 0;  // Note number or MACKIE
 byte CC = 1;  // Control change
 byte T = 2;   // Toggle
-byte PC = 3;  // Program Change
-byte PB = 4;  // Pitch Bend
+byte PChange = 3;  // Program Change
+byte PBend = 4;  // Pitch Bend
 
 /////////////////////////////////////////////
 // BUTTONS
@@ -291,10 +291,10 @@ int buttonMuxThreshold = 850;
 // NN: Note number or MACKIE
 // CC: Control change
 // T: Toggle
-// PC: Program Change
+// PChange: Program Change
 
 //* Put here the type of message you want to send, in the same order you declared the button pins
-// "NN" for Note Number | "CC" for Control Change | "T" for Note Number but in toggle mode | "PC" for Program Change
+// "NN" for Note Number | "CC" for Control Change | "T" for Note Number but in toggle mode | "PChange" for Program Change
 byte MESSAGE_TYPE[N_BUTTONS] = { NN, NN, NN };
 
 //* Put here the number of the message you want to send, in the right order, no matter if it's a note number, CC (or MACKIE), Program Change
@@ -376,11 +376,11 @@ const byte POT_MUX_PIN[N_MUX][16] = {
 // Control Change - Pitch Bend
 
 // CC: Control change
-// PB: Pitch Bend
+// PBend: Pitch Bend
 
 //* Put here the type of message you want to send, in the same order you declared the button pins
-// "CC" for Control Change | "PB" for Pitch Bend
-byte MESSAGE_TYPE_POT[N_POTS] = { CC, PB };
+// "CC" for Control Change | "PBend" for Pitch Bend
+byte MESSAGE_TYPE_POT[N_POTS] = { CC, PBend };
 
 byte POT_CC_N[N_POTS] = { 1, 2 };  // Add the CC NUMBER or MACKIE of each pot you want
 
