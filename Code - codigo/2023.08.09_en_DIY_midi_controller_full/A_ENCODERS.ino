@@ -7,11 +7,11 @@
 /////////////////////////////////////////////
 // variables you don't need to change
 
-unsigned int lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
-unsigned int lastEncoderMidiValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
-unsigned int encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
-unsigned int encoderMidiValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
-unsigned int encoderMackieValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
+int lastEncoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
+int lastEncoderMidiValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
+int encoderValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
+int encoderMidiValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
+int encoderMackieValue[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = { 0 };
 
 // for the encoder Channels - Used for different banks
 
@@ -40,7 +40,7 @@ void encoders() {
 
   for (int i = 0; i < N_ENCODERS; i++) {
 
-    unsigned int encoderValueTemp = encoder[i].read();  // reads each encoder and stores the value
+    int encoderValueTemp = encoder[i].read();  // reads each encoder and stores the value
     // Serial.print("Raw Encoder Value: ");
     // Serial.println(encoderValueTemp);
     encoderValue[ENCODER_MIDI_CH][i] = encoderValueTemp;
@@ -49,7 +49,7 @@ void encoders() {
     //#ifndef TRAKTOR // if not def Traktor
     //#ifndef USING_MACKIE
     clipEncoderValue(i, encoderMinVal, encoderMaxVal * encSensitivity);  // checks if it's greater than the max value or less than the min value
-    //#endif
+                                                                         //#endif
 
 #endif
 
@@ -57,8 +57,8 @@ void encoders() {
 #ifdef USING_HIGH_RES_ENC  // if def
 
     highResenc[ENCODER_MIDI_CH][i] = map(encoderValue[ENCODER_MIDI_CH][i], 0, encoderMaxVal * encSensitivity, 0, encoderMaxVal);  // changes the enconder sensitivity
-    encMSB[ENCODER_MIDI_CH][i] = highResenc[ENCODER_MIDI_CH][i] / 128;                                                                // Most Sigficant Byte
-    encLSB[ENCODER_MIDI_CH][i] = highResenc[ENCODER_MIDI_CH][i] % 128;                                                                // Least Significant Byte
+    encMSB[ENCODER_MIDI_CH][i] = highResenc[ENCODER_MIDI_CH][i] / 128;                                                            // Most Sigficant Byte
+    encLSB[ENCODER_MIDI_CH][i] = highResenc[ENCODER_MIDI_CH][i] % 128;                                                            // Least Significant Byte
 
 #endif  // USING_HIGH_RES_ENC
 
@@ -285,7 +285,7 @@ void isEncoderMoving() {
       encMoved[i] = false;
 
     } else {
-      
+
       if (encMoving[i] == true) {
 
         encMoving[i] = false;
