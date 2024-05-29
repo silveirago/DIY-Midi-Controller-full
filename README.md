@@ -169,6 +169,125 @@ const byte N_ENCODERS = 2;  // Total number of encoders
 Encoder encoder[N_ENCODERS] = { { 10, 16 }, { 14, 15 } };  // Pins for each encoder
 byte ENCODER_CC_N[N_ENCODERS] = { 11, 12 };  // CC number for each encoder
 ```
+## Preset Configuration for Encoders
+
+The `preset` array stores initial values for the encoders across different MIDI channels. This allows you to start your encoders with specific values.
+
+### Code Explanation
+
+```cpp
+byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {
+  // stores presets to start your encoders
+  //  {64, 64}, // ch 1
+  //  {64, 64}, // ch 2
+  //  {64, 64}, // ch 3
+  //  {64, 64}, // ch 4
+  //  {64, 64}, // ch 5
+  //  {64, 64}, // ch 6
+  //  {64, 64}, // ch 7
+  //  {64, 64}, // ch 8
+  //  {64, 64}, // ch 9
+  //  {64, 64}, // ch 10
+  //  {64, 64}, // ch 11
+  //  {64, 64}, // ch 12
+  //  {64, 64}, // ch 13
+  //  {64, 64}, // ch 14
+  //  {64, 64}, // ch 15
+  //  {64, 64}  // ch 16
+};
+```
+
+### How to Customize
+
+1. **Define the Presets**: Replace the values within the curly braces with your desired starting values for each encoder. Each inner array corresponds to a MIDI channel, and each value within the inner array corresponds to an encoder.
+
+Example:
+```cpp
+byte preset[N_ENCODER_MIDI_CHANNELS][N_ENCODERS] = {
+  {0, 127}, // ch 1
+  {10, 120}, // ch 2
+  {20, 110}, // ch 3
+  {30, 100}, // ch 4
+  {40, 90}, // ch 5
+  {50, 80}, // ch 6
+  {60, 70}, // ch 7
+  {70, 60}, // ch 8
+  {80, 50}, // ch 9
+  {90, 40}, // ch 10
+  {100, 30}, // ch 11
+  {110, 20}, // ch 12
+  {120, 10}, // ch 13
+  {127, 0}, // ch 14
+  {64, 64}, // ch 15
+  {64, 64}  // ch 16
+};
+```
+
+## MCP23017 Encoder Configuration
+
+If you are using encoders with the MCP23017 I/O expander, configure the settings as follows:
+
+### Code Explanation
+
+```cpp
+#ifdef USING_ENCODER_MCP23017
+
+const int I2C_ADDRESS = 0x20;  // MCP23017 I2C address
+
+const byte N_ENC_MCP23017 = 6;      // Number of encoders used
+const byte N_ENC_CH_MCP23017 = 16;  // Number of ENCODER_MIDI_CHs
+
+int encoderPin[N_ENC_MCP23017][2] = {{8, 9}, {0, 1}, {12, 13}, {10, 11}, {2, 3}, {14, 15}};  // Pin numbers for the A and B channels of each encoder
+int INT_PIN = 8;  // Microcontroller pin attached to INTA/B
+
+int count[N_ENC_MCP23017] = { 0 };      // Current count of each encoder
+int lastCount[N_ENC_MCP23017] = { 0 };  // Previous count of each encoder
+
+int encoderA[N_ENC_MCP23017] = { 0 };         // Current state of the A channel of each encoder
+int encoderB[N_ENC_MCP23017] = { 0 };         // Current state of the B channel of each encoder
+int lastEncoderA[N_ENC_MCP23017] = { HIGH };  // Previous state of the A channel of each encoder
+int lastEncoderB[N_ENC_MCP23017] = { HIGH };  // Previous state of the B channel of each encoder
+
+byte ENCODER_CC_N[N_ENC_MCP23017] = { 15, 16, 17, 18, 19, 20 };  // Add the CC NUMBER of each encoder you want
+
+Adafruit_MCP23X17 mcp;  // Create an instance of the Adafruit_MCP23X17 class
+
+#endif  // USING_ENCODER_MCP23017
+```
+
+### How to Customize
+
+1. **Set the I2C Address**: Change the `I2C_ADDRESS` if your MCP23017 uses a different address.
+
+2. **Define Encoder Pins**: Adjust the `encoderPin` array to match the pins you have connected your encoders to. Each inner array should contain the pin numbers for the A and B channels of an encoder.
+
+Example:
+```cpp
+int encoderPin[N_ENC_MCP23017][2] = {
+  {8, 9},
+  {0, 1},
+  {12, 13},
+  {10, 11},
+  {2, 3},
+  {14, 15}
+};
+```
+
+3. **Set Interrupt Pin**: Define the `INT_PIN` to the microcontroller pin connected to the MCP23017 interrupt output.
+
+4. **Initialize Encoder States**: Initialize `count`, `lastCount`, `encoderA`, `encoderB`, `lastEncoderA`, and `lastEncoderB` arrays as shown.
+
+5. **Assign CC Numbers**: Assign the desired MIDI CC numbers to the `ENCODER_CC_N` array for each encoder.
+
+Example:
+```cpp
+byte ENCODER_CC_N[N_ENC_MCP23017] = { 15, 16, 17, 18, 19, 20 };
+```
+
+---
+
+This concludes the instructions for configuring encoder presets and setting up MCP23017 encoders.
+
 
 #### Multiplexers
 
