@@ -35,7 +35,7 @@
     - Update 21 (04/14/23): Encoder High Resolution
     - Update 22 (04/14/23): MCP23017 Encoder "multiplexing"
 
-    ## Introduction
+## Introduction
 
 This guide provides detailed instructions on how to build and use a DIY MIDI controller using the provided Arduino sketches.
 
