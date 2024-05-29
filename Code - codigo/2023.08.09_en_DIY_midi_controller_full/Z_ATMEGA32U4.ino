@@ -467,7 +467,7 @@ void handleControlChange(byte channel, byte number, byte value) {
 #ifdef USING_MOTORIZED_FADERS
 
 
-  byte midiValue = MSB;
+  byte midiValue = value;
   midiValue = clipValue(midiValue, 1, 126);
 
 #ifdef USING_MACKIE

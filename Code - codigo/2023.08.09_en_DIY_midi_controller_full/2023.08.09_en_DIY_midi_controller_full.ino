@@ -23,12 +23,11 @@
 // "BLEMIDI" if using BLE MIDI (ESP32)
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define ATMEGA32U4 1  //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
-//#define DEBUG 1
+#define DEBUG 1  //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using buttons?
-//#define USING_BUTTONS 1  //* comment if not using buttons
+#define USING_BUTTONS 1  //* comment if not using buttons
 
 /////////////////////////////////////////////
 // Are you using potentiometers?
@@ -46,7 +45,7 @@
 
 /////////////////////////////////////////////
 // Are you using encoders?
-//#define USING_ENCODER 1  //* comment if not using encoders, uncomment if using it.
+#define USING_ENCODER 1  //* comment if not using encoders, uncomment if using it.
 //#define USING_ENCODER_MCP23017 1
 //#define TRAKTOR 1 // uncomment if using with traktor, comment if not
 

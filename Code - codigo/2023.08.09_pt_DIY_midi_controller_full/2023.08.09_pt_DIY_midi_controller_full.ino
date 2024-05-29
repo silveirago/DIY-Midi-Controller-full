@@ -19,15 +19,15 @@ PS: Basta alterar o valor que tem um comentário como " //* "
 // "DEBUG" se você quiser apenas depurar o código no monitor serial
 
 #define ATMEGA32U4 1  //* coloque aqui o uC que você está usando, como nas linhas acima seguido por "1", como "ATMEGA328 1", "DEBUG 1", etc.
-//#define DEBUG 1
+#define DEBUG 1
 
 /////////////////////////////////////////////
 // Você está usando botões?
-//#define USING_BUTTONS 1  //* comente se não estiver usando botões
+#define USING_BUTTONS 1  //* comente se não estiver usando botões
 
 /////////////////////////////////////////////
 // Você está usando potenciômetros?
-//#define USING_POTENTIOMETERS 1  //* comente se não estiver usando potenciômetros
+#define USING_POTENTIOMETERS 1  //* comente se não estiver usando potenciômetros
 
 // Você está usando faders de alta resolução?
 //#define USING_HIGH_RES_FADERS 1 //* comente se não estiver usando faders de alta resolução (qualquer fader pode ser de alta resolução)
@@ -41,7 +41,7 @@ PS: Basta alterar o valor que tem um comentário como " //* "
 
 /////////////////////////////////////////////
 // Você está usando encoders?
-//#define USING_ENCODER 1  //* comente se não estiver usando encoders, descomente se estiver usando.
+#define USING_ENCODER 1  //* comente se não estiver usando encoders, descomente se estiver usando.
 //#define USING_ENCODER_MCP23017 1
 //#define TRAKTOR 1 // descomente se estiver usando com o traktor, comente se não
 
@@ -341,7 +341,7 @@ const byte N_POTS = 2;  //* número total de potenciômetros (slide e rotativo).
 const byte N_POTS_ARDUINO = 2;  //* número de potenciômetros conectados diretamente ao Arduino
 // Se estiver usando o Arduino, declare como "A1, A2"
 // Se estiver usando o ESP32, use apenas o número GPIO como "11, 10"
-const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = { A2, A1 };  //* pinos de cada potenciômetro conectado diretamente ao Arduino (não use "A" se estiver usando o ESP32, apenas o número)
+const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = { A0, A1 };  //* pinos de cada potenciômetro conectado diretamente ao Arduino (não use "A" se estiver usando o ESP32, apenas o número)
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -413,7 +413,7 @@ const byte encoderMaxVal = 127;  //* valor máximo do encoder MIDI normal de 7 b
 // "1" fornecerá 4 leituras por clique, aumentará em 4, como 4, 8, 12 ...
 // "4" fornecerá 1 leitura por clique, como 1, 2, 3, 4 ...
 // então "4" dará a leitura mais precisa
-const float encSensitivity = 0.1;  //* mude a sensibilidade do encoder aqui
+const float encSensitivity = 1;  //* mude a sensibilidade do encoder aqui
 
 const byte N_ENCODER_MIDI_CHANNELS = 16;  // número de ENCODER_MIDI_CHs (NÃO ALTERE)
 
@@ -422,14 +422,14 @@ const byte N_ENCODER_MIDI_CHANNELS = 16;  // número de ENCODER_MIDI_CHs (NÃO A
 
 #ifdef USING_ENCODER
 
-const byte N_ENCODERS = 2;                   //* número de encoders
+const byte N_ENCODERS = 1;                   //* número de encoders
 const byte N_ENCODER_PINS = N_ENCODERS * 2;  //número de pinos usados pelos encoders
 
 //Encoder encoder[N_ENCODERS] = { { 10, 16 } };  // os dois pinos de cada encoder - Use pinos com interrupções!
-Encoder encoder[N_ENCODERS] = { { 10, 16 }, { 14, 15 } };  // os dois pinos de cada encoder - Use pinos com interrupções!
+Encoder encoder[N_ENCODERS] = { { 5, 6 } };  // os dois pinos de cada encoder - Use pinos com interrupções!
 
 // Escolha o valor CC ou MACKIE
-byte ENCODER_CC_N[N_ENCODERS] = { 11, 12 };  // Adicione o NÚMERO DO CC de cada encoder que desejar
+byte ENCODER_CC_N[N_ENCODERS] = { 11 };  // Adicione o NÚMERO DO CC de cada encoder que desejar
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
