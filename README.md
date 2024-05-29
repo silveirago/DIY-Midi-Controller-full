@@ -1,6 +1,6 @@
 # DIY-Midi-Controller-full
 
-   Made by Gustavo Silveira, 2021.
+   Made by Gustavo Silveira, 2024.
   - This Sketch rmakes the Arduino a full MIDI controller.
 
   http://go.musiconerd.com
@@ -101,6 +101,114 @@ This guide provides detailed instructions on how to build and use a DIY MIDI con
 3. **Run the Code**: Open the Arduino IDE, select your board and port, and upload the main sketch.
 
 4. **MIDI Configuration**: Configure your DAW (Digital Audio Workstation) to recognize the MIDI signals from the Arduino.
+
+## Customizing the Code
+
+### Board Selection
+
+Choose your board by defining it. Uncomment and set the appropriate board definition in the code:
+
+```cpp
+#define ATMEGA328 1  // Uncomment if using ATmega328 - Uno, Mega, Nano...
+//#define ATMEGA32U4 1  // Uncomment if using ATmega32U4 - Micro, Pro Micro, Leonardo...
+//#define TEENSY 1  // Uncomment if using a Teensy board
+//#define BLEMIDI 1  // Uncomment if using BLE MIDI (ESP32)
+//#define DEBUG 1  // Uncomment if you just want to debug the code in the serial monitor
+```
+
+### Component Usage
+
+Uncomment or comment the following lines based on the components you are using:
+
+```cpp
+#define USING_BUTTONS 1  // Comment if not using buttons
+#define USING_POTENTIOMETERS 1  // Comment if not using potentiometers
+//#define USING_HIGH_RES_FADERS 1  // Comment if not using high res faders
+//#define USING_MOTORIZED_FADERS 1  // Comment if not using motorized faders
+//#define USING_MUX 1  // Uncomment if using a multiplexer
+#define USING_ENCODER 1  // Comment if not using encoders
+//#define USING_ENCODER_MCP23017 1  // Uncomment if using encoders with MCP23017
+//#define TRAKTOR 1  // Uncomment if using with Traktor
+//#define USING_NEOPIXEL 1  // Uncomment if using neopixels
+//#define USING_DISPLAY 1  // Uncomment if using an I2C Oled Display
+//#define USING_BANKS_WITH_BUTTONS 1  // Uncomment if using banks with buttons
+//#define USING_LED_FEEDBACK 1  // Uncomment if using LED feedback
+//#define USING_74HC595 1  // Uncomment if using 74HC595 Bit Shifter
+//#define USING_VU 1  // Uncomment if using a VU meter
+//#define USING_MACKIE 1  // Uncomment if using the Mackie Protocol
+//#define USING_OCTAVE 1  // Uncomment if using octave change buttons
+//#define MIDI_DIN 1  // Uncomment if using Physical MIDI din 5-pin connector
+```
+
+### Pin Configuration
+
+Configure the pins for your components. Below are some examples:
+
+#### Buttons
+
+```cpp
+const byte N_BUTTONS = 3;  // Total number of buttons
+const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = { 2, 3, 4 };  // Pins for each button
+byte MESSAGE_TYPE[N_BUTTONS] = { NN, NN, NN };  // Message type for each button (NN, CC, T, PC)
+byte MESSAGE_VAL[N_BUTTONS] = { 36, 37, 38 };  // Message value for each button
+```
+
+#### Potentiometers
+
+```cpp
+const byte N_POTS = 2;  // Total number of pots
+const byte POT_ARDUINO_PIN[N_POTS] = { A2, A1 };  // Pins for each pot
+byte MESSAGE_TYPE_POT[N_POTS] = { CC, PB };  // Message type for each pot (CC, PB)
+byte POT_CC_N[N_POTS] = { 1, 2 };  // CC number for each pot
+```
+
+#### Encoders
+
+```cpp
+const byte N_ENCODERS = 2;  // Total number of encoders
+Encoder encoder[N_ENCODERS] = { { 10, 16 }, { 14, 15 } };  // Pins for each encoder
+byte ENCODER_CC_N[N_ENCODERS] = { 11, 12 };  // CC number for each encoder
+```
+
+#### Multiplexers
+
+```cpp
+#define N_MUX 1  // Number of multiplexers
+#define s0 18
+#define s1 19
+#define s2 20
+#define s3 21
+#define x1 A0  // Analog pin of the first mux
+Multiplexer4067 mux[N_MUX] = {
+  Multiplexer4067(s0, s1, s2, s3, x1),
+  // Add more if you have additional muxes
+};
+```
+
+### Usage
+
+1. **Connect the Hardware**: Connect all the required components (potentiometers, encoders, buttons, etc.) to your Arduino board as per the provided pin configuration.
+
+2. **Power the Arduino**: Connect the Arduino to your computer or a power source.
+
+3. **Run the Code**: Open the Arduino IDE, select your board and port, and upload the main sketch.
+
+4. **MIDI Configuration**: Configure your DAW (Digital Audio Workstation) to recognize the MIDI signals from the Arduino.
+
+### Troubleshooting
+
+- **Arduino Not Recognized**: Ensure the correct board and port are selected in the Arduino IDE.
+- **Libraries Not Found**: Verify that all required libraries are installed correctly.
+- **No MIDI Signal**: Check connections and ensure the MIDI settings in your DAW are configured properly.
+
+## Contributing
+
+If you would like to contribute to this project, please fork the repository and submit a pull request. Contributions can include code improvements, bug fixes, documentation, and new features.
+
+---
+
+This is a basic structure for the GitHub Wiki. You can expand each section with more detailed information, diagrams, and code snippets as needed.
+
 
 ## Troubleshooting
 
