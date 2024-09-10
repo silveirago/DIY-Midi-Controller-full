@@ -41,7 +41,7 @@
 
 /////////////////////////////////////////////
 // Are you using a multiplexer?
-//#define USING_MUX 1 //* comment if not using a multiplexer, uncomment if using it.
+#define USING_MUX 1  //* comment if not using a multiplexer, uncomment if using it.
 
 /////////////////////////////////////////////
 // Are you using encoders?
@@ -209,7 +209,7 @@ Adafruit_SSD1306 display(128, 64);  // Create display - size of the display in p
 // MULTIPLEXERS
 #ifdef USING_MUX
 
-#define N_MUX 1  //* number of multiplexers
+#define N_MUX 3  //* number of multiplexers
 //* Define s0, s1, s2, s3, and x pins
 #define s0 18
 #define s1 19
@@ -217,8 +217,8 @@ Adafruit_SSD1306 display(128, 64);  // Create display - size of the display in p
 #define s3 21
 
 #define x1 A0  // analog pin of the first mux
-//#define x2 A1 // analog pin of the first mux
-//#define x3 A2 // analog pin of the first mux
+#define x2 A1  // analog pin of the first mux
+#define x3 A2  // analog pin of the first mux
 
 // add more #define and the x number if you need
 
@@ -229,8 +229,8 @@ Adafruit_SSD1306 display(128, 64);  // Create display - size of the display in p
 // Initializes the multiplexer
 Multiplexer4067 mux[N_MUX] = {
   Multiplexer4067(s0, s1, s2, s3, x1),  // The SIG pin where the multiplexer is connnected
-  //  Multiplexer4067(s0, s1, s2, s3, x2), // The SIG pin where the multiplexer is connnected
-  //  Multiplexer4067(s0, s1, s2, s3, x3) // The SIG pin where the multiplexer is connnected
+  Multiplexer4067(s0, s1, s2, s3, x2),  // The SIG pin where the multiplexer is connnected
+  Multiplexer4067(s0, s1, s2, s3, x3)   // The SIG pin where the multiplexer is connnected
   // ...
 };
 #endif
@@ -270,12 +270,12 @@ const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = { 2, 3, 4 };  //* pins of each button
 #ifdef USING_MUX                                      // Fill if you are using mux, otherwise just leave it
 const byte N_BUTTONS_PER_MUX[N_MUX] = { 16, 13, 5 };  //* number of buttons in each mux (in order)
 const byte BUTTON_MUX_PIN[N_MUX][16] = {
-//* pin of each button of each mux in order
+  //* pin of each button of each mux in order
 
-{ 1, 2, 0, 5, 4, 3, 6, 7, 10, 9, 8, 13, 12, 11, 15, 14 },  // 1
-{ 2, 1, 0, 5, 4, 3, 7, 6, 9, 8, 13, 12, 15 },              // 2
-{ 6, 5, 4, 3, 8 },
-// ...
+  { 1, 2, 0, 5, 4, 3, 6, 7, 10, 9, 8, 13, 12, 11, 15, 14 },  // 1
+  { 2, 1, 0, 5, 4, 3, 7, 6, 9, 8, 13, 12, 15 },              // 2
+  { 6, 5, 4, 3, 8 },
+  // ...
 };
 
 int buttonMuxThreshold = 850;
@@ -358,11 +358,11 @@ const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = { A2, A1 };  //* pins of each pot c
 #ifdef USING_MUX
 const byte N_POTS_PER_MUX[N_MUX] = { 0, 3, 1 };  //* number of pots in each multiplexer (in order)
 const byte POT_MUX_PIN[N_MUX][16] = {
-//* pins of each pot of each mux in the order you want them to be
-{},  //* pins of the first mux
-{ 10, 11, 14 },
-{ 7 }
-// ...
+  //* pins of each pot of each mux in the order you want them to be
+  {},  //* pins of the first mux
+  { 10, 11, 14 },
+  { 7 }
+  // ...
 };
 #endif
 
@@ -484,7 +484,7 @@ const int I2C_ADDRESS = 0x20;  //* MCP23017 I2C address
 const byte N_ENC_MCP23017 = 6;      // Number of encoders used
 const byte N_ENC_CH_MCP23017 = 16;  // number of ENCODER_MIDI_CHs
 
-int encoderPin[N_ENC_MCP23017][2] = {{8, 9}, {0, 1}, {12, 13}, {10, 11}, {2, 3}, {14, 15}};  // Pin numbers for the A and B channels of each encoder
+int encoderPin[N_ENC_MCP23017][2] = { { 8, 9 }, { 0, 1 }, { 12, 13 }, { 10, 11 }, { 2, 3 }, { 14, 15 } };  // Pin numbers for the A and B channels of each encoder
 int INT_PIN = 8;                                                                                           // microcontroller pin attached to INTA/B
 
 int count[N_ENC_MCP23017] = { 0 };      // Current count of each encoder
