@@ -136,7 +136,7 @@ void processMIDI(void) {
       if (encSensitivity >= 1) {
         encTempVal = map(encTempVal, 0, 127, 0, 127 * encSensitivity);  // changes the encoder sensitivity
       } else {
-        encTempVal = lerp(0, 127 * encSensitivity, encTempVal / 127.0);  // changes the encoder sensitivity
+        encTempVal = customLerp(0, 127 * encSensitivity, encTempVal / 127.0);  // changes the encoder sensitivity
       }
 
       // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -175,7 +175,7 @@ void processMIDI(void) {
         if (encSensitivity >= 1) {
           encTempVal = map(highResenc[channel][i], 0, 127, 0, 127 * encSensitivity);  // changes the encoder sensitivity
         } else {
-          encTempVal = lerp(0, 127 * encSensitivity, highResenc[channel][i] / 127.0);  // changes the encoder sensitivity
+          encTempVal = customLerp(0, 127 * encSensitivity, highResenc[channel][i] / 127.0);  // changes the encoder sensitivity
         }
 
         encoderValue[channel][i] = encTempVal;
@@ -215,7 +215,7 @@ void processMIDI(void) {
       if (encSensitivity >= 1) {
         encTempVal_MCP23017 = map(encTempVal_MCP23017, 0, 127, 0, 127 * encSensitivity);  // changes the encoder sensitivity
       } else {
-        encTempVal_MCP23017 = lerp(0, 127 * encSensitivity, encTempVal_MCP23017 / 127.0);  // changes the encoder sensitivity
+        encTempVal_MCP23017 = customLerp(0, 127 * encSensitivity, encTempVal_MCP23017 / 127.0);  // changes the encoder sensitivity
       }
 
 #ifdef USING_HIGH_RES_ENC
@@ -270,7 +270,7 @@ void processMIDI(void) {
         if (encSensitivity >= 1) {
           encTempVal_MCP23017 = map(highResenc_MCP23017[channel][i], 0, 127, 0, 127 * encSensitivity);  // changes the encoder sensitivity
         } else {
-          encTempVal_MCP23017 = lerp(0, 127 * encSensitivity, highResenc_MCP23017[channel][i] / 127.0);  // changes the encoder sensitivity
+          encTempVal_MCP23017 = customLerp(0, 127 * encSensitivity, highResenc_MCP23017[channel][i] / 127.0);  // changes the encoder sensitivity
         }
 
 
