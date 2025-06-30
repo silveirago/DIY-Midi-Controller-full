@@ -137,7 +137,7 @@ void setup() {
 #ifdef USING_MUX
   // Dynamically allocate Multiplexer4067 objects
   for (int i = 0; i < N_MUX; i++) {
-    mux[i] = new Multiplexer4067(s0, s1, s2, s3, mux_x[i]);
+    mux[i] = new Multiplexer4067(mux_s[0], mux_s[1], mux_s[1], mux_s[3], mux_x[i]);
   }
   // Initialize each multiplexer and set its signal pin to INPUT_PULLUP
   for (int i = 0; i < N_MUX; i++) {

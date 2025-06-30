@@ -23,7 +23,7 @@
 // "BLEMIDI" if using BLE MIDI (ESP32)
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define DEBUG 1  //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA32U4 1  //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // Are you using buttons?
@@ -245,7 +245,7 @@ byte PB = 4;  // Pitch Bend
 // BUTTONS
 #ifdef USING_BUTTONS
 
-const byte N_BUTTONS = 2 + 3;                         //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2... (DON'T put Octave and MIDI channel (bank) buttons here)
+const byte N_BUTTONS = 2 ;                         //*  total numbers of buttons. Number of buttons in the Arduino + number of buttons on multiplexer 1 + number of buttons on multiplexer 2... (DON'T put Octave and MIDI channel (bank) buttons here)
 const byte N_BUTTONS_ARDUINO = 2;                     //* number of buttons connected straight to the Arduino
 const byte BUTTON_ARDUINO_PIN[N_BUTTONS] = { 2, 3 };  //* pins of each button connected straight to the Arduino
 
@@ -278,10 +278,10 @@ int buttonMuxThreshold = 850;
 
 //* Put here the type of message you want to send, in the same order you declared the button pins
 // "NN" for Note Number | "CC" for Control Change | "T" for Note Number but in toggle mode | "PC" for Program Change
-byte MESSAGE_TYPE[N_BUTTONS] = { NN, NN, NN, NN, NN };
+byte MESSAGE_TYPE[N_BUTTONS] = { NN, NN };
 
 //* Put here the number of the message you want to send, in the right order, no matter if it's a note number, CC (or MACKIE), Program Change
-byte MESSAGE_VAL[N_BUTTONS] = { 36, 37, 39, 42, 43 };
+byte MESSAGE_VAL[N_BUTTONS] = { 36, 37 };
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -328,7 +328,7 @@ unsigned long debounceDelay = 50;  //* the debounce time; increase if the output
 
 #ifdef USING_POTENTIOMETERS
 
-const byte N_POTS = 2 + 2;  //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
+const byte N_POTS = 2;  //* total numbers of pots (slide & rotary). Number of pots in the Arduino + number of pots on multiplexer 1 + number of pots on multiplexer 2...
 
 const byte N_POTS_ARDUINO = 2;  //* number of pots connected straight to the Arduino
 // If using the Arduino declare as "A1, A2"
@@ -361,9 +361,9 @@ const byte POT_MUX_PIN[N_MUX][16] = {
 
 //* Put here the type of message you want to send, in the same order you declared the button pins
 // "CC" for Control Change | "PB" for Pitch Bend
-byte MESSAGE_TYPE_POT[N_POTS] = { CC, CC, CC, CC };
+byte MESSAGE_TYPE_POT[N_POTS] = { CC, CC };
 
-byte POT_CC_N[N_POTS] = { 1, 2, 3, 4 };  // Add the CC NUMBER or MACKIE of each pot you want
+byte POT_CC_N[N_POTS] = { 1, 2 };  // Add the CC NUMBER or MACKIE of each pot you want
 
 #endif
 
