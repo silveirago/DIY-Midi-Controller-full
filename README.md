@@ -1,19 +1,19 @@
 # DIY-Midi-Controller-full
 
    Made by Gustavo Silveira, 2024.
-  - This Sketch rmakes the Arduino a full MIDI controller.
+  - This sketch makes the Arduino a full MIDI controller.
 
-  http://go.musiconerd.com
-  http://www.youtube.com/musiconerd
+  https://go.musiconerd.com
+  https://www.youtube.com/musiconerd
   http://facebook.com/musiconerdmusiconerd
-  http://instagram.com/musiconerd/
-  http://www.gustavosilveira.net
+  https://instagram.com/musiconerd
+  https://www.gustavosilveira.net
   gustavosilveira@musiconerd.com
 
   If you are using for anything that's not for personal use don't forget to give credit.
  
     - Update 1 (03/12/19): You can add multiple multiplexers for potentiometers.
-    - Update 2 Threads added. it makes your MIDI controller faster.
+    - Update 2: Threads added. It makes your MIDI controller faster.
     - Update 3 Encoder functionality added, using a super handy library.
     - Update 4 (03/18/19): Multiple encoders tested and working.
     - Update 5 (03/19/19): Multiple encoders (with banks) tested and working.
@@ -21,13 +21,13 @@
     - Update 7 (06/02/20): Velocity Variable
     - Update 8 (06/02/20): Buttons using CC
     - Update 9 (06/08/20): Toggle mode added
-    - Update 10 (11/17/20): Addressable led Midi feedback with FastLed lib (ATmega32U4 only) 
-    - Update 11 (03/14/21): Tabs; Oled displays, 75HC595 Bit shifter for LED feedback and VU; and many fixes.
+    - Update 10 (11/17/20): Addressable LED MIDI feedback with FastLED lib (ATmega32U4 only)
+    - Update 11 (03/14/21): Tabs; OLED displays, 75HC595 bit shifter for LED feedback and VU; and many fixes.
     - Update 12 (06/25/21): Better pot reading; High Res Faders; Motorized Faders.
     - Update 13 (01/09/21): Custom Note Numbers, CC and Toggle: Now you can use them at the same time with different buttons.  
     - Update 14 (01/09/21): How to change octaves and show it on the display.
     - Update 15 (01/04/22): Motorized Faders
-    - Update 16 (01/08/22): MIDI Din
+    - Update 16 (01/08/22): MIDI DIN
     - Update 17 (01/11/22): BLE MIDI
     - Update 18 (04/14/23): More MIDI Messages
     - Update 19 (04/14/23): LED MIDI In in the Arduino (w/o bit shifter)
@@ -64,7 +64,7 @@ This guide provides detailed instructions on how to build and use a DIY MIDI con
 1. **Download the Code**: Clone or download the repository to your local machine.
 
    ```sh
-   git clone https://github.com/yourusername/DIY_MIDI_Controller.git
+     git clone https://github.com/MusicNerd/DIY-Midi-Controller-full.git
    ```
 
 2. **Install Arduino IDE**: If not already installed, download and install the Arduino IDE from the [official website](https://www.arduino.cc/en/software).
@@ -303,31 +303,6 @@ Multiplexer4067 mux[N_MUX] = {
   // Add more if you have additional muxes
 };
 ```
-
-### Usage
-
-1. **Connect the Hardware**: Connect all the required components (potentiometers, encoders, buttons, etc.) to your Arduino board as per the provided pin configuration.
-
-2. **Power the Arduino**: Connect the Arduino to your computer or a power source.
-
-3. **Run the Code**: Open the Arduino IDE, select your board and port, and upload the main sketch.
-
-4. **MIDI Configuration**: Configure your DAW (Digital Audio Workstation) to recognize the MIDI signals from the Arduino.
-
-### Troubleshooting
-
-- **Arduino Not Recognized**: Ensure the correct board and port are selected in the Arduino IDE.
-- **Libraries Not Found**: Verify that all required libraries are installed correctly.
-- **No MIDI Signal**: Check connections and ensure the MIDI settings in your DAW are configured properly.
-
-## Contributing
-
-If you would like to contribute to this project, please fork the repository and submit a pull request. Contributions can include code improvements, bug fixes, documentation, and new features.
-
----
-
-This is a basic structure for the GitHub Wiki. You can expand each section with more detailed information, diagrams, and code snippets as needed.
-
 
 ## Troubleshooting
 
