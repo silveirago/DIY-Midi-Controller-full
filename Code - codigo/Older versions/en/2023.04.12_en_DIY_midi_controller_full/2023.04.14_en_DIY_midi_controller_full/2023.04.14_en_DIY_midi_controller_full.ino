@@ -23,8 +23,8 @@
 // "BLEMIDI" if using BLE MIDI (ESP32)
 // "DEBUG" if you just want to debug the code in the serial monitor
 
-#define TEENSY 1  //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
-#define DEBUG 1
+#define ATMEGA32U4 1  //* put here the uC you are using, like in the lines above followed by "1", like "ATMEGA328 1", "DEBUG 1", etc.
+//#define DEBUG 1
 
 /////////////////////////////////////////////
 // Are you using buttons?
@@ -46,12 +46,12 @@
 
 /////////////////////////////////////////////
 // Are you using encoders?
-//#define USING_ENCODER 1  //* comment if not using encoders, uncomment if using it.
-#define USING_ENCODER_MCP23017 1
+#define USING_ENCODER 1  //* comment if not using encoders, uncomment if using it.
+//#define USING_ENCODER_MCP23017 1
 //#define TRAKTOR 1 // uncomment if using with traktor, comment if not
 
 // Are you using high res ENCODER?
-//#define USING_HIGH_RES_ENC 1  //* comment if not using high res faders (any fader can be high res)
+#define USING_HIGH_RES_ENC 1  //* comment if not using high res faders (any fader can be high res)
 
 /////////////////////////////////////////////
 // Are you using neopixels (any addressable strips)?
@@ -433,14 +433,14 @@ const byte N_ENCODER_MIDI_CHANNELS = 16;  // number of ENCODER_MIDI_CHs (DO NOT 
 
 #ifdef USING_ENCODER
 
-const byte N_ENCODERS = 2;                   //* number of encoders
+const byte N_ENCODERS = 1;                   //* number of encoders
 const byte N_ENCODER_PINS = N_ENCODERS * 2;  //number of pins used by the encoders
 
 //Encoder encoder[N_ENCODERS] = { { 10, 16 } };  // the two pins of each encoder -  Use pins with Interrupts!
-Encoder encoder[N_ENCODERS] = { { 10, 16 }, { 14, 15 } };  // the two pins of each encoder -  Use pins with Interrupts!
+Encoder encoder[N_ENCODERS] = { { 2, 3 } };  // the two pins of each encoder -  Use pins with Interrupts!
 
 // Choose the CC or MACKIE value
-byte ENCODER_CC_N[N_ENCODERS] = { 11, 12 };  // Add the CC NUMBER of each encoder you want
+byte ENCODER_CC_N[N_ENCODERS] = { 2 };  // Add the CC NUMBER of each encoder you want
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -

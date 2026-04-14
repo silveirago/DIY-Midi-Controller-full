@@ -35,10 +35,10 @@ void banksWithButtons() {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   for (int i = 0; i < 2; i++) { // Read the button state and change the MIDI channel
-    if ((millis() - lastDebounceTime[i]) > debounceDelay) {
+    if ((millis() - buttonsState[i].lastDebounceTime) > debounceDelay) {
 
       if (buttonBankPState[i] != buttonBankCState[i]) {
-        lastDebounceTime[i] = millis();
+        buttonsState[i].lastDebounceTime = millis();
 
         if (buttonBankCState[i] == LOW) {
 
